@@ -32,22 +32,25 @@ namespace Boids
 
 	void Camera::UpdateCameraVectors()
 	{
-		mat4 m_CameraRotation, m_CameraPosition;
+		if (!m_CameraLock)
+		{
+			mat4 m_CameraRotation, m_CameraPosition;
 
-		m_CameraRotation = mat4::Rotate(m_Pitch, vec3(1.0f, 0.0f, 0.0f));
-		m_CameraRotation *= mat4::Rotate(m_Yaw, vec3(0.0f, 1.0f, 0.0f));
+			m_CameraRotation = mat4::Rotate(m_Pitch, vec3(1.0f, 0.0f, 0.0f));
+			m_CameraRotation *= mat4::Rotate(m_Yaw, vec3(0.0f, 1.0f, 0.0f));
 
-		m_CameraPosition = mat4::Translate(-m_CameraPos);
+			m_CameraPosition = mat4::Translate(-m_CameraPos);
 
-		m_ViewMatrix = m_CameraRotation * m_CameraPosition;
+			m_ViewMatrix = m_CameraRotation * m_CameraPosition;
 
-		vec3 forward(m_ViewMatrix[2 + 0 * 4], m_ViewMatrix[2 + 1 * 4], m_ViewMatrix[2 + 2 * 4]);
-		vec3 strafe(m_ViewMatrix[0 + 0 * 4], m_ViewMatrix[0 + 1 * 4], m_ViewMatrix[0 + 2 * 4]);
-		vec3 up(m_ViewMatrix[1 + 0 * 4], m_ViewMatrix[1 + 1 * 4], m_ViewMatrix[1 + 2 * 4]);
-		
-		m_FacingDirection = forward;
-		m_CameraRight = strafe;
-		m_CameraUp = up;
+			vec3 forward(m_ViewMatrix[2 + 0 * 4], m_ViewMatrix[2 + 1 * 4], m_ViewMatrix[2 + 2 * 4]);
+			vec3 strafe(m_ViewMatrix[0 + 0 * 4], m_ViewMatrix[0 + 1 * 4], m_ViewMatrix[0 + 2 * 4]);
+			vec3 up(m_ViewMatrix[1 + 0 * 4], m_ViewMatrix[1 + 1 * 4], m_ViewMatrix[1 + 2 * 4]);
+			
+			m_FacingDirection = forward;
+			m_CameraRight = strafe;
+			m_CameraUp = up;
+		}
 	}
 
 	//For Free look fps camera

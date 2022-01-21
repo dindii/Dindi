@@ -44,7 +44,10 @@ namespace Boids
 
 		void RemakeProjection(float newWidth, float newHeight);
 
+		inline void LockCamera(bool lockCamera) { m_CameraLock = lockCamera; }
+
 	private:
+		bool m_CameraLock = false;
 		void UpdateCameraVectors();
 
 		vec3 m_FacingDirection;

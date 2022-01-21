@@ -150,6 +150,9 @@ namespace Boids
 
 	void Window::windowResizeCallback(GLFWwindow* window, int width, int height)
 	{
+		m_Width = width;
+		m_Height = height;
+
 		WindowResizeEvent e(width, height);
 		EventCallback(e);
 	}

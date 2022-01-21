@@ -4,6 +4,7 @@
 #include "Rendering/Core/Renderer.h"
 #include "Input/Input.h"
 #include "Event/ApplicationEvent.h"
+#include "Event/KeyEvent.h"
 #include "Math/Maths.h"
 #include "Visual/Model/Model.h"
 #include "GUI/GUI.h"
@@ -90,7 +91,25 @@ namespace Boids
 			return true;
 		});
 
+		dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent Event) -> bool
+		{
+			if (Event.GetKeyCode() == BOIDS_KEY_ESCAPE)
+			{
+				TerminateProgram();
+				return true; //consume event
+			}
 
+			//temporary
+			if (Event.GetKeyCode() == BOIDS_KEY_F2)
+			{
+				m_MouseLockedAndInvisible = !m_MouseLockedAndInvisible;
+
+				Input::HideAndLockCursor(m_MouseLockedAndInvisible);
+				m_ActiveScene->GetSceneActiveCamera()->LockCamera(!m_MouseLockedAndInvisible);
+
+				return true;
+			}
+		});
 	}
 
 	void Application::Run()
@@ -121,6 +140,7 @@ namespace Boids
 
 	void Application::ProcessEngineInterface()
 	{
+		//#TODO: this should get huge, so take this to a better place.
 		GUI::Begin();
 
 		ImGui::Begin("Iha!");
@@ -133,22 +153,22 @@ namespace Boids
 	{
 		vec3 IntendedCameraPosition;
 
-		if (Input::IsKeyPressed(EKeyCode::GLR_KEY_W))
+		if (Input::IsKeyPressed(EKeyCode::BOIDS_KEY_W))
 			IntendedCameraPosition.z = -m_DefaultEditorCameraSpeed;
 
-		if (Input::IsKeyPressed(EKeyCode::GLR_KEY_S))
+		if (Input::IsKeyPressed(EKeyCode::BOIDS_KEY_S))
 			IntendedCameraPosition.z = m_DefaultEditorCameraSpeed;
 
-		if (Input::IsKeyPressed(EKeyCode::GLR_KEY_D))
+		if (Input::IsKeyPressed(EKeyCode::BOIDS_KEY_D))
 			IntendedCameraPosition.x = m_DefaultEditorCameraSpeed;
 
-		if (Input::IsKeyPressed(EKeyCode::GLR_KEY_A))
+		if (Input::IsKeyPressed(EKeyCode::BOIDS_KEY_A))
 			IntendedCameraPosition.x = -m_DefaultEditorCameraSpeed;
 
-		if (Input::IsKeyPressed(EKeyCode::GLR_KEY_SPACE))
+		if (Input::IsKeyPressed(EKeyCode::BOIDS_KEY_SPACE))
 			IntendedCameraPosition.y = m_DefaultEditorCameraSpeed;
 
-		if (Input::IsKeyPressed(EKeyCode::GLR_KEY_LEFT_CONTROL))
+		if (Input::IsKeyPressed(EKeyCode::BOIDS_KEY_LEFT_CONTROL))
 			IntendedCameraPosition.y = -m_DefaultEditorCameraSpeed;
 
 		//Add this vector on the Target Position, this is, where we are looking at, thus, making a free camera style

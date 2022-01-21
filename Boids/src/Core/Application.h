@@ -26,6 +26,8 @@ namespace Boids
 
 		void ProcessEngineInterface();
 
+		inline void TerminateProgram() { m_Running = false; }
+
 	private:
 		static inline Application* s_Instance = nullptr;
 
@@ -41,6 +43,8 @@ namespace Boids
 
 		Camera* m_DefaultEditorCamera;
 		float m_DefaultEditorCameraSpeed;
+
+		bool m_MouseLockedAndInvisible = true;
 		//Editor specific stuff
 	private:
 		void MoveCamera(DeltaTime& dt);

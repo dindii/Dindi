@@ -33,7 +33,6 @@ namespace Boids
 		}
 
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		
 	}
 
 
@@ -44,6 +43,12 @@ namespace Boids
 		glfwGetCursorPos(window, &xpos, &ypos);
 
 		return { (float)xpos, (float)ypos };
+	}
+
+	void Input::SetCursorPosition(int x, int y)
+	{
+		GLFWwindow* window = Application::GetInstance().GetWindow()->GetNativeWindow();
+		glfwSetCursorPos(window, x, y);
 	}
 
 }

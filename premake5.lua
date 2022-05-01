@@ -1,4 +1,4 @@
-workspace "Boids"
+workspace "Dindi"
 		architecture "x64"
 		startproject "SandBox"
 
@@ -15,21 +15,21 @@ characterset ("MBCS")
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
  IncludeDir = {}
-  IncludeDir["Glad"] = "Boids/vendor/Glad/include"
-  IncludeDir["ImGui"] = "Boids/vendor/imgui"
-  IncludeDir["stbi"] = "Boids/vendor/stbi"
-  IncludeDir["glfw"] = "Boids/vendor/glfw/include"
-  IncludeDir["assimp"] = "Boids/vendor/assimp"
+  IncludeDir["Glad"] = "Dindi/vendor/Glad/include"
+  IncludeDir["ImGui"] = "Dindi/vendor/imgui"
+  IncludeDir["stbi"] = "Dindi/vendor/stbi"
+  IncludeDir["glfw"] = "Dindi/vendor/glfw/include"
+  IncludeDir["assimp"] = "Dindi/vendor/assimp"
 
   group "Dependencies"
-  include "Boids/vendor/Glad"
-  include "Boids/vendor/imgui"
-  include "Boids/vendor/glfw"
-  include "Boids/vendor/assimp"
+  include "Dindi/vendor/Glad"
+  include "Dindi/vendor/imgui"
+  include "Dindi/vendor/glfw"
+  include "Dindi/vendor/assimp"
   group ""
 
-project "Boids"
-	location "Boids"
+project "Dindi"
+	location "Dindi"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
@@ -38,8 +38,8 @@ project "Boids"
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("bin-int/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "boidspch.h"
-	pchsource "Boids/src/boidspch.cpp"
+	pchheader "Dindipch.h"
+	pchsource "Dindi/src/Dindipch.cpp"
 
 	files
 	{
@@ -76,21 +76,21 @@ project "Boids"
 
 	defines
 	{
-		"BOIDS_PLATFORM_WINDOWS"
+		"DINDI_PLATFORM_WINDOWS"
 	}
 
 	filter "configurations:Debug"
-	defines "BOIDS_DEBUG"
+	defines "DINDI_DEBUG"
 	runtime "Debug"
 	symbols "on"
 
 	filter "configurations:Release"
-	defines "BOIDS_RELEASE"
+	defines "DINDI_RELEASE"
 	runtime "Release"
 	optimize "Debug"
 
 	filter "configurations:Dist"
-	defines "BOIDS_DIST"
+	defines "DINDI_DIST"
 	runtime "Release"
 	symbols "Off"
 	optimize "Full"
@@ -116,13 +116,13 @@ project "Boids"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"Boids/src",
-        "Boids/vendor"
+		"Dindi/src",
+        "Dindi/vendor"
 	}
 
 	links                      -- Linkamos a Engine no Sandbox também
       {
-      	 "Boids"
+      	 "Dindi"
       }
 	
 	filter "system:windows"
@@ -130,21 +130,21 @@ project "Boids"
 
 	defines
 	{
-		"BOIDS_PLATFORM_WINDOWS"
+		"DINDI_PLATFORM_WINDOWS"
 	}
 
 	filter "configurations:Debug"
-	defines "BOIDS_DEBUG"
+	defines "DINDI_DEBUG"
 	runtime "Debug"
 	symbols "on"
 
 	filter "configurations:Release"
-	defines "BOIDS_RELEASE"
+	defines "DINDI_RELEASE"
 	runtime "Release"
 	optimize "Debug"
 
 	filter "configurations:Dist"
-	defines "BOIDS_DIST"
+	defines "DINDI_DIST"
 	runtime "Release"
 	symbols "Off"
 	optimize "Full"

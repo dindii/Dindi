@@ -9,7 +9,6 @@
 
 # Precompiled Headers
 *.gch
-*.pch
 
 # Compiled Dynamic libraries
 *.so
@@ -30,3 +29,10 @@
 *.exe
 *.out
 *.app
+
+# Visual studio stuff
+*.opendb
+*.opensdf
+*.aps
+*.ncb
+*.cachefile

@@ -1,0 +1,2 @@
+﻿  boidspch.cpp
+c:\users\didim\documents\dev\boids\boids\src\boidspch.cpp(1): fatal error C1083: Não é possível abrir arquivo incluir: 'Dindipch.h': No such file or directory

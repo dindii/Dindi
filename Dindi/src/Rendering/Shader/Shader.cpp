@@ -155,6 +155,12 @@ namespace Dindi
 		
 	}
 
+	void Shader::UploadUniformFloat(const std::string& name, const float value)
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
+		glUniform1f(location, value);
+	}
+
 	void Shader::UploadUniformFloat4(const std::string& name, const vec4& mat)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations

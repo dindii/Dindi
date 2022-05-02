@@ -23,7 +23,7 @@ namespace Dindi
 		inline const char* GetName() const { return m_Name; }
 		inline GLFWwindow* GetNativeWindow() { return m_Window; }
 		inline float GetAspectRatio() const { return m_AspectRatio; }
-	
+		float GetTime() const;
 		inline void setEventCallback(const EventCallbackFn& callback) { EventCallback = callback; }
 
 	

@@ -132,6 +132,9 @@
     <ClInclude Include="src\Rendering\Shader\Shader.h">
       <Filter>src\Rendering\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering\Shader\ShaderHotReloader.h">
+      <Filter>src\Rendering\Shader</Filter>
+    </ClInclude>
     <ClInclude Include="src\Utils\DeltaTime.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
@@ -156,7 +159,6 @@
     <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3.h">
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering\Shader\ShaderHotReloader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -204,6 +206,9 @@
     <ClCompile Include="src\Rendering\Shader\Shader.cpp">
       <Filter>src\Rendering\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering\Shader\ShaderHotReloader.cpp">
+      <Filter>src\Rendering\Shader</Filter>
+    </ClCompile>
     <ClCompile Include="src\Utils\DeltaTime.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
@@ -225,6 +230,5 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\Shader\ShaderHotReloader.cpp" />
   </ItemGroup>
 </Project>

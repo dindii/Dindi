@@ -4,7 +4,9 @@
 //#NOTE This probably allocate std::string memory, check this when we have a bottleneck.
 //#NOTE This runs in a single thread, the same as the renderer. Please, put this in another thread and insert a sleep for it.
 
-//#TODO Combine shaders in a single file to add vertex shader hot reloader as well.
+//#TODO Combine shaders in a single file to add vertex shader hot reloader as well. I am too lazy to do this right now because I would have to
+//change some shader loading stuff.
+//I will probably do this transition once I miss vertex shader hot reload ha.
 #define LAST_SHADER_WRITE_TIME(x)  std::filesystem::last_write_time(std::filesystem::path(x.GetFragmentShaderFilePath())).time_since_epoch().count()
 
 namespace Dindi
@@ -15,6 +17,7 @@ namespace Dindi
 
 	void ShaderHotReloader::OnUpdate()
 	{
+		
 		CheckForShaderFileChanges();
 		ReloadDirtyShaders();
 	}
@@ -42,6 +45,7 @@ namespace Dindi
 
 	void ShaderHotReloader::ReloadDirtyShaders()
 	{
+		//This is kinda linear but ok, I don't think it will be a problem.
 		for (uint32_t x = 0; x < m_DirtyShaders.size(); x++)
 		{
 			m_DirtyShaders[x]->ReloadShader();

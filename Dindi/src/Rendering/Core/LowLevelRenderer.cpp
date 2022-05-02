@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Utils/Logger.h"
+#include "Core/Application.h"
 
 namespace Dindi
 {
@@ -47,21 +48,6 @@ namespace Dindi
 		{
 			for (int32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
-// 				glBindVertexArray(scene->GetEntities()[x]->GetVertexArrayObjectID());
-// 				glBindBuffer(GL_ARRAY_BUFFER, scene->GetEntities()[x]->GetVertexBufferObjectID());
-// 				
-// 				Shader* shader = (scene->GetEntities())[x]->GetShader();
-// 				shader->Bind();
-// 
-// 				Camera* camera = scene->GetSceneActiveCamera();
-// 
-// 				mat4 viewProjectionMatrix = camera->GetProjection() * camera->getViewMatrix();
-// 
-// 				shader->UploadUniformMat4("u_ViewProjection", viewProjectionMatrix);
-// 
-// 
-// 				glDrawArrays(GL_TRIANGLES, 0, scene->GetEntities()[x]->GetElementsCount());
-
 				glBindVertexArray(scene->GetEntities()[x]->GetMesh()->GetVertexArrayObjectID());
 				glBindBuffer(GL_ARRAY_BUFFER, scene->GetEntities()[x]->GetMesh()->GetVertexBufferObjectID());
 
@@ -73,7 +59,7 @@ namespace Dindi
 				mat4 viewProjectionMatrix = camera->GetProjection() * camera->getViewMatrix();
 
 				shader->UploadUniformMat4("u_ViewProjection", viewProjectionMatrix);
-
+				shader->UploadUniformFloat("u_Time", Application::GetInstance().GetTime());
 
 				glDrawArrays(GL_TRIANGLES, 0, scene->GetEntities()[x]->GetMesh()->GetElementsCount());
 			}

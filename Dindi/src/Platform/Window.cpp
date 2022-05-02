@@ -88,6 +88,11 @@ namespace Dindi
 		pollEvents();
 	}
 	
+	float Window::GetTime() const
+	{
+		return glfwGetTime();
+	}
+
 	void Window::pollEvents()
 	{
 		glfwPollEvents();

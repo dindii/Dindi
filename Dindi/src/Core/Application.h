@@ -22,7 +22,7 @@ namespace Dindi
 		void OnUpdate(DeltaTime& dt);
 		inline Window* GetWindow() { return m_ApplicationWindow; }
 		inline static Application& GetInstance() { return *s_Instance; }
-
+		float GetTime() const;
 		void ProcessEngineInterface();
 
 		inline void TerminateProgram() { m_Running = false; }

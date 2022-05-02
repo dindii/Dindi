@@ -1,6 +1,6 @@
 #pragma once
 
-#define DND_ASSERT(x) if(x) { } \
+#define DND_ASSERT(x) if(!x) { } \
 else { __debugbreak();}
 
 //#NOTE: I don't think this will be a bottleneck but we should be aware. Our program is not so event driven, so we are ok.

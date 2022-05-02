@@ -10,7 +10,7 @@ namespace Dindi
 		double getDeltaTime();
 
 		operator float() { return (float)deltaTime; }
-		operator double() { return deltaTime; }
+		//operator double() { return deltaTime; }
 
 	private:
 		double currentTime;

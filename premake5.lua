@@ -19,13 +19,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
   IncludeDir["ImGui"] = "Dindi/vendor/imgui"
   IncludeDir["stbi"] = "Dindi/vendor/stbi"
   IncludeDir["glfw"] = "Dindi/vendor/glfw/include"
-  IncludeDir["assimp"] = "Dindi/vendor/assimp"
 
   group "Dependencies"
   include "Dindi/vendor/Glad"
   include "Dindi/vendor/imgui"
   include "Dindi/vendor/glfw"
-  include "Dindi/vendor/assimp"
   group ""
 
 project "Dindi"
@@ -58,8 +56,7 @@ project "Dindi"
 		"%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
 		"%{IncludeDir.stbi}",
-		"%{IncludeDir.glfw}",
-		"%{IncludeDir.assimp}"
+		"%{IncludeDir.glfw}"
 	}
 	
 	links
@@ -67,7 +64,6 @@ project "Dindi"
 		"Glad",
         "ImGui",
 		"GLFW",
-		"assimp",
         "opengl32.lib"
 	}
 

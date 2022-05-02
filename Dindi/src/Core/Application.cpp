@@ -22,7 +22,7 @@ namespace Dindi
 	{
 		if (s_Instance)
 		{
-			DND_LOG_ERROR("More than one instance of Application is not allowed.");
+			DND_LOG_FATAL("More than one instance of Application is not allowed.");
 			return;
 		}
 
@@ -52,7 +52,7 @@ namespace Dindi
 
 		//o asset system entra gerindo o armazenamento através de um loader
 
-	//#TODO: Ordem: aprender o cmake > buildar o assimp > criar os containers para os dados > criar um loader que armazene nos containers certos > 
+	//#TODO: Ordem: buildar o assimp > criar os containers para os dados > criar um loader que armazene nos containers certos > 
 		//criar um asset system para trabalhar em cima desses containers utilizando os loaders
 		//Quando um usuario der load num asset, o asset system verifica se já existe em algum container e se sim retorna um shared ptr e se não loada e retorna o shared
 
@@ -147,14 +147,17 @@ namespace Dindi
 		MoveCamera(dt);
 	}
 
+	float Application::GetTime() const
+	{
+		return m_ApplicationWindow->GetTime();
+	}
+
 	void Application::ProcessEngineInterface()
 	{
 		//#TODO: this should get huge, so take this to a better place.
 		GUI::Begin();
-
 		ImGui::Begin("Iha!");
 		ImGui::End();
-
 		GUI::End();
 	}
 	

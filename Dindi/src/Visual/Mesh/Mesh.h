@@ -1,5 +1,6 @@
 #pragma once
 #include "Rendering/Object/Renderable.h"
+#include "../vendor/tinyobjloader/tiny_obj_loader.h"
 
 namespace Dindi
 {

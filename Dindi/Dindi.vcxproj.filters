@@ -159,6 +159,7 @@
     <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3.h">
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering\Texture\Texture2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -230,5 +231,6 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering\Texture\Texture2D.cpp" />
   </ItemGroup>
 </Project>

@@ -39,7 +39,7 @@ namespace Dindi
 			glCullFace(GL_BACK);
 
 			glEnable(GL_DEPTH_TEST);
-			glDepthFunc(GL_ALWAYS);
+			glDepthFunc(GL_LESS);
 
 
 		}
@@ -61,7 +61,19 @@ namespace Dindi
 				shader->UploadUniformMat4("u_ViewProjection", viewProjectionMatrix);
 				shader->UploadUniformFloat("u_Time", Application::GetInstance().GetTime());
 
-				glDrawArrays(GL_TRIANGLES, 0, scene->GetEntities()[x]->GetMesh()->GetElementsCount());
+				Mesh* mesh = scene->GetEntities()[x]->GetMesh();
+			
+				mesh->BindTextures();
+
+				shader->UploadInt("u_Diffuse", 1);
+				shader->UploadInt("u_Specular", 2);
+				shader->UploadInt("u_Normal", 3);
+
+
+				//#TODO: Indexed draw not working 100%, please fix this.
+				//#TODO: Multiple mesh model rendering.
+				
+				glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 			}
 		
 		}

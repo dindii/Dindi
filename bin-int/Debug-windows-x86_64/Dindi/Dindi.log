@@ -1,17 +1,10 @@
 ﻿  Application.cpp
-  GUI.cpp
-  Input.cpp
-  Window.cpp
-c:\users\didim\documents\dev\dindi\dindi\src\platform\window.cpp(93): warning C4244: 'return': conversão de 'double' para 'float', possível perda de dados
-  Camera.cpp
+c:\users\didim\documents\dev\dindi\dindi\src\visual\mesh\mesh.h(19): warning C4267: 'return': conversão de 'size_t' para 'uint32_t', possível perda de dados
   LowLevelRenderer.cpp
-  Renderer.cpp
-  Renderable.cpp
-  Scene.cpp
-  Logger.cpp
+c:\users\didim\documents\dev\dindi\dindi\src\visual\mesh\mesh.h(19): warning C4267: 'return': conversão de 'size_t' para 'uint32_t', possível perda de dados
   Mesh.cpp
-  Model.cpp
-  Cube.cpp
+c:\users\didim\documents\dev\dindi\dindi\src\visual\mesh\mesh.h(19): warning C4267: 'return': conversão de 'size_t' para 'uint32_t', possível perda de dados
+c:\users\didim\documents\dev\dindi\dindi\src\visual\mesh\mesh.cpp(104): warning C4834: descartando o valor retornado da função com o atributo 'nodiscard'
   Gerando Código...
 Scene.obj : warning LNK4221: Este objeto nÒo define nenhum dos sÝmbolos anteriormente indefinidos, portanto ele nÒo serß utilizado em nenhuma operaþÒo de vÝnculo que consuma esta biblioteca
   Dindi.vcxproj -> C:\Users\didim\Documents\dev\Dindi\Dindi\..\bin\Debug-windows-x86_64\Dindi\Dindi.lib

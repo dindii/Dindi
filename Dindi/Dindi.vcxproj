@@ -158,6 +158,7 @@
     <ClInclude Include="src\Rendering\Scene\Scene.h" />
     <ClInclude Include="src\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Rendering\Shader\ShaderHotReloader.h" />
+    <ClInclude Include="src\Rendering\Texture\Texture2D.h" />
     <ClInclude Include="src\Utils\DeltaTime.h" />
     <ClInclude Include="src\Utils\Logger.h" />
     <ClInclude Include="src\Visual\Material\Material.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="src\Rendering\Scene\Scene.cpp" />
     <ClCompile Include="src\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Rendering\Shader\ShaderHotReloader.cpp" />
+    <ClCompile Include="src\Rendering\Texture\Texture2D.cpp" />
     <ClCompile Include="src\Utils\DeltaTime.cpp" />
     <ClCompile Include="src\Utils\Logger.cpp" />
     <ClCompile Include="src\Visual\Mesh\Mesh.cpp" />

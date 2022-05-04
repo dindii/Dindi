@@ -46,27 +46,16 @@ namespace Dindi
 		m_ActiveScene = SceneOne;
 		SceneOne->SetActiveCameraScene(m_DefaultEditorCamera);
 
-//#TODO: Buildar o assimp, separar os dados em Mesh(pos, normals, uv etc) e Material(shader e texturas)
-		//achar um jeito legal também de bindar as texturas certas antes de renderizar e de setar pro sampler2d uniform direitinho
-		//também derivar alguns primitivos de Model e hardcodar eles (usar os construtores de hardcode do mesh ja basta!)
 
-		//o asset system entra gerindo o armazenamento através de um loader
-
-	//#TODO: Ordem: buildar o assimp > criar os containers para os dados > criar um loader que armazene nos containers certos > 
-		//criar um asset system para trabalhar em cima desses containers utilizando os loaders
-		//Quando um usuario der load num asset, o asset system verifica se já existe em algum container e se sim retorna um shared ptr e se não loada e retorna o shared
-
-		std::vector<vec3> vert;
-		vert.emplace_back(vec3(-0.5f, -0.5f, 0.0f));
-		vert.emplace_back(vec3( 0.5f, -0.5f, 0.0f));
-		vert.emplace_back(vec3( 0.0f, 0.5f, 0.0f ));
-		
- 		static Mesh* mesh = new Mesh(vert);
+		//#TODO: Material(shader e texturas), a setup when we start using pbr.
+		//#NEXT: Improve this abstraction, please. Put textures inside material and let mesh alone with only geometry.
+		//To do this, you can just use a static loader class and load it with Model constructor (which takes a filepath).
+		static Mesh* mesh = new Mesh(RESOURCES_PATH + std::string("Resources/Models/backpack.obj"));
 
 		//#TODO: We will have to see how we will handle this material. Like, a default PBR shader with some Tweaks?
 		//In that case, only the maps should be placeable or not and its configurations, and not what shader 
-		std::string EngineDefaultVertexShader = RESOURCES_PATH + std::string("Resources/DefaultShaderVert.shader");
-		std::string EngineDefaultFragmentShader = RESOURCES_PATH + std::string("Resources/DefaultShaderFrag.shader");
+		std::string EngineDefaultVertexShader = RESOURCES_PATH + std::string("Resources/Shaders/DefaultShaderVert.shader");
+		std::string EngineDefaultFragmentShader = RESOURCES_PATH + std::string("Resources/Shaders/DefaultShaderFrag.shader");
 
  		static Material* mat = new Material(EngineDefaultVertexShader, EngineDefaultFragmentShader);
  		static Model* model = new Model(mesh, mat);

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Math/vec3.h"
+#include "Math/vec2.h"
 #include "Rendering/Shader/Shader.h"
 
 namespace Dindi
@@ -18,7 +19,7 @@ namespace Dindi
 		unsigned int virtual GetVertexArrayObjectID()  const { return m_VertexArrayObjectID; }
 		unsigned int virtual GetElementsCount() const { return m_Elements; }
 	protected:
-		void RegisterMeshData(std::vector<vec3>& vertexPositions);
+		void RegisterMeshData(std::vector<vec3>& vertexPositions, std::vector<vec3>& vertexNormals, std::vector<vec2>& textCoords);
 	private:
 		//this will have a vbo abstraction
 		unsigned int m_VertexBufferObjectID, m_VertexArrayObjectID;

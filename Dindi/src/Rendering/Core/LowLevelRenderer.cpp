@@ -65,9 +65,9 @@ namespace Dindi
 			
 				mesh->BindTextures();
 
-				shader->UploadInt("u_Diffuse", 1);
-				shader->UploadInt("u_Specular", 2);
-				shader->UploadInt("u_Normal", 3);
+				shader->UploadInt("u_Diffuse",  RenderingMapSlot::Diffuse);
+				shader->UploadInt("u_Specular", RenderingMapSlot::Specular);
+				shader->UploadInt("u_Normal",   RenderingMapSlot::Normal);
 
 
 				//#TODO: Indexed draw not working 100%, please fix this.

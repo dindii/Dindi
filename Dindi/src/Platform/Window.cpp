@@ -90,7 +90,7 @@ namespace Dindi
 	
 	float Window::GetTime() const
 	{
-		return glfwGetTime();
+		return (float)glfwGetTime();
 	}
 
 	void Window::pollEvents()

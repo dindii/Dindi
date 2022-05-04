@@ -1,5 +1,6 @@
 #include "Dindipch.h"
 
+#include "Core/Core.h"
 
 #include <vector>
 #include <string>

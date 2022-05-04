@@ -101,7 +101,7 @@ namespace Dindi
 				index_offset += fv;
 
 				// per-face material
-				shapes[s].mesh.material_ids[f];
+				//shapes[s].mesh.material_ids[f];
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace Dindi
 
 		RegisterMeshData(m_VertexPositions, m_Normal, m_TextureCoord);
 
-		//#TODO: Make this dynamic, please. It is hardcoded for now.
+		//#TODO: Make this dynamic, please. It is hardcoded for now. (the [0] of GetMaterials() part)
 		
 		std::string dirPrefix = directory + "/";
 
@@ -120,21 +120,22 @@ namespace Dindi
 		if(loader.GetMaterials()[0].specular_texname.size())
 			m_specularMap = new Texture2D(dirPrefix + loader.GetMaterials()[0].specular_texname);
 
-		//#TODO Probably i'm loading normal maps twice, one as texture and another as attributes, fix this later.
+		//#TODO Probably i'm loading normal maps twice, one as texture and another as attributes, fix this later. Or find a way
+		//to detect if we have attributes but not maps and make it use only attributes.
 		if(m_bHasNormal)
 			m_normalMap = new Texture2D(dirPrefix + loader.GetMaterials()[0].bump_texname);
 	}
-
+	
 	void Mesh::BindTextures() const
 	{
 		if(m_diffuseMap)
-			m_diffuseMap->Bind(1);
+			m_diffuseMap->Bind(RenderingMapSlot::Diffuse);
 		
 		if(m_specularMap)
-			m_specularMap->Bind(2);
+			m_specularMap->Bind(RenderingMapSlot::Specular);
 		
 		if(m_normalMap)
-			m_normalMap->Bind(3);
+			m_normalMap->Bind(RenderingMapSlot::Normal);
 	}
 
 }

@@ -14,3 +14,14 @@ else { __debugbreak();}
 //but, to be honest, SandBox will hold the resources in the future, so we won't need anything of this.
 //Although, this is useful to engine default stuff like shader and materials etc
 #define RESOURCES_PATH "../Dindi/"
+
+
+//Rendering stuff
+
+enum RenderingMapSlot
+{
+	None = 0,
+	Diffuse = 1,
+	Specular = 2,
+	Normal = 3
+};

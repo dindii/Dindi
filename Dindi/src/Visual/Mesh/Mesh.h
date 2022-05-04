@@ -16,7 +16,7 @@ namespace Dindi
 		Mesh(std::string& filepath);
 		void BindTextures() const;
 		//#TODO REMOVE
-		uint32_t GetVertexCount() { return m_VertexPositions.size(); }
+		uint32_t GetVertexCount() { return (uint32_t)m_VertexPositions.size(); }
 
 		bool HasNormal() const { return m_bHasNormal; }
 		bool HasTexCoord() const { return m_bHasTexCoord; }

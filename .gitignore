@@ -37,3 +37,10 @@
 *.ncb
 *.cachefile
 *.db
+*.suo
+*.ipch
+*.tlog
+*.idb
+*.pdb
+*.ilk
+*.log

@@ -8,8 +8,6 @@
   Renderable.cpp
   Scene.cpp
   Mesh.cpp
-  Model.cpp
-  Cube.cpp
   Gerando Código...
 Scene.obj : warning LNK4221: Este objeto nÒo define nenhum dos sÝmbolos anteriormente indefinidos, portanto ele nÒo serß utilizado em nenhuma operaþÒo de vÝnculo que consuma esta biblioteca
   Dindi.vcxproj -> C:\Users\didim\Documents\dev\Dindi\Dindi\..\bin\Debug-windows-x86_64\Dindi\Dindi.lib

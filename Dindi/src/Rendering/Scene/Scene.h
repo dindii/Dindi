@@ -14,8 +14,8 @@ namespace Dindi
 		//meant to be just a program with some models with fancy graphics applied to it and simple stuff as this should be enough.
 	
 		void AddEntity(Model* Entity) { m_Entities.emplace_back(Entity); }
-		void SetActiveCameraScene(Camera* camera) { m_ActiveCamera = camera; }
-		Camera* GetSceneActiveCamera() { return m_ActiveCamera; }
+		void SetActiveCamera(Camera* camera) { m_ActiveCamera = camera; }
+		Camera* GetActiveCamera() { return m_ActiveCamera; }
 		std::vector<Model*>& GetEntities() { return m_Entities; }
 		//TODO: pop functions
 

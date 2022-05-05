@@ -27,9 +27,13 @@ namespace Dindi
 		}
 
 		s_Instance = this;
+
+		//#NOTE: this could be static, right? 
 		m_Logger = new Logger;
 		m_ApplicationWindow = new Window(windowWidth, windowHeight, appName, aspectRatio);
 		m_ApplicationWindow->setEventCallback(BIND_EVENT_FN(Application::OnEvent));
+
+		//#NOTE: so would be this...
 		m_DeltaTime = new DeltaTime();
 
 		Renderer::Init();
@@ -43,8 +47,9 @@ namespace Dindi
 		m_DefaultEditorCamera->SetCameraLagValue(0.15f);
 
 		SceneOne = new Scene();
+		//#TODO: SetActiveScene function, please.
 		m_ActiveScene = SceneOne;
-		SceneOne->SetActiveCameraScene(m_DefaultEditorCamera);
+		SceneOne->SetActiveCamera(m_DefaultEditorCamera);
 
 
 		//#TODO: Material(shader e texturas), a setup when we start using pbr.
@@ -78,7 +83,7 @@ namespace Dindi
 
 		dispatcher.Dispatch<WindowResizeEvent>([&](WindowResizeEvent Event) -> bool
 		{
-			m_ActiveScene->GetSceneActiveCamera()->RemakeProjection((float)Event.GetWidth(), (float)Event.GetHeight());
+			m_ActiveScene->GetActiveCamera()->RemakeProjection((float)Event.GetWidth(), (float)Event.GetHeight());
 			return true;
 		});
 
@@ -100,7 +105,7 @@ namespace Dindi
 				m_MouseLockedAndInvisible = !m_MouseLockedAndInvisible;
 
 				Input::HideAndLockCursor(m_MouseLockedAndInvisible);
-				m_ActiveScene->GetSceneActiveCamera()->LockCamera(!m_MouseLockedAndInvisible);
+				m_ActiveScene->GetActiveCamera()->LockCamera(!m_MouseLockedAndInvisible);
 
 				return true;
 			}
@@ -173,7 +178,7 @@ namespace Dindi
 			IntendedCameraPosition.y = -m_DefaultEditorCameraSpeed;
 
 		//Add this vector on the Target Position, this is, where we are looking at, thus making a free camera style
-		m_ActiveScene->GetSceneActiveCamera()->AddCameraTargetPosition(IntendedCameraPosition, dt);
+		m_ActiveScene->GetActiveCamera()->AddCameraTargetPosition(IntendedCameraPosition, dt);
 	}
 
 	void Application::LookAround()
@@ -182,8 +187,8 @@ namespace Dindi
 		//       and this would change the camera offset making it harder and annoying to edit the scene
 		//So just don't start changing every camera based on mouse input, please.
 		vec2 MousePosition = Input::GetMousePosition();
-		m_ActiveScene->GetSceneActiveCamera()->SetCameraYaw(toRadians(MousePosition.x));
-		m_ActiveScene->GetSceneActiveCamera()->SetCameraPitch(toRadians(MousePosition.y));
+		m_ActiveScene->GetActiveCamera()->SetCameraYaw(toRadians(MousePosition.x));
+		m_ActiveScene->GetActiveCamera()->SetCameraPitch(toRadians(MousePosition.y));
 	}
 
 }

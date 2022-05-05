@@ -54,7 +54,7 @@ namespace Dindi
 				Shader* shader = (scene->GetEntities())[x]->GetMaterial()->GetShader();
 				shader->Bind();
 
-				Camera* camera = scene->GetSceneActiveCamera();
+				Camera* camera = scene->GetActiveCamera();
 
 				mat4 viewProjectionMatrix = camera->GetProjection() * camera->getViewMatrix();
 

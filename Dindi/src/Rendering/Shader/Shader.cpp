@@ -70,6 +70,9 @@ namespace Dindi
 			return false;
 		}
 
+		DND_LOG_TRACE("Vertex Shader successfuly compiled! Shader: ", m_VertexShaderFilepath);
+		DND_LOG_TRACE("Fragment Shader successfuly compiled! Shader: ", m_FragmentShaderFilepath);
+
 		//if we are hot reloading and the compilation went fine, we will delete the old shader program so we can 
 		//bind the new one and change the id.
 		if (hotreload && m_RendererID)

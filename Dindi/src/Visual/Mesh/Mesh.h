@@ -22,6 +22,7 @@ namespace Dindi
 		bool HasTexCoord() const { return m_bHasTexCoord; }
 		std::vector<uint32_t>& GetIndices() { return m_Indices; }
 		//this will be dynamic as well
+
 	private:
 		std::vector<uint32_t> m_Indices;
 		std::vector<vec3> m_VertexPositions;

@@ -12,5 +12,5 @@ uniform sampler2D u_Normal;
 void main()
 {
 	//outColor = vec4(sin(v_Time), 0.0f, cos(v_Time), 1.0f);
-	outColor = texture(u_Diffuse, v_TexCoord);
+	outColor = texture(u_Diffuse, v_TexCoord) * vec4(sin(v_Time), 0.5f, cos(v_Time), 1.0f);
 }

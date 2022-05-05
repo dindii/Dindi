@@ -161,6 +161,7 @@
     <ClInclude Include="src\Rendering\Texture\Texture2D.h" />
     <ClInclude Include="src\Utils\DeltaTime.h" />
     <ClInclude Include="src\Utils\Logger.h" />
+    <ClInclude Include="src\Utils\ModelLoader.h" />
     <ClInclude Include="src\Visual\Material\Material.h" />
     <ClInclude Include="src\Visual\Mesh\Mesh.h" />
     <ClInclude Include="src\Visual\Model\Model.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="src\Rendering\Texture\Texture2D.cpp" />
     <ClCompile Include="src\Utils\DeltaTime.cpp" />
     <ClCompile Include="src\Utils\Logger.cpp" />
+    <ClCompile Include="src\Utils\ModelLoader.cpp" />
     <ClCompile Include="src\Visual\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Visual\Model\Model.cpp" />
     <ClCompile Include="src\Visual\Model\Primitives\Cube.cpp" />

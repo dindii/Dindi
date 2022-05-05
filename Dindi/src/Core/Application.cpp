@@ -28,17 +28,19 @@ namespace Dindi
 
 		s_Instance = this;
 
-		//#NOTE: this could be static, right? 
-		m_Logger = new Logger;
+		ShaderHotReloader::Init();
+		Logger::Init();
+
 		m_ApplicationWindow = new Window(windowWidth, windowHeight, appName, aspectRatio);
 		m_ApplicationWindow->setEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
-		//#NOTE: so would be this...
 		m_DeltaTime = new DeltaTime();
 
 		Renderer::Init();
 		GUI::Init(this->m_ApplicationWindow);
 		
+		//#NOTE: ModelLoader as a static class as helpers of the program, classes that will help to build the program
+		//stuff like DeltaTime are part of the program (the deltatime of the program duh) so they will be inside Application.
 
 		//FROM HERE TO BELOW IS ALL DEBUG STUFF
 		m_DefaultEditorCamera = new Camera(this->GetWindow()->GetAspectRatio(), vec3(0.0f, 0.0f, 5.0f));
@@ -74,7 +76,6 @@ namespace Dindi
 	Application::~Application()
 	{
 		delete m_ApplicationWindow;
-		delete m_Logger;
 	}
 
 	void Application::OnEvent(Event& e)
@@ -123,7 +124,7 @@ namespace Dindi
 			Renderer::Clear();
 
 			m_DeltaTime->Tick();
-			m_Logger->Flush();
+			Logger::Flush();
 
 			OnUpdate(*m_DeltaTime);
 

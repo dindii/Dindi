@@ -20,12 +20,15 @@ namespace Dindi
 		};
 
 
-		Logger()
+		Logger() = delete;
+
+
+		static void Init()
 		{
-			m_levelLabels[Level::DND_TRACE]   = "TRACE";
+			m_levelLabels[Level::DND_TRACE] = "TRACE";
 			m_levelLabels[Level::DND_WARNING] = "WARNING";
-			m_levelLabels[Level::DND_ERROR]   = "ERROR";
-			m_levelLabels[Level::DND_FATAL]   = "FATAL";
+			m_levelLabels[Level::DND_ERROR] = "ERROR";
+			m_levelLabels[Level::DND_FATAL] = "FATAL";
 		}
 
 		~Logger() = default;

@@ -9,7 +9,8 @@ namespace Dindi
 	{
 	public:
 		ShaderHotReloader() = default;
-	
+
+		static void Init();
 		static void OnUpdate();
 		static void AddShader(Shader& shader);
 	

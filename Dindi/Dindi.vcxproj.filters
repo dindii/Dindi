@@ -160,6 +160,7 @@
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\Texture\Texture2D.h" />
+    <ClInclude Include="src\Utils\ModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -232,5 +233,6 @@
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering\Texture\Texture2D.cpp" />
+    <ClCompile Include="src\Utils\ModelLoader.cpp" />
   </ItemGroup>
 </Project>

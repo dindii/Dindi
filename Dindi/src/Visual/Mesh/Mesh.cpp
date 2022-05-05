@@ -137,5 +137,4 @@ namespace Dindi
 		if(m_normalMap)
 			m_normalMap->Bind(RenderingMapSlot::Normal);
 	}
-
 }

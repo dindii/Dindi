@@ -1,12 +1,15 @@
 ﻿  Application.cpp
   GUI.cpp
   Input.cpp
+  vec3.cpp
   Window.cpp
   Camera.cpp
   LowLevelRenderer.cpp
-  Renderer.cpp
   Renderable.cpp
-  Scene.cpp
+  Shader.cpp
+  Texture2D.cpp
+  DeltaTime.cpp
+  Logger.cpp
   Mesh.cpp
   Gerando Código...
 Scene.obj : warning LNK4221: Este objeto nÒo define nenhum dos sÝmbolos anteriormente indefinidos, portanto ele nÒo serß utilizado em nenhuma operaþÒo de vÝnculo que consuma esta biblioteca

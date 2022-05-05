@@ -30,7 +30,6 @@ namespace Dindi
 	private:
 		static inline Application* s_Instance = nullptr;
 
-		Logger* m_Logger;
 		Window* m_ApplicationWindow;
 		DeltaTime* m_DeltaTime;
 	private:

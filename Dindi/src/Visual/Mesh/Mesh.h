@@ -12,6 +12,7 @@ namespace Dindi
 	public:
 		//We will have something here to init
 		//We'll extent this or add a copy constructor soon
+		Mesh() = default;
 		Mesh(std::string& filepath);
 		uint32_t GetVertexCount() { return (uint32_t)m_VertexPositions.size(); }
 

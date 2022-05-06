@@ -132,12 +132,10 @@ namespace Dindi
 		Material* materialToFill;
 		materialToFill = modelToFill.GetMaterial();
 
-		materialToFill->SetDiffuseMap (std::move(*temporaryDiffuse));
-		materialToFill->SetSpecularMap(std::move(*temporarySpecular));
-		materialToFill->SetNormalMap  (std::move(*temporaryNormal));
-
-
-		
+		//Pass the ownership of the texture pointers to the material.
+		materialToFill->SetDiffuseMap (temporaryDiffuse);
+		materialToFill->SetSpecularMap(temporarySpecular);
+		materialToFill->SetNormalMap  (temporaryNormal);
 	}
 
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include "Rendering/Shader/Shader.h"
 #include <string>
+#include "Rendering/Texture/Texture2D.h"
+
 namespace Dindi
 {
 	class Material
@@ -8,12 +10,28 @@ namespace Dindi
 	public:
 		//The idea here is an interface for Shader, to easily tweak some attributes and exclude de necessity of 
 		//having shaders all over the place
-		Material(std::string vertexPath, std::string fragmentPath) { m_Shader = new Shader(vertexPath, fragmentPath); };
 		Material(Shader* shader) : m_Shader(shader) {};
+		void Bind() const;
+		inline Shader* GetShader() const { return m_Shader; }
 
-		inline Shader* GetShader() { return m_Shader; }
+		void SetDiffuseMap         (Texture2D&& DiffuseMap);
+		void SetNormalMap          (Texture2D&& NormalMap);
+		void SetRoughnessMap       (Texture2D&& RoughnessMap);
+		void SetSpecularMap        (Texture2D&& SpecularMap);
+		void SetAmbientOcclusionMap(Texture2D&& AmbientOcclusionMap);
+
+		void SetViewProjection(const mat4& mat);
+		void SetTime(float time);
+
 
 	private:
 		Shader* m_Shader;
+
+		Texture2D* m_diffuseMap = nullptr;
+		Texture2D* m_normalMap = nullptr;
+		Texture2D* m_roughnessMap = nullptr;
+		Texture2D* m_specularMap = nullptr;
+		Texture2D* m_ambientOcclusionMap = nullptr;
+
 	};
 }

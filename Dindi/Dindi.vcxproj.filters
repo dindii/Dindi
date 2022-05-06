@@ -234,5 +234,6 @@
     </ClCompile>
     <ClCompile Include="src\Rendering\Texture\Texture2D.cpp" />
     <ClCompile Include="src\Utils\ModelLoader.cpp" />
+    <ClCompile Include="src\Visual\Material\Material.cpp" />
   </ItemGroup>
 </Project>

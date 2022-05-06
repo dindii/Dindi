@@ -46,32 +46,27 @@ namespace Dindi
 
 		void LowLevelRenderer::Draw(Scene* scene)
 		{
+			Application& app = Application::GetInstance();
+
 			for (int32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
-				glBindVertexArray(scene->GetEntities()[x]->GetMesh()->GetVertexArrayObjectID());
-				glBindBuffer(GL_ARRAY_BUFFER, scene->GetEntities()[x]->GetMesh()->GetVertexBufferObjectID());
+				//#TODO: It would have another For loop here to iterate the meshes of a model
 
-				Shader* shader = (scene->GetEntities())[x]->GetMaterial()->GetShader();
-				shader->Bind();
+				Model* model = scene->GetEntities()[x];
+
+				glBindVertexArray(model->GetMesh()->GetVertexArrayObjectID());
+				glBindBuffer(GL_ARRAY_BUFFER, model->GetMesh()->GetVertexBufferObjectID());
+
+				Material* material = model->GetMaterial();
+				material->Bind();
 
 				Camera* camera = scene->GetActiveCamera();
-
 				mat4 viewProjectionMatrix = camera->GetProjection() * camera->getViewMatrix();
 
-				shader->UploadUniformMat4("u_ViewProjection", viewProjectionMatrix);
-				shader->UploadUniformFloat("u_Time", Application::GetInstance().GetTime());
+				material->SetViewProjection(viewProjectionMatrix);
+				material->SetTime(app.GetTime());
 
-				Mesh* mesh = scene->GetEntities()[x]->GetMesh();
-			
-				mesh->BindTextures();
-
-				shader->UploadInt("u_Diffuse",  RenderingMapSlot::Diffuse);
-				shader->UploadInt("u_Specular", RenderingMapSlot::Specular);
-				shader->UploadInt("u_Normal",   RenderingMapSlot::Normal);
-
-
-				//#TODO: Indexed draw not working 100%, please fix this.
-				//#TODO: Multiple mesh model rendering.
+				Mesh* mesh = model->GetMesh();
 				
 				glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 			}

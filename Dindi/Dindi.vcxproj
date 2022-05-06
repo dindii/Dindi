@@ -192,6 +192,7 @@
     <ClCompile Include="src\Utils\DeltaTime.cpp" />
     <ClCompile Include="src\Utils\Logger.cpp" />
     <ClCompile Include="src\Utils\ModelLoader.cpp" />
+    <ClCompile Include="src\Visual\Material\Material.cpp" />
     <ClCompile Include="src\Visual\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Visual\Model\Model.cpp" />
     <ClCompile Include="src\Visual\Model\Primitives\Cube.cpp" />

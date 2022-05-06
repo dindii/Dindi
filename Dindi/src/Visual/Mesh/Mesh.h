@@ -12,29 +12,24 @@ namespace Dindi
 	public:
 		//We will have something here to init
 		//We'll extent this or add a copy constructor soon
-		Mesh(const std::vector<vec3>& vertexPositions);
 		Mesh(std::string& filepath);
-		void BindTextures() const;
-		//#TODO REMOVE
 		uint32_t GetVertexCount() { return (uint32_t)m_VertexPositions.size(); }
 
-		bool HasNormal() const { return m_bHasNormal; }
-		bool HasTexCoord() const { return m_bHasTexCoord; }
+		inline bool HasNormal() const { return m_bHasNormal; }
+		inline bool HasTexCoord() const { return m_bHasTexCoord; }
 		std::vector<uint32_t>& GetIndices() { return m_Indices; }
 		//this will be dynamic as well
 
+		void SetVertexPositionData(std::vector<vec3>&& vertexPosData);
+		void SetNormalData        (std::vector<vec3>&& normalData)       { m_Normal = normalData; }
+		void SetTextureCoordData  (std::vector<vec2>&& textureCoordData) { m_TextureCoord = textureCoordData; }
+
+		void RegisterData();
 	private:
 		std::vector<uint32_t> m_Indices;
-		std::vector<vec3> m_VertexPositions;
-		std::vector<vec3> m_Normal;
-		std::vector<vec2> m_TextureCoord;
-
-		Texture2D* m_diffuseMap          = nullptr;
-		Texture2D* m_normalMap           = nullptr;
-		Texture2D* m_roughnessMap        = nullptr;
-		Texture2D* m_specularMap         = nullptr;
-		Texture2D* m_ambientOcclusionMap = nullptr;
-
+		std::vector<vec3>     m_VertexPositions;
+		std::vector<vec3>     m_Normal;
+		std::vector<vec2>     m_TextureCoord;
 
 		bool m_bHasNormal   = false;
 		bool m_bHasTexCoord = false;

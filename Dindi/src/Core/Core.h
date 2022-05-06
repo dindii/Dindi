@@ -15,6 +15,8 @@ else { __debugbreak();}
 //Although, this is useful to engine default stuff like shader and materials etc
 #define RESOURCES_PATH "../Dindi/"
 
+#define DEFAULT_VERTEX_SHADER RESOURCES_PATH "Resources/Shaders/DefaultShaderVert.shader"
+#define DEFAULT_FRAGMENT_SHADER RESOURCES_PATH "Resources/Shaders/DefaultShaderFrag.shader"
 
 //Rendering stuff
 

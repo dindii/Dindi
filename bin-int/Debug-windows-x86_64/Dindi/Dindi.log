@@ -1,16 +1,8 @@
 ﻿  Application.cpp
-  GUI.cpp
-  Input.cpp
-  vec3.cpp
-  Window.cpp
-  Camera.cpp
-  LowLevelRenderer.cpp
-  Renderable.cpp
-  Shader.cpp
-  Texture2D.cpp
-  DeltaTime.cpp
-  Logger.cpp
-  Mesh.cpp
+  ModelLoader.cpp
+  Material.cpp
+  Model.cpp
   Gerando Código...
+c:\users\didim\documents\dev\dindi\dindi\src\utils\modelloader.cpp(141): warning C4715: 'Dindi::ModelLoader::LoadOBJ': nem todos os caminhos de controle retornam um valor
 Scene.obj : warning LNK4221: Este objeto nÒo define nenhum dos sÝmbolos anteriormente indefinidos, portanto ele nÒo serß utilizado em nenhuma operaþÒo de vÝnculo que consuma esta biblioteca
   Dindi.vcxproj -> C:\Users\didim\Documents\dev\Dindi\Dindi\..\bin\Debug-windows-x86_64\Dindi\Dindi.lib

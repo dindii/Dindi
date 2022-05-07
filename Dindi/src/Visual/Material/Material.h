@@ -10,7 +10,7 @@ namespace Dindi
 	public:
 		//The idea here is an interface for Shader, to easily tweak some attributes and exclude de necessity of 
 		//having shaders all over the place
-		Material();
+		Material(const std::string& vertexpath, const std::string& fragpath);
 		Material(Shader* shader) : m_Shader(shader) {};
 		void Bind() const;
 		inline Shader* GetShader() const { return m_Shader; }

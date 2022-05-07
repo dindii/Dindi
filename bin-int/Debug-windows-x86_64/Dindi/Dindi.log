@@ -8,7 +8,7 @@
   Renderable.cpp
   Scene.cpp
   ModelLoader.cpp
-  Material.cpp
+  Mesh.cpp
   Model.cpp
   Cube.cpp
   Gerando Código...

@@ -53,12 +53,7 @@ namespace Dindi
 		m_ActiveScene = SceneOne;
 		SceneOne->SetActiveCamera(m_DefaultEditorCamera);
 
-
-		//#TODO: Material(shader e texturas), a setup when we start using pbr.
-		//#NEXT: Improve this abstraction, please. Put textures inside material and let mesh alone with only geometry.
-		//To do this, you can just use a static loader class and load it with Model constructor (which takes a filepath).
-
- 		static Model* model = new Model(RESOURCES_PATH + std::string("Resources/Models/backpack.obj"));
+ 		static Model* model = new Model(RESOURCES_PATH "Resources/Models/backpack.obj");
 		SceneOne->AddEntity(model);
 
 

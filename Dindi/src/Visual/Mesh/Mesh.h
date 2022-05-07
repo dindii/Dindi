@@ -21,7 +21,7 @@ namespace Dindi
 		std::vector<uint32_t>& GetIndices() { return m_Indices; }
 		//this will be dynamic as well
 
-		void SetVertexPositionData(std::vector<vec3>&& vertexPosData);
+		void SetVertexPositionData(std::vector<vec3>&& vertexPosData)    { m_VertexPositions = vertexPosData; }
 		void SetNormalData        (std::vector<vec3>&& normalData)       { m_Normal = normalData; }
 		void SetTextureCoordData  (std::vector<vec2>&& textureCoordData) { m_TextureCoord = textureCoordData; }
 

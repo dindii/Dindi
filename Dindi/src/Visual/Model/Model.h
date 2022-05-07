@@ -8,7 +8,7 @@ namespace Dindi
 	{
 	public:
 		//#TODO: check for duplicates
-		Model(std::string& meshPath, std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER);
+		Model(std::string meshPath, std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER);
 		~Model();
 
 		inline Mesh* GetMesh() { return m_Mesh; }

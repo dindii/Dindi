@@ -5,13 +5,10 @@
 namespace Dindi
 {
 
-	Material::Material()
+
+	Material::Material(const std::string& vertexpath, const std::string& fragpath)
 	{
-		//m_diffuseMap   = new Texture2D();
-		//m_normalMap    = new Texture2D();
-		//m_roughnessMap =	new Texture2D();
-		//m_specularMap  =		new Texture2D();
-		//m_ambientOcclusionMap = new Texture2D();;
+		m_Shader = new Shader(vertexpath, fragpath);
 	}
 
 	void Material::Bind() const

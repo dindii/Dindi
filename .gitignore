@@ -45,3 +45,6 @@
 *.ilk
 *.log
 *.VC.db
+.vs/
+/.vs
+Dindi/.vs

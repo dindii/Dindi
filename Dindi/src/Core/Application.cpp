@@ -56,7 +56,6 @@ namespace Dindi
  		static Model* model = new Model(RESOURCES_PATH "Resources/Models/backpack.obj");
 		SceneOne->AddEntity(model);
 
-
 		Input::HideAndLockCursor(true);
 	}
 

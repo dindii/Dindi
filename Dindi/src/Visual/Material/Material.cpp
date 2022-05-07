@@ -11,6 +11,26 @@ namespace Dindi
 		m_Shader = new Shader(vertexpath, fragpath);
 	}
 
+	Material::~Material()
+	{
+		delete m_Shader;
+
+		if (m_diffuseMap)
+			delete m_diffuseMap;
+
+		if (m_specularMap)
+			delete m_specularMap;
+
+		if (m_normalMap)
+			delete m_normalMap;
+
+		if (m_roughnessMap)
+			delete m_roughnessMap;
+
+		if (m_ambientOcclusionMap)
+			delete m_ambientOcclusionMap;
+	}
+
 	void Material::Bind() const
 	{
 		m_Shader->Bind();

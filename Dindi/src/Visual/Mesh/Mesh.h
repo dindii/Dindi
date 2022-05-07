@@ -14,12 +14,7 @@ namespace Dindi
 		//We'll extent this or add a copy constructor soon
 		Mesh() = default;
 		Mesh(std::string& filepath);
-		uint32_t GetVertexCount() { return (uint32_t)m_VertexPositions.size(); }
-
-		inline bool HasNormal() const { return m_bHasNormal; }
-		inline bool HasTexCoord() const { return m_bHasTexCoord; }
-		std::vector<uint32_t>& GetIndices() { return m_Indices; }
-		//this will be dynamic as well
+		inline uint32_t GetVertexCount() const { return (uint32_t)m_VertexPositions.size(); }
 
 		void SetVertexPositionData(std::vector<vec3>&& vertexPosData)    { m_VertexPositions = vertexPosData; }
 		void SetNormalData        (std::vector<vec3>&& normalData)       { m_Normal = normalData; }
@@ -31,8 +26,5 @@ namespace Dindi
 		std::vector<vec3>     m_VertexPositions;
 		std::vector<vec3>     m_Normal;
 		std::vector<vec2>     m_TextureCoord;
-
-		bool m_bHasNormal   = false;
-		bool m_bHasTexCoord = false;
 	};
 }

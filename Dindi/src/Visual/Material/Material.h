@@ -12,6 +12,7 @@ namespace Dindi
 		//having shaders all over the place
 		Material(const std::string& vertexpath, const std::string& fragpath);
 		Material(Shader* shader) : m_Shader(shader) {};
+		~Material();
 		void Bind() const;
 		inline Shader* GetShader() const { return m_Shader; }
 

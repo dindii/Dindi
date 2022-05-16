@@ -63,8 +63,7 @@ project "Dindi"
 	{
 		"Glad",
         "ImGui",
-		"GLFW",
-        "opengl32.lib"
+		"GLFW"
 	}
 
 	filter "system:windows"

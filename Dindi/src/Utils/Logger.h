@@ -34,7 +34,7 @@ namespace Dindi
 		~Logger() = default;
 
 		template<typename ... Args>
-		inline static void Log(Level level, Args&& ... args)
+		static void Log(Level level, Args&& ... args)
 		{
 			m_sstream << m_levelLabels[level] << ": ";
 			(m_sstream << ... << std::forward<Args>(args)) << '\n';
@@ -55,7 +55,7 @@ namespace Dindi
 }
 
 
-#ifdef NDEBUG
+#ifndef DINDI_DEBUG
 #define DND_LOG_TRACE(...) 
 #define DND_LOG_WARNING(...)
 #define DND_LOG_ERROR(...) 

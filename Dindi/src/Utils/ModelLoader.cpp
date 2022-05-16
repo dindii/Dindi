@@ -114,7 +114,7 @@ namespace Dindi
 
 		//#TODO: Make this dynamic, please. It is hardcoded for now. (the [0] of GetMaterials() part)
 
-		Texture2D *temporaryDiffuse, *temporarySpecular, *temporaryNormal;
+		Texture2D *temporaryDiffuse = nullptr, *temporarySpecular = nullptr, *temporaryNormal = nullptr;
 
 		std::string dirPrefix = directory + "/";
 
@@ -133,9 +133,16 @@ namespace Dindi
 		materialToFill = modelToFill.GetMaterial();
 
 		//Pass the ownership of the texture pointers to the material.
-		materialToFill->SetDiffuseMap (temporaryDiffuse);
-		materialToFill->SetSpecularMap(temporarySpecular);
-		materialToFill->SetNormalMap  (temporaryNormal);
+		if(temporaryDiffuse)
+			materialToFill->SetDiffuseMap (temporaryDiffuse);
+		
+		if(temporarySpecular)
+			materialToFill->SetSpecularMap(temporarySpecular);
+		
+		if(temporaryNormal)
+			materialToFill->SetNormalMap  (temporaryNormal);
+
+		return true;
 	}
 
 }

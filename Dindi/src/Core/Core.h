@@ -27,3 +27,5 @@ enum RenderingMapSlot
 	Specular = 2,
 	Normal = 3
 };
+
+#define DND_MAX_LIGHTS 1000000

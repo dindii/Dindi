@@ -87,9 +87,6 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -105,9 +102,6 @@
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
-    <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
@@ -131,9 +125,6 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Application.h" />
@@ -162,6 +153,7 @@
     <ClInclude Include="src\Utils\DeltaTime.h" />
     <ClInclude Include="src\Utils\Logger.h" />
     <ClInclude Include="src\Utils\ModelLoader.h" />
+    <ClInclude Include="src\Visual\Light\Light.h" />
     <ClInclude Include="src\Visual\Material\Material.h" />
     <ClInclude Include="src\Visual\Mesh\Mesh.h" />
     <ClInclude Include="src\Visual\Model\Model.h" />
@@ -192,6 +184,7 @@
     <ClCompile Include="src\Utils\DeltaTime.cpp" />
     <ClCompile Include="src\Utils\Logger.cpp" />
     <ClCompile Include="src\Utils\ModelLoader.cpp" />
+    <ClCompile Include="src\Visual\Light\Light.cpp" />
     <ClCompile Include="src\Visual\Material\Material.cpp" />
     <ClCompile Include="src\Visual\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Visual\Model\Model.cpp" />

@@ -41,7 +41,8 @@ namespace Dindi
 			glEnable(GL_DEPTH_TEST);
 			glDepthFunc(GL_LESS);
 
-
+			//#TODO: This AA is temporary, I guess I will not use MSAA.
+			glEnable(GL_MULTISAMPLE);
 		}
 
 		void LowLevelRenderer::Draw(Scene* scene)

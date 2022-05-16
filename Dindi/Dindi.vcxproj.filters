@@ -40,6 +40,9 @@
     <Filter Include="src\Rendering\Shader">
       <UniqueIdentifier>{20EBDA52-0C7A-641C-B598-7817A10675C2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Rendering\Texture">
+      <UniqueIdentifier>{1A50DCF5-86BC-97F0-4FB0-2F4EBBDBB958}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Utils">
       <UniqueIdentifier>{4D9AFFB3-B904-B42A-0243-65D06EEC917F}</UniqueIdentifier>
     </Filter>
@@ -135,10 +138,16 @@
     <ClInclude Include="src\Rendering\Shader\ShaderHotReloader.h">
       <Filter>src\Rendering\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering\Texture\Texture2D.h">
+      <Filter>src\Rendering\Texture</Filter>
+    </ClInclude>
     <ClInclude Include="src\Utils\DeltaTime.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Utils\Logger.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\ModelLoader.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Visual\Material\Material.h">
@@ -159,8 +168,7 @@
     <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3.h">
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering\Texture\Texture2D.h" />
-    <ClInclude Include="src\Utils\ModelLoader.h" />
+    <ClInclude Include="src\Visual\Light\Light.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -211,11 +219,20 @@
     <ClCompile Include="src\Rendering\Shader\ShaderHotReloader.cpp">
       <Filter>src\Rendering\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering\Texture\Texture2D.cpp">
+      <Filter>src\Rendering\Texture</Filter>
+    </ClCompile>
     <ClCompile Include="src\Utils\DeltaTime.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\Utils\Logger.cpp">
       <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\ModelLoader.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Visual\Material\Material.cpp">
+      <Filter>src\Visual\Material</Filter>
     </ClCompile>
     <ClCompile Include="src\Visual\Mesh\Mesh.cpp">
       <Filter>src\Visual\Mesh</Filter>
@@ -232,8 +249,6 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\Texture\Texture2D.cpp" />
-    <ClCompile Include="src\Utils\ModelLoader.cpp" />
-    <ClCompile Include="src\Visual\Material\Material.cpp" />
+    <ClCompile Include="src\Visual\Light\Light.cpp" />
   </ItemGroup>
 </Project>

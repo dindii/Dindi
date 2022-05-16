@@ -7,7 +7,6 @@ namespace Dindi
 	class Model
 	{
 	public:
-		//#TODO: check for duplicates
 		Model(std::string meshPath, std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER);
 		~Model();
 

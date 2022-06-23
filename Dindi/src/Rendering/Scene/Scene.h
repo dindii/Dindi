@@ -16,6 +16,8 @@ namespace Dindi
 		void AddEntity(Model* Entity) { m_Entities.emplace_back(Entity); }
 		void AddPointLight(const PointLight& light) { m_Lights.emplace_back(light); }
 		
+		std::vector<PointLight>& GetLights() { return m_Lights; }
+
 		void SetActiveCamera(Camera* camera) { m_ActiveCamera = camera; }
 		
 		Camera* GetActiveCamera() { return m_ActiveCamera; }

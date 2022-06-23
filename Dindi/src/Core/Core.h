@@ -28,4 +28,5 @@ enum RenderingMapSlot
 	Normal = 3
 };
 
-#define DND_MAX_LIGHTS 1000000
+//#NOTE: Please, when changing this, also change in the shaders.
+#define DND_MAX_LIGHTS 1000

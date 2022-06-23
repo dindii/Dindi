@@ -22,10 +22,6 @@ namespace Dindi
 		void SetSpecularMap        (Texture2D* SpecularMap);
 		void SetAmbientOcclusionMap(Texture2D* AmbientOcclusionMap);
 
-		void SetViewProjection(const mat4& mat);
-		void SetTime(float time);
-
-
 	private:
 		Shader* m_Shader;
 

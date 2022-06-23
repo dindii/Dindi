@@ -84,15 +84,4 @@ namespace Dindi
 	{
 		m_ambientOcclusionMap = AmbientOcclusionMap;
 	}
-
-	void Material::SetViewProjection(const mat4& mat)
-	{
-		m_Shader->UploadUniformMat4("u_ViewProjection", mat);
-	}
-
-	void Material::SetTime(float time)
-	{
-		m_Shader->UploadUniformFloat("u_Time", time);
-	}
-
 }

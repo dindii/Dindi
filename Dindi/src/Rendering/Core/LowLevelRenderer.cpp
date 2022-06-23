@@ -5,11 +5,17 @@
 #include "Utils/Logger.h"
 #include "Core/Application.h"
 
+
 namespace Dindi
 {
+
 	namespace DND_INTERNAL
 	{
-	
+		//We are going to use only one UBO, so this doesn't need to be dynamic.
+		static constexpr uint32_t ConstantBufferSlot = 1;
+
+		ConstantBuffer PersistentData;
+
 		LowLevelRenderer::LowLevelRenderer()
 		{
 			Init();
@@ -22,8 +28,8 @@ namespace Dindi
 		void LowLevelRenderer::Init()
 		{
 
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
@@ -41,13 +47,40 @@ namespace Dindi
 			glEnable(GL_DEPTH_TEST);
 			glDepthFunc(GL_LESS);
 
-			//#TODO: This AA is temporary, I guess I will not use MSAA.
+			//#TODO: This AA is temporary, I will remove this once we have deferred.
 			glEnable(GL_MULTISAMPLE);
+
+			glGenBuffers(1, &PersistentData.handle);
+			glBindBuffer(GL_UNIFORM_BUFFER, PersistentData.handle);
+
+			//#NOTE: I got lazy and used sizeof for almost everything related to UBO, so take this into account when adding stuff to the constant buffer.
+			//Just use raw arrays or use the size of the vector * type when doing calculations.
+			glBufferData(GL_UNIFORM_BUFFER, sizeof(PersistentData.data), NULL, GL_STATIC_DRAW);
+			glBindBufferBase(GL_UNIFORM_BUFFER, ConstantBufferSlot, PersistentData.handle);
 		}
 
 		void LowLevelRenderer::Draw(Scene* scene)
 		{
 			Application& app = Application::GetInstance();
+
+
+			//Persistent data (projection, camera, lights etc...)
+			Camera* camera = scene->GetActiveCamera();
+			mat4 viewProjectionMatrix = camera->GetProjection() * camera->getViewMatrix();
+
+			PersistentData.data.c_ViewProjection = viewProjectionMatrix;
+			PersistentData.data.c_Time = app.GetTime();
+
+			std::vector<PointLight>& lights = scene->GetLights();
+			uint32_t nLights = lights.size();
+
+			memcpy(&PersistentData.data.c_Lights, lights.data(), sizeof(PointLight) * nLights);
+
+			PersistentData.data.numLights = nLights;
+			
+			glBindBuffer(GL_UNIFORM_BUFFER, PersistentData.handle);
+			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PersistentData.data), &PersistentData.data);
+
 
 			for (int32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
@@ -60,15 +93,8 @@ namespace Dindi
 
 				Material* material = model->GetMaterial();
 				material->Bind();
-
-				Camera* camera = scene->GetActiveCamera();
-				mat4 viewProjectionMatrix = camera->GetProjection() * camera->getViewMatrix();
-
-				material->SetViewProjection(viewProjectionMatrix);
-				material->SetTime(app.GetTime());
-
-				Mesh* mesh = model->GetMesh();
 				
+				Mesh* mesh = model->GetMesh();
 				glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 			}
 		

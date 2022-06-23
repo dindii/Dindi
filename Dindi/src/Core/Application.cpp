@@ -9,6 +9,7 @@
 #include "Math/Maths.h"
 #include "Visual/Model/Model.h"
 #include "GUI/GUI.h"
+#include "Visual/Light/Light.h"
 
 namespace Dindi
 {
@@ -21,14 +22,13 @@ namespace Dindi
 	Application::Application(float windowWidth, float windowHeight, const char* appName, float aspectRatio)
 	{
 		if (s_Instance)
-		{
 			DND_LOG_FATAL("More than one instance of Application is not allowed.");
-			return;
-		}
 
 		s_Instance = this;
 
+#ifdef DINDI_DEBUG
 		ShaderHotReloader::Init();
+#endif
 		Logger::Init();
 
 		m_ApplicationWindow = new Window(windowWidth, windowHeight, appName, aspectRatio);
@@ -40,7 +40,7 @@ namespace Dindi
 		GUI::Init(this->m_ApplicationWindow);
 		
 		//#NOTE: ModelLoader as a static class as helpers of the program, classes that will help to build the program
-		//stuff like DeltaTime are part of the program (the deltatime of the program duh) so they will be inside Application.
+		//stuff like DeltaTime are part of the program (the delta time of the program duh) so they will be inside Application.
 
 		//FROM HERE TO BELOW IS ALL DEBUG STUFF
 		m_DefaultEditorCamera = new Camera(this->GetWindow()->GetAspectRatio(), vec3(0.0f, 0.0f, 5.0f));
@@ -55,6 +55,9 @@ namespace Dindi
 
  		static Model* model = new Model(RESOURCES_PATH "Resources/Models/backpack.obj");
 		SceneOne->AddEntity(model);
+
+		m_ActiveScene->AddPointLight({ { 1.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f } });
+
 
 		Input::HideAndLockCursor(true);
 	}
@@ -120,8 +123,11 @@ namespace Dindi
 
 	void Application::OnUpdate(DeltaTime& dt)
 	{
-		ShaderHotReloader::OnUpdate();
 
+		//This is just for when developing the shaders, removing this would save us some ms.
+#ifdef DINDI_DEBUG
+		ShaderHotReloader::OnUpdate();
+#endif
 		Renderer::Draw(m_ActiveScene);
 
 		LookAround();

@@ -12,6 +12,7 @@ namespace Dindi
 	namespace DND_INTERNAL
 	{
 		//We are going to use only one UBO, so this doesn't need to be dynamic.
+		//This is static because we user don't need to mess with UBOs, he will not need and doesn't care either. This is internal for us.
 		static constexpr uint32_t ConstantBufferSlot = 1;
 
 		ConstantBuffer PersistentData;
@@ -70,6 +71,9 @@ namespace Dindi
 
 			PersistentData.data.c_ViewProjection = viewProjectionMatrix;
 			PersistentData.data.c_Time = app.GetTime();
+
+			vec3 cameraPos = camera->GetCameraPos();
+			PersistentData.data.c_CameraPos = vec4(cameraPos.x, cameraPos.y, cameraPos.z, 0.0f);
 
 			std::vector<PointLight>& lights = scene->GetLights();
 			uint32_t nLights = lights.size();

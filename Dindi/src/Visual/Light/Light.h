@@ -7,6 +7,7 @@ namespace Dindi
 	{
 	public:
 		PointLight(const vec4& position, const vec4& color);
+		PointLight(const vec3& position, const vec3& color);
 		PointLight() = default;
 
 		void SetPosition(const vec4& pos) { m_Position = pos; }

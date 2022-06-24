@@ -21,6 +21,7 @@ namespace Dindi
 				float _p1 = 0, _p2 = 0;
 				uint32_t numLights = 0;
 				mat4 c_ViewProjection;
+				vec4 c_CameraPos;
 				PointLight c_Lights[DND_MAX_LIGHTS];
 			};
 

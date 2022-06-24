@@ -17,6 +17,11 @@ namespace Dindi
 		SetColor(color);
 	}
 
+	PointLight::PointLight(const vec3& position, const vec3& color) : m_Position(position.x, position.y, position.z, 0.0f)
+	{
+		SetColor({ color.x, color.y, color.z, 0.0f });
+	}
+
 	bool PointLight::SetColor(const vec4& color)
 	{
 		if (!AssertColor(color))

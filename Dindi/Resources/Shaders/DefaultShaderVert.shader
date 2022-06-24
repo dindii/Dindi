@@ -1,6 +1,7 @@
 #version 420 core
 
 layout(location = 0) in vec3 a_Coord;
+layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
 
 #define DND_MAX_LIGHTS 1000
@@ -18,14 +19,21 @@ layout(std140, binding = 1) uniform ConstantData
 	float _p2;
 	unsigned int numLights;
 	mat4 c_ViewProjection;
+	vec4 c_CameraPos;
 	PointLight c_Lights[DND_MAX_LIGHTS];
 };
 
 
 out vec2 v_TexCoord;
 
+//#TODO: Multiply this by the model matrix, please.
+out vec3 v_FragPos;
+out vec3 v_Normal;
+
 void main()
 {
 	gl_Position = c_ViewProjection * /* u_Transform*/ vec4(a_Coord.x, a_Coord.y, a_Coord.z, 1.0f);
 	v_TexCoord = a_TexCoord;
+	v_FragPos = a_Coord;
+	v_Normal = a_Normal;
 }

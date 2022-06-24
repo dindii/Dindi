@@ -50,13 +50,15 @@ namespace Dindi
 
 		SceneOne = new Scene();
 		//#TODO: SetActiveScene function, please.
-		m_ActiveScene = SceneOne;
 		SceneOne->SetActiveCamera(m_DefaultEditorCamera);
 
  		static Model* model = new Model(RESOURCES_PATH "Resources/Models/backpack.obj");
 		SceneOne->AddEntity(model);
 
-		m_ActiveScene->AddPointLight({ { 1.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f } });
+		m_ActiveScene = SceneOne;
+
+		m_ActiveScene->AddPointLight({ { 1.0f, 0.0f, 3.0f}, { 0.0f, 0.0f, 1.0f} });
+		m_ActiveScene->AddPointLight({ { -1.0f, 0.0f, 3.0f}, { 1.0f, 0.0f, 0.0f} });
 
 
 		Input::HideAndLockCursor(true);

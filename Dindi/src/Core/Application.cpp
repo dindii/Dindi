@@ -57,10 +57,6 @@ namespace Dindi
 
 		m_ActiveScene = SceneOne;
 
-		m_ActiveScene->AddPointLight({ { 1.0f, 0.0f, 3.0f}, { 0.0f, 0.0f, 1.0f} });
-		m_ActiveScene->AddPointLight({ { -1.0f, 0.0f, 3.0f}, { 1.0f, 0.0f, 0.0f} });
-
-
 		Input::HideAndLockCursor(true);
 	}
 
@@ -143,10 +139,43 @@ namespace Dindi
 
 	void Application::ProcessEngineInterface()
 	{
-		//#TODO: this should get huge, so take this to a better place.
+		static constexpr int maxLightLabelSize = 50;
+
 		GUI::Begin();
-		ImGui::Begin("Iha!");
-		ImGui::End();
+			ImGui::Begin("Scene Lights");
+
+			ImGui::NewLine();
+			if (ImGui::Button("Add Light", { 128.0f, 32.0f }))
+				m_ActiveScene->AddPointLight({ { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f } });
+			ImGui::NewLine();
+
+			for (int x = 0; x < m_ActiveScene->GetLights().size(); x++)
+			{
+				PointLight& light0 = m_ActiveScene->GetLights()[x];
+
+				float pos[3] = { light0.GetPosition().x, light0.GetPosition().y, light0.GetPosition().z };
+				float color[3] = { light0.GetColor().x, light0.GetColor().y, light0.GetColor().z };
+
+				char lightLabel[maxLightLabelSize] = "Light Position ";
+				char lightColorLabel[maxLightLabelSize] = "Light Color ";
+				char number[maxLightLabelSize];
+
+				sprintf(number, "%i", x);
+
+				//#NOTE: I don't think we will ever get a bottleneck from strcat not being fast enough to found \0, but I will keep and eye on this when profiling later.
+				//They're not safe btw, but we are in a controlled environment.
+				strcat(lightLabel, number);
+				strcat(lightColorLabel, number);
+
+				if (ImGui::SliderFloat3(lightLabel, pos, -50.0f, 50.0f))
+					light0.SetPosition({ pos[0], pos[1], pos[2], 0.0f });
+				
+				if (ImGui::ColorEdit3(lightColorLabel, color))
+					light0.SetColor({ color[0], color[1], color[2], 0.0f });
+
+				ImGui::NewLine();
+			}
+			ImGui::End();
 		GUI::End();
 	}
 	

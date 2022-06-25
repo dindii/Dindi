@@ -47,10 +47,11 @@ void main()
 	for (unsigned int x = 0; x < numLights; x++)
 	{
 		vec3 color = texture(u_Diffuse, v_TexCoord).rgb * c_Lights[x].m_Color.rgb;
-		
+		vec3 specularColor = texture(u_Specular, v_TexCoord).rgb * c_Lights[x].m_Color.rgb;
+
 		//ambient
 		vec3 ambient = 0.05f * color;
-
+		
 		//diffuse calc
 		vec3 lightPos = c_Lights[x].m_Position.xyz;
 		vec3 lightDir = normalize(lightPos - v_FragPos);
@@ -76,8 +77,7 @@ void main()
 		vec3 diffuseWithAttenuation  = diffuse  * attenuation;
 		vec3 specularWithAttenuation = specular * attenuation;
 
-		temporaryResult += vec3(ambientWithAttenuation + diffuseWithAttenuation + specularWithAttenuation);
-	//	temporaryResult += vec3(ambient + diffuse + specular);
+		temporaryResult += vec3(ambientWithAttenuation + diffuseWithAttenuation) + vec3(specularColor * specularWithAttenuation);
 	}
 
 	outColor = vec4(temporaryResult.xyz, 1.0f);

@@ -118,16 +118,19 @@ namespace Dindi
 
 		std::string dirPrefix = directory + "/";
 
-		if (loader.GetMaterials()[0].diffuse_texname.size())
-			temporaryDiffuse = new Texture2D(dirPrefix + loader.GetMaterials()[0].diffuse_texname);
+		if (loader.GetMaterials().size())
+		{
+			if (loader.GetMaterials()[0].diffuse_texname.size())
+				temporaryDiffuse = new Texture2D(dirPrefix + loader.GetMaterials()[0].diffuse_texname);
 
-		if (loader.GetMaterials()[0].specular_texname.size())
-			temporarySpecular = new Texture2D(dirPrefix + loader.GetMaterials()[0].specular_texname);
+			if (loader.GetMaterials()[0].specular_texname.size())
+				temporarySpecular = new Texture2D(dirPrefix + loader.GetMaterials()[0].specular_texname);
 
-		//#TODO Probably i'm loading normal maps twice, one as texture and another as attributes, fix this later. Or find a way
-		//to detect if we have attributes but not maps and make it use only attributes.
-		if (loader.GetMaterials()[0].bump_texname.size())
-			temporaryNormal = new Texture2D(dirPrefix + loader.GetMaterials()[0].bump_texname);
+			//#TODO Probably i'm loading normal maps twice, one as texture and another as attributes, fix this later. Or find a way
+			//to detect if we have attributes but not maps and make it use only attributes.
+			if (loader.GetMaterials()[0].bump_texname.size())
+				temporaryNormal = new Texture2D(dirPrefix + loader.GetMaterials()[0].bump_texname);
+		}
 		
 		Material* materialToFill;
 		materialToFill = modelToFill.GetMaterial();

@@ -3,7 +3,7 @@
 #include "Utils/Logger.h"
 #include "Utils/DeltaTime.h"
 #include "Rendering/Scene/Scene.h"
-
+#include "Layer.h"
 
 namespace Dindi
 {
@@ -22,8 +22,10 @@ namespace Dindi
 		void OnUpdate(DeltaTime& dt);
 		inline Window* GetWindow() { return m_ApplicationWindow; }
 		inline static Application& GetInstance() { return *s_Instance; }
+		inline void SetActiveScene(Scene* scene) { m_ActiveScene = scene; }
 		float GetTime() const;
 		void ProcessEngineInterface();
+		void PushLayer(Layer* layer);
 
 		inline void TerminateProgram() { m_Running = false; }
 
@@ -32,20 +34,13 @@ namespace Dindi
 
 		Window* m_ApplicationWindow;
 		DeltaTime* m_DeltaTime;
+
+		std::vector<Layer*> m_LayerStack;
 	private:
 		bool m_Running = true;
 
 	private:
 		Scene* m_ActiveScene;
-		Scene* SceneOne;
-
-		Camera* m_DefaultEditorCamera;
-		float m_DefaultEditorCameraSpeed;
-
 		bool m_MouseLockedAndInvisible = true;
-		//Editor specific stuff
-	private:
-		void MoveCamera(DeltaTime& dt);
-		void LookAround();
 	};
 }

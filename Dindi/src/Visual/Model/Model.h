@@ -7,6 +7,8 @@ namespace Dindi
 	class Model
 	{
 	public:
+		Model() : m_Mesh(nullptr), m_Material(nullptr) {};
+
 		Model(std::string meshPath, std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER);
 		~Model();
 

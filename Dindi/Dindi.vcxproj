@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
+    <ClInclude Include="src\Core\Layer.h" />
     <ClInclude Include="src\Dindipch.h" />
     <ClInclude Include="src\Event\ApplicationEvent.h" />
     <ClInclude Include="src\Event\Event.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="src\Rendering\Camera\Camera.h" />
     <ClInclude Include="src\Rendering\Core\LowLevelRenderer.h" />
     <ClInclude Include="src\Rendering\Core\Renderer.h" />
+    <ClInclude Include="src\Rendering\Debug\DebugRenderer.h" />
     <ClInclude Include="src\Rendering\Object\Renderable.h" />
     <ClInclude Include="src\Rendering\Scene\Scene.h" />
     <ClInclude Include="src\Rendering\Shader\Shader.h" />
@@ -176,6 +178,7 @@
     <ClCompile Include="src\Rendering\Camera\Camera.cpp" />
     <ClCompile Include="src\Rendering\Core\LowLevelRenderer.cpp" />
     <ClCompile Include="src\Rendering\Core\Renderer.cpp" />
+    <ClCompile Include="src\Rendering\Debug\DebugRenderer.cpp" />
     <ClCompile Include="src\Rendering\Object\Renderable.cpp" />
     <ClCompile Include="src\Rendering\Scene\Scene.cpp" />
     <ClCompile Include="src\Rendering\Shader\Shader.cpp" />

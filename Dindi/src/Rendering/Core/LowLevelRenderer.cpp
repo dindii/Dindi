@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "Utils/Logger.h"
 #include "Core/Application.h"
-
+#include "Rendering/Debug/DebugRenderer.h"
 
 namespace Dindi
 {
@@ -19,7 +19,7 @@ namespace Dindi
 
 		LowLevelRenderer::LowLevelRenderer()
 		{
-			Init();
+			
 		}
 
 		LowLevelRenderer::~LowLevelRenderer()
@@ -58,6 +58,10 @@ namespace Dindi
 			//Just use raw arrays or use the size of the vector * type when doing calculations.
 			glBufferData(GL_UNIFORM_BUFFER, sizeof(PersistentData.data), NULL, GL_STATIC_DRAW);
 			glBindBufferBase(GL_UNIFORM_BUFFER, ConstantBufferSlot, PersistentData.handle);
+
+#ifdef DINDI_DEBUG
+			DebugRenderer::Init();
+#endif
 		}
 
 		void LowLevelRenderer::Draw(Scene* scene)
@@ -85,6 +89,13 @@ namespace Dindi
 			glBindBuffer(GL_UNIFORM_BUFFER, PersistentData.handle);
 			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PersistentData.data), &PersistentData.data);
 
+#ifdef DINDI_DEBUG
+			for (uint32_t x = 0; x < lights.size(); x++)
+			{
+				//DebugRenderer::DrawCube(lights[x].GetPosition(), lights[x].GetColor());
+			}
+#endif
+
 
 			for (int32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
@@ -99,6 +110,8 @@ namespace Dindi
 				material->Bind();
 				
 				Mesh* mesh = model->GetMesh();
+
+				//#TODO: Please, let's use elements to draw.
 				glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 			}
 		

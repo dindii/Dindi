@@ -7,15 +7,14 @@ namespace Dindi
 	public:
 		DeltaTime();
 		void Tick();
-		double getDeltaTime();
 
-		operator float() { return (float)deltaTime; }
+		operator float() { return deltaTime; }
 		//operator double() { return deltaTime; }
 
 	private:
-		double currentTime;
-		double previousTime;
-		double deltaTime;
-		double secondsPerCount;
+		float currentTime;
+		float previousTime;
+		float deltaTime;
+		float secondsPerCount;
 	};
 }

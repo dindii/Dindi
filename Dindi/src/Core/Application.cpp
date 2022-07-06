@@ -38,30 +38,13 @@ namespace Dindi
 
 		Renderer::Init();
 		GUI::Init(this->m_ApplicationWindow);
-		
-		//#NOTE: ModelLoader as a static class as helpers of the program, classes that will help to build the program
-		//stuff like DeltaTime are part of the program (the delta time of the program duh) so they will be inside Application.
-
-		//FROM HERE TO BELOW IS ALL DEBUG STUFF
-		m_DefaultEditorCamera = new Camera(this->GetWindow()->GetAspectRatio(), vec3(0.0f, 0.0f, 5.0f));
-		m_DefaultEditorCameraSpeed = 10.0f;
-		m_DefaultEditorCamera->SetCameraLag(true);
-		m_DefaultEditorCamera->SetCameraLagValue(0.15f);
-
-		SceneOne = new Scene();
-		//#TODO: SetActiveScene function, please.
-		SceneOne->SetActiveCamera(m_DefaultEditorCamera);
-
- 		static Model* model = new Model(RESOURCES_PATH "Resources/Models/backpack.obj");
-		SceneOne->AddEntity(model);
-
-		m_ActiveScene = SceneOne;
-
-		Input::HideAndLockCursor(true);
 	}
 
 	Application::~Application()
 	{
+		for (Layer* layer : m_LayerStack)
+			layer->OnDetach();
+
 		delete m_ApplicationWindow;
 	}
 
@@ -80,26 +63,32 @@ namespace Dindi
 		{
 
 #ifdef DINDI_DEBUG
-			//press escape to close program.
-			if (Event.GetKeyCode() == DND_KEY_ESCAPE)
+			switch (Event.GetKeyCode())
 			{
-				TerminateProgram();
-				return true; 
-			}
+				case DND_KEY_ESCAPE:
+				{
+					TerminateProgram();
+					return true;
+				}   break;
+
+				case DND_KEY_F2:
+				{
+					m_MouseLockedAndInvisible = !m_MouseLockedAndInvisible;
+
+					Input::HideAndLockCursor(m_MouseLockedAndInvisible);
+					m_ActiveScene->GetActiveCamera()->LockCamera(!m_MouseLockedAndInvisible);
+
+					return true;
+				}   break;
 #endif
-
-			if (Event.GetKeyCode() == DND_KEY_F2)
-			{
-				m_MouseLockedAndInvisible = !m_MouseLockedAndInvisible;
-
-				Input::HideAndLockCursor(m_MouseLockedAndInvisible);
-				m_ActiveScene->GetActiveCamera()->LockCamera(!m_MouseLockedAndInvisible);
-
-				return true;
+				default:
+					return false;
 			}
-
-			return false;
 		});
+
+
+		for (Layer* layer : m_LayerStack)
+			layer->OnEvent(e);
 	}
 
 	void Application::Run()
@@ -122,14 +111,15 @@ namespace Dindi
 	void Application::OnUpdate(DeltaTime& dt)
 	{
 
-		//This is just for when developing the shaders, removing this would save us some ms.
+		//This is just for when developing the shaders, removing this would save us some frame budget.
 #ifdef DINDI_DEBUG
 		ShaderHotReloader::OnUpdate();
 #endif
 		Renderer::Draw(m_ActiveScene);
 
-		LookAround();
-		MoveCamera(dt);
+
+		for (Layer* layer : m_LayerStack)
+			layer->OnUpdate(dt);
 	}
 
 	float Application::GetTime() const
@@ -139,6 +129,9 @@ namespace Dindi
 
 	void Application::ProcessEngineInterface()
 	{
+		//This is printing something of the engine (the active scene) and not the scene itself from the layers
+		//so this will be an engine GUI part thus it is fine to let this to be here.
+
 		static constexpr int maxLightLabelSize = 50;
 
 		GUI::Begin();
@@ -158,61 +151,46 @@ namespace Dindi
 
 				char lightLabel[maxLightLabelSize] = "Light Position ";
 				char lightColorLabel[maxLightLabelSize] = "Light Color ";
+				char lightRemoveLabel[maxLightLabelSize] = "Remove Light ";
+
 				char number[maxLightLabelSize];
 
 				sprintf(number, "%i", x);
 
 				//#NOTE: I don't think we will ever get a bottleneck from strcat not being fast enough to found \0, but I will keep and eye on this when profiling later.
-				//They're not safe btw, but we are in a controlled environment.
+				//They're not safe by the way, but we are in a controlled environment.
+				//Kinda annoying to have to make every label unique
 				strcat(lightLabel, number);
 				strcat(lightColorLabel, number);
+				strcat(lightRemoveLabel, number);
 
 				if (ImGui::SliderFloat3(lightLabel, pos, -50.0f, 50.0f))
 					light0.SetPosition({ pos[0], pos[1], pos[2], 0.0f });
 				
+				ImGui::SameLine();
+				if (ImGui::Button(lightRemoveLabel))
+					m_ActiveScene->GetLights().erase(m_ActiveScene->GetLights().begin() + x);
+
 				if (ImGui::ColorEdit3(lightColorLabel, color))
 					light0.SetColor({ color[0], color[1], color[2], 0.0f });
 
 				ImGui::NewLine();
 			}
 			ImGui::End();
+
+			ImGui::Begin("Stats");
+			ImGui::Text("%.4f", m_DeltaTime);
+			ImGui::End();
+
 		GUI::End();
+
+		for (Layer* layer : m_LayerStack)
+			layer->OnUIRender();
 	}
 	
-	void Application::MoveCamera(DeltaTime& dt)
+	void Application::PushLayer(Layer* layer)
 	{
-		vec3 IntendedCameraPosition;
-
-		if (Input::IsKeyPressed(EKeyCode::DND_KEY_W))
-			IntendedCameraPosition.z = -m_DefaultEditorCameraSpeed;
-
-		if (Input::IsKeyPressed(EKeyCode::DND_KEY_S))
-			IntendedCameraPosition.z = m_DefaultEditorCameraSpeed;
-
-		if (Input::IsKeyPressed(EKeyCode::DND_KEY_D))
-			IntendedCameraPosition.x = m_DefaultEditorCameraSpeed;
-
-		if (Input::IsKeyPressed(EKeyCode::DND_KEY_A))
-			IntendedCameraPosition.x = -m_DefaultEditorCameraSpeed;
-
-		if (Input::IsKeyPressed(EKeyCode::DND_KEY_SPACE))
-			IntendedCameraPosition.y = m_DefaultEditorCameraSpeed;
-
-		if (Input::IsKeyPressed(EKeyCode::DND_KEY_LEFT_CONTROL))
-			IntendedCameraPosition.y = -m_DefaultEditorCameraSpeed;
-
-		//Add this vector on the Target Position, this is, where we are looking at, thus making a free camera style
-		m_ActiveScene->GetActiveCamera()->AddCameraTargetPosition(IntendedCameraPosition, dt);
+		m_LayerStack.emplace_back(layer);
+		layer->OnAttach();
 	}
-
-	void Application::LookAround()
-	{
-		//#TODO: Set to not do this by default, most of times we do want to pick objects with the cursor to control the scene
-		//       and this would change the camera offset making it harder and annoying to edit the scene
-		//So just don't start changing every camera based on mouse input, please.
-		vec2 MousePosition = Input::GetMousePosition();
-		m_ActiveScene->GetActiveCamera()->SetCameraYaw(toRadians(MousePosition.x));
-		m_ActiveScene->GetActiveCamera()->SetCameraPitch(toRadians(MousePosition.y));
-	}
-
 }

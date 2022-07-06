@@ -111,8 +111,10 @@ project "Dindi"
 	includedirs
 	{
 		"%{prj.name}/src",
+		"../",
 		"Dindi/src",
-        "Dindi/vendor"
+        "Dindi/vendor",
+        "Dindi/vendor/glfw/include"
 	}
 
 	links                      -- Linkamos a Engine no Sandbox também

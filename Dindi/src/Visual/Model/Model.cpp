@@ -8,6 +8,7 @@ namespace Dindi
 	//No difference between RESOURCES_PATH + std::string(path) and  RESOURCES_PATH path, the later we can have more simplicity.
 	Model::Model(std::string meshPath, std::string vertexPath /*= DEFAULT_VERTEX_SHADER*/, std::string fragmentPath /*= DEFAULT_FRAGMENT_SHADER*/)
 	{
+		//#NOTE: Not sure if I want to allocate memory here.
 		m_Mesh = new Mesh();
 		m_Material = new Material(vertexPath, fragmentPath);
 		ModelLoader::Load(meshPath, *this);

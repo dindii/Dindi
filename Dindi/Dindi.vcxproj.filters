@@ -31,6 +31,9 @@
     <Filter Include="src\Rendering\Core">
       <UniqueIdentifier>{52B9FC3B-3E9D-BD91-A7FD-B7E49300A813}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Rendering\Debug">
+      <UniqueIdentifier>{B03EA0BB-1CA0-7DC9-A50D-C47B116EB488}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Rendering\Object">
       <UniqueIdentifier>{00A91E49-EC37-A812-9556-BC0D81C4B8B8}</UniqueIdentifier>
     </Filter>
@@ -48,6 +51,9 @@
     </Filter>
     <Filter Include="src\Visual">
       <UniqueIdentifier>{309F8635-1C57-C882-855E-A1DE71356373}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Visual\Light">
+      <UniqueIdentifier>{D756EA0F-C34F-0962-EC81-EEE6D8D9E86D}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Visual\Material">
       <UniqueIdentifier>{CEE3D5D1-3A45-B3DF-C3B2-F9912F13EA9E}</UniqueIdentifier>
@@ -76,6 +82,9 @@
       <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Core.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Layer.h">
       <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Dindipch.h">
@@ -126,6 +135,9 @@
     <ClInclude Include="src\Rendering\Core\Renderer.h">
       <Filter>src\Rendering\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering\Debug\DebugRenderer.h">
+      <Filter>src\Rendering\Debug</Filter>
+    </ClInclude>
     <ClInclude Include="src\Rendering\Object\Renderable.h">
       <Filter>src\Rendering\Object</Filter>
     </ClInclude>
@@ -150,6 +162,9 @@
     <ClInclude Include="src\Utils\ModelLoader.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\Visual\Light\Light.h">
+      <Filter>src\Visual\Light</Filter>
+    </ClInclude>
     <ClInclude Include="src\Visual\Material\Material.h">
       <Filter>src\Visual\Material</Filter>
     </ClInclude>
@@ -168,7 +183,6 @@
     <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3.h">
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
-    <ClInclude Include="src\Visual\Light\Light.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -207,6 +221,9 @@
     <ClCompile Include="src\Rendering\Core\Renderer.cpp">
       <Filter>src\Rendering\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering\Debug\DebugRenderer.cpp">
+      <Filter>src\Rendering\Debug</Filter>
+    </ClCompile>
     <ClCompile Include="src\Rendering\Object\Renderable.cpp">
       <Filter>src\Rendering\Object</Filter>
     </ClCompile>
@@ -231,6 +248,9 @@
     <ClCompile Include="src\Utils\ModelLoader.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\Visual\Light\Light.cpp">
+      <Filter>src\Visual\Light</Filter>
+    </ClCompile>
     <ClCompile Include="src\Visual\Material\Material.cpp">
       <Filter>src\Visual\Material</Filter>
     </ClCompile>
@@ -249,6 +269,5 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="src\Visual\Light\Light.cpp" />
   </ItemGroup>
 </Project>

@@ -18,10 +18,4 @@ namespace Dindi
 		deltaTime = currentTime - previousTime;
 		previousTime = currentTime;
 	}	
-
-	double DeltaTime::getDeltaTime()
-	{
-		return deltaTime;
-	}
-
 }

@@ -16,8 +16,8 @@ public:
 
 private:
 	Dindi::Scene* SceneOne;
-
 	Dindi::Camera* m_DefaultEditorCamera;
+
 	float m_DefaultEditorCameraSpeed;
 
 	void MoveCamera(Dindi::DeltaTime& dt);

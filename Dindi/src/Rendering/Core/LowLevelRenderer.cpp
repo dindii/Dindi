@@ -55,12 +55,12 @@ namespace Dindi
 			glBindBuffer(GL_UNIFORM_BUFFER, PersistentData.handle);
 
 			//#NOTE: I got lazy and used sizeof for almost everything related to UBO, so take this into account when adding stuff to the constant buffer.
-			//Just use raw arrays or use the size of the vector * type when doing calculations.
+			//Just use static arrays or use the size of the vector * type when doing calculations.
 			glBufferData(GL_UNIFORM_BUFFER, sizeof(PersistentData.data), NULL, GL_STATIC_DRAW);
 			glBindBufferBase(GL_UNIFORM_BUFFER, ConstantBufferSlot, PersistentData.handle);
 
 #ifdef DINDI_DEBUG
-			DebugRenderer::Init();
+			Debug::DebugRenderer::Init();
 #endif
 		}
 
@@ -90,9 +90,10 @@ namespace Dindi
 			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PersistentData.data), &PersistentData.data);
 
 #ifdef DINDI_DEBUG
+			//Draw cubes in light positions to debug.
 			for (uint32_t x = 0; x < lights.size(); x++)
 			{
-				//DebugRenderer::DrawCube(lights[x].GetPosition(), lights[x].GetColor());
+				Debug::DebugRenderer::Draw(Debug::DebugShape::CUBE, lights[x].GetPosition(), lights[x].GetColor(), 2.0f);
 			}
 #endif
 

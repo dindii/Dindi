@@ -30,7 +30,6 @@ void RasterizerExample::OnDetach()
 
 void RasterizerExample::OnUIRender()
 {
-
 }
 
 void RasterizerExample::OnUpdate(Dindi::DeltaTime& dt)

@@ -9,7 +9,9 @@ namespace Dindi
 	public:
 		Model() : m_Mesh(nullptr), m_Material(nullptr) {};
 
-		Model(std::string meshPath, std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER);
+		Model(std::string meshPath,       std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER);
+		Model(std::vector<vec3>& vertex, std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER);
+
 		~Model();
 
 		inline Mesh* GetMesh() { return m_Mesh; }

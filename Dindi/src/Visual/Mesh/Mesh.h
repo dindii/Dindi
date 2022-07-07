@@ -13,12 +13,13 @@ namespace Dindi
 		//We will have something here to init
 		//We'll extent this or add a copy constructor soon
 		Mesh() = default;
-		Mesh(std::string& filepath);
+		Mesh(std::vector<vec3>&& vertices) noexcept;
+
 		inline uint32_t GetVertexCount() const { return (uint32_t)m_VertexPositions.size(); }
 
-		void SetVertexPositionData(std::vector<vec3>&& vertexPosData)    { m_VertexPositions = vertexPosData; }
-		void SetNormalData        (std::vector<vec3>&& normalData)       { m_Normal = normalData; }
-		void SetTextureCoordData  (std::vector<vec2>&& textureCoordData) { m_TextureCoord = textureCoordData; }
+		void SetVertexPositionData(std::vector<vec3>&& vertexPosData)    noexcept { m_VertexPositions = vertexPosData; }
+		void SetNormalData        (std::vector<vec3>&& normalData)       noexcept { m_Normal = normalData; }
+		void SetTextureCoordData  (std::vector<vec2>&& textureCoordData) noexcept { m_TextureCoord = textureCoordData; }
 
 		void RegisterData();
 	private:

@@ -9,4 +9,9 @@ namespace Dindi
 	{
 		RegisterMeshData(m_VertexPositions, m_Normal, m_TextureCoord);
 	}
+
+	Mesh::Mesh(std::vector<vec3>&& vertices) noexcept
+	{
+		m_VertexPositions = vertices;
+	}
 }

@@ -4,13 +4,25 @@
 
 namespace Dindi
 {
-	class DebugRenderer
+	namespace Debug
 	{
-	public:
-		static void Init();
-		static void DrawCube(vec3 pos, vec3 color);
+		enum DebugShape
+		{
+			NONE = -1,
+			
+			CUBE,
+			
+			MAX
+		};
 
-	private:
-		static Model m_Cube;
-	};
+		class DebugRenderer
+		{
+		public:
+			static void Init();
+			static void Draw(DebugShape shape, vec3& pos, vec3& color, float size);
+		private:
+			static Model* m_DebugShapes[Debug::DebugShape::MAX];
+		};
+	}
+
 }

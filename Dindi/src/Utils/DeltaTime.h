@@ -9,8 +9,8 @@ namespace Dindi
 		void Tick();
 
 		operator float() { return deltaTime; }
-		//operator double() { return deltaTime; }
-
+		float Milliseconds() const { return deltaTime * 1000; }
+	
 	private:
 		float currentTime;
 		float previousTime;

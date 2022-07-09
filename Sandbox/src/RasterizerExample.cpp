@@ -4,6 +4,8 @@
 #include <input/Input.h>
 #include <Math/Maths.h>
 
+#include <Rendering/Debug/DebugRenderer.h>
+
 void RasterizerExample::OnAttach()
 {
 	//FROM HERE TO BELOW IS ALL DEBUG STUFF
@@ -17,7 +19,7 @@ void RasterizerExample::OnAttach()
 	SceneOne = new Dindi::Scene();
 	SceneOne->SetActiveCamera(m_DefaultEditorCamera);
 
-	Dindi::Model* model = new Dindi::Model(RESOURCES_PATH "Resources/Models/backpack.obj");
+	Dindi::Model* model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\cube.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 0.05f);
 	SceneOne->AddEntity(model);
 
 	app.SetActiveScene(SceneOne);
@@ -40,7 +42,7 @@ void RasterizerExample::OnUpdate(Dindi::DeltaTime& dt)
 
 void RasterizerExample::OnEvent(Dindi::Event& event)
 {
-	DND_LOG_TRACE(event);
+	//DND_LOG_TRACE(event);
 }
 
 void RasterizerExample::MoveCamera(Dindi::DeltaTime& dt)

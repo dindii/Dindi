@@ -43,6 +43,7 @@ namespace Dindi
 			static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 			static unsigned int GenMesh(unsigned int nMeshes = 1);
 			static void SetWireframeMode(bool cond);
+			static void SetOverlay(bool cond);
 			static void DelMesh(unsigned int Mesh, unsigned int nMeshes = 1);			
 		};
 	}

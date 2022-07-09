@@ -26,6 +26,7 @@ namespace Dindi
 		virtual void UnBind();
 		virtual void UploadUniformMat4(const std::string& name, const mat4& mat);
 		virtual void UploadUniformFloat(const std::string& name, const float value);
+		virtual void UploadUniformFloat3(const std::string& name, const vec3& mat);
 		virtual void UploadUniformFloat4(const std::string& name, const vec4& mat);
 		virtual void UploadIntArray(const std::string& name, int* data, uint32_t count);
 		virtual void UploadInt(const std::string& name, uint32_t data);

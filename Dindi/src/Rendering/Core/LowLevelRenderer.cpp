@@ -37,7 +37,12 @@ namespace Dindi
 			if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 				DND_LOG_FATAL("Failed to initialize GLAD");
 
-			SetViewport(0, 0, 800, 600);
+			Application& app = Application::GetInstance();
+
+			uint32_t width  = app.GetWindow()->GetWidth();
+			uint32_t height = app.GetWindow()->GetHeight();
+
+			SetViewport(0, 0, width, height);
 			//debug
 			SetClearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
 
@@ -89,15 +94,6 @@ namespace Dindi
 			glBindBuffer(GL_UNIFORM_BUFFER, PersistentData.handle);
 			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PersistentData.data), &PersistentData.data);
 
-#ifdef DINDI_DEBUG
-			//Draw cubes in light positions to debug.
-			for (uint32_t x = 0; x < lights.size(); x++)
-			{
-				Debug::DebugRenderer::Draw(Debug::DebugShape::CUBE, lights[x].GetPosition(), lights[x].GetColor(), 2.0f);
-			}
-#endif
-
-
 			for (int32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
 				//#TODO: It would have another For loop here to iterate the meshes of a model
@@ -111,10 +107,23 @@ namespace Dindi
 				material->Bind();
 				
 				Mesh* mesh = model->GetMesh();
+				
+				mat4 modelTransform;
+				modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale({ model->GetScale() });
+				material->GetShader()->UploadUniformMat4("u_Transform", modelTransform);
 
 				//#TODO: Please, let's use elements to draw.
 				glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 			}
+
+//DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
+			//Draw cubes in light positions to debug.
+			if(app.GetApplicationState() == EApplicationState::EDITOR)
+				for (uint32_t x = 0; x < lights.size(); x++)
+				{
+					uint32_t flags = (Debug::EDebugRenderFlags::WIREFRAME | Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
+					Debug::DebugRenderer::Draw(Debug::EDebugShape::CUBE, lights[x].GetPosition(), lights[x].GetColor(), 0.25f, flags);
+				}
 		
 		}
 
@@ -159,6 +168,14 @@ namespace Dindi
 			{
 				glDeleteBuffers(nMeshes, &Mesh);
 			}
+		}
+
+		void LowLevelRenderer::SetOverlay(bool cond)
+		{
+			if (cond)
+				glDepthFunc(GL_ALWAYS);
+			else
+				glDepthFunc(GL_LESS);
 		}
 
 	}

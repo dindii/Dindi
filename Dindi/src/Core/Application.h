@@ -27,13 +27,19 @@ namespace Dindi
 		void ProcessEngineInterface();
 		void PushLayer(Layer* layer);
 
+		inline EApplicationState GetApplicationState() const { return m_AppState; }
 		inline void TerminateProgram() { m_Running = false; }
 
+	private:
+		//Show Scene Lights and its properties in a GUI window
+		void LightUIInspector();
+		//Show Scene Models and its properties in a GUI Window
+		void ModelUIInspector();
 	private:
 		static inline Application* s_Instance = nullptr;
 
 		Window* m_ApplicationWindow;
-		DeltaTime* m_DeltaTime;
+		DeltaTime m_DeltaTime;
 
 		std::vector<Layer*> m_LayerStack;
 	private:
@@ -42,5 +48,7 @@ namespace Dindi
 	private:
 		Scene* m_ActiveScene;
 		bool m_MouseLockedAndInvisible = true;
+
+		EApplicationState m_AppState;
 	};
 }

@@ -8,14 +8,14 @@ namespace Dindi
 	{
 	public:
 		/**
-		* @brief Constructor, takes two uint16_t so i can set m_Mousex and m_MouseY.
+		* @brief Constructor, takes two uint32_t so i can set m_Mousex and m_MouseY.
 		* @param x - X coord of where the mouse is now.
 		* @param y - Y coord of where the mouse is now.
 		*/
-		MouseMovedEvent(uint16_t x, uint16_t y) : m_MouseX(x), m_MouseY(y) {};
+		MouseMovedEvent(uint32_t x, uint32_t y) : m_MouseX(x), m_MouseY(y) {};
 
-		inline uint16_t GetX() const { return m_MouseX; }
-		inline uint16_t GetY() const { return m_MouseY; }
+		inline uint32_t GetX() const { return m_MouseX; }
+		inline uint32_t GetY() const { return m_MouseY; }
 
 		/**
 		* @brief Stringfy the event so i can be printed easily.
@@ -36,7 +36,7 @@ namespace Dindi
 			EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 
 	private:
-		uint16_t m_MouseX, m_MouseY;
+		uint32_t m_MouseX, m_MouseY;
 	};
 
 	class MouseScrolledEvent : public Event

@@ -93,7 +93,6 @@ namespace Dindi
 	void Camera::RemakeProjection(float newWidth, float newHeight)
 	{//#TODO: More params
 		float NewAspectRatio = newWidth / newHeight;
-		Renderer::SetViewport(0, 0, uint32_t(newWidth), uint32_t(newHeight));
 		SetProjection(NewAspectRatio);
 	}
 }

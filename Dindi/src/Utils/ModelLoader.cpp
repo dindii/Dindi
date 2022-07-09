@@ -24,9 +24,17 @@ namespace Dindi
 		//Quick workaround for the .mtl directory (this current one)
 		std::string directory;
 		const size_t last_slash_idx = filepath.rfind('/');
+		
 		if (std::string::npos != last_slash_idx)
 		{
 			directory = filepath.substr(0, last_slash_idx);
+		}
+		else
+		{
+			const size_t last_backslash_idx = filepath.rfind('\\');
+
+			if(std::string::npos != last_backslash_idx)
+				directory = filepath.substr(0, last_backslash_idx);
 		}
 
 		readerConfig.mtl_search_path = directory;
@@ -116,7 +124,7 @@ namespace Dindi
 
 		Texture2D *temporaryDiffuse = nullptr, *temporarySpecular = nullptr, *temporaryNormal = nullptr;
 
-		std::string dirPrefix = directory + "/";
+		std::string dirPrefix = directory + "\\";
 
 		if (loader.GetMaterials().size())
 		{

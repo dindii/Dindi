@@ -1,9 +1,7 @@
 #pragma once
 #include "Event/Event.h"
 #include "Core/Application.h"
-#include "Event/Event.h"
-
-struct GLFWwindow;
+#include <GLFW/glfw3.h>
 
 namespace Dindi
 {
@@ -12,7 +10,7 @@ namespace Dindi
 		using EventCallbackFn = std::function<void(Event&)>;
 
 	public:
-		Window(float width, float height, const char* m_Name, float aspectRatio);
+		Window(float width, float height, const char* m_Name, float aspectRatio = 1.0f);
 	
 		virtual ~Window();
 	
@@ -22,7 +20,7 @@ namespace Dindi
 		inline uint32_t GetHeight() const { return m_Height;}
 		inline const char* GetName() const { return m_Name; }
 		inline GLFWwindow* GetNativeWindow() { return m_Window; }
-		inline float GetAspectRatio() const { return m_AspectRatio; }
+		float GetAspectRatio() const;
 		float GetTime() const;
 		inline void setEventCallback(const EventCallbackFn& callback) { EventCallback = callback; }
 

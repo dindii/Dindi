@@ -154,6 +154,7 @@
     <ClInclude Include="src\Rendering\Shader\ShaderHotReloader.h" />
     <ClInclude Include="src\Rendering\Texture\Texture2D.h" />
     <ClInclude Include="src\Utils\DeltaTime.h" />
+    <ClInclude Include="src\Utils\FileDialog.h" />
     <ClInclude Include="src\Utils\Logger.h" />
     <ClInclude Include="src\Utils\ModelLoader.h" />
     <ClInclude Include="src\Visual\Light\Light.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="src\Rendering\Shader\ShaderHotReloader.cpp" />
     <ClCompile Include="src\Rendering\Texture\Texture2D.cpp" />
     <ClCompile Include="src\Utils\DeltaTime.cpp" />
+    <ClCompile Include="src\Utils\FileDialog.cpp" />
     <ClCompile Include="src\Utils\Logger.cpp" />
     <ClCompile Include="src\Utils\ModelLoader.cpp" />
     <ClCompile Include="src\Visual\Light\Light.cpp" />
@@ -206,6 +208,10 @@
     <ProjectReference Include="vendor\glfw\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\Debug\DebugShaderFrag.shader" />
+    <None Include="Resources\Shaders\Debug\DebugShaderVert.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

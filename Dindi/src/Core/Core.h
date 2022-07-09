@@ -13,19 +13,26 @@ else { __debugbreak();}
 //Quick workaround to avoid copy and paste .exe waste of time. Move this to a copy post build command
 //but, to be honest, SandBox will hold the resources in the future, so we won't need anything of this.
 //Although, this is useful to engine default stuff like shader and materials etc
-#define RESOURCES_PATH "../Dindi/"
+#define RESOURCES_PATH "..\\Dindi\\"
 
-#define DEFAULT_VERTEX_SHADER RESOURCES_PATH "Resources/Shaders/DefaultShaderVert.shader"
-#define DEFAULT_FRAGMENT_SHADER RESOURCES_PATH "Resources/Shaders/DefaultShaderFrag.shader"
+#define DEFAULT_VERTEX_SHADER RESOURCES_PATH "Resources\\Shaders\\DefaultShaderVert.shader"
+#define DEFAULT_FRAGMENT_SHADER RESOURCES_PATH "Resources\\Shaders\\DefaultShaderFrag.shader"
 
 //Rendering stuff
 
-enum RenderingMapSlot
+enum ERenderingMapSlot
 {
 	None = 0,
 	Diffuse = 1,
 	Specular = 2,
 	Normal = 3
+};
+
+enum EApplicationState
+{
+	EDITOR = 0, //We are in the editor, we have debug shapes, UI and everything.
+	SIMULATION, //We are simulating the game. We don't have any debug shapes but we have UI.
+	PLAYING     //Playing, no editor infos.
 };
 
 //#NOTE: Please, when changing this, also change in the shaders.

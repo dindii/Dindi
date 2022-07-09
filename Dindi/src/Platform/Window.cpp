@@ -4,7 +4,6 @@
 #include "Event/KeyEvent.h"
 #include "Event/MouseEvent.h"
 #include "Event/ApplicationEvent.h"
-#include <GLFW/glfw3.h>
 
 
 namespace Dindi
@@ -13,6 +12,9 @@ namespace Dindi
 	{
 		if (width < 0 || height < 0)
 			DND_LOG_FATAL("Could not create window: negative resolution.");
+
+		m_Width  = width;
+		m_Height = height;
 
 		if (!glfwInit())
 			DND_LOG_FATAL("Could not initialize window system!");
@@ -92,6 +94,16 @@ namespace Dindi
 		pollEvents();
 	}
 	
+	float Window::GetAspectRatio() const
+	{
+		if (m_AspectRatio == 1.0f)
+		{
+			return (float)m_Width / (float)m_Height;
+		}
+
+		return m_AspectRatio;
+	}
+
 	float Window::GetTime() const
 	{
 		return (float)glfwGetTime();
@@ -135,7 +147,7 @@ namespace Dindi
 
 	void Window::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 	{
-		MouseMovedEvent e((uint16_t)xpos, (uint16_t)ypos);
+		MouseMovedEvent e((uint32_t)xpos, (uint32_t)ypos);
 		EventCallback(e);
 	}
 

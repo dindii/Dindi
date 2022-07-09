@@ -37,20 +37,20 @@ namespace Dindi
 
 		if (m_diffuseMap)
 		{
-			m_diffuseMap->Bind(				 RenderingMapSlot::Diffuse);
-			m_Shader->UploadInt("u_Diffuse", RenderingMapSlot::Diffuse);
+			m_diffuseMap->Bind(				 ERenderingMapSlot::Diffuse);
+			m_Shader->UploadInt("u_Diffuse", ERenderingMapSlot::Diffuse);
 		}
 
 		if (m_specularMap)
 		{
-			m_specularMap->Bind(	          RenderingMapSlot::Specular);
-			m_Shader->UploadInt("u_Specular", RenderingMapSlot::Specular);
+			m_specularMap->Bind(	          ERenderingMapSlot::Specular);
+			m_Shader->UploadInt("u_Specular", ERenderingMapSlot::Specular);
 		}
 
 		if (m_normalMap)
 		{
-			m_normalMap->Bind(				RenderingMapSlot::Normal);
-			m_Shader->UploadInt("u_Normal", RenderingMapSlot::Normal);
+			m_normalMap->Bind(				ERenderingMapSlot::Normal);
+			m_Shader->UploadInt("u_Normal", ERenderingMapSlot::Normal);
 		}
 
 		//#TODO: add more.

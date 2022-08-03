@@ -121,7 +121,7 @@ namespace Dindi
 			if(app.GetApplicationState() == EApplicationState::EDITOR)
 				for (uint32_t x = 0; x < lights.size(); x++)
 				{
-					uint32_t flags = (Debug::EDebugRenderFlags::WIREFRAME | Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
+					uint32_t flags = (Debug::EDebugRenderFlags::WIREFRAME);
 					Debug::DebugRenderer::Draw(Debug::EDebugShape::CUBE, lights[x].GetPosition(), lights[x].GetColor(), 0.25f, flags);
 				}
 		

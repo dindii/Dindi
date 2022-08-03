@@ -64,8 +64,6 @@ namespace Dindi
 
 		dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent Event) -> bool
 		{
-
-#ifdef DINDI_DEBUG
 			switch (Event.GetKeyCode())
 			{
 				case DND_KEY_ESCAPE:
@@ -93,7 +91,6 @@ namespace Dindi
 
 					return true;
 				}   break;
-#endif
 				default:
 					return false;
 			}
@@ -137,6 +134,7 @@ namespace Dindi
 
 	float Application::GetTime() const
 	{
+		//#TODO - Move to a Timer function class.
 		return m_ApplicationWindow->GetTime();
 	}
 

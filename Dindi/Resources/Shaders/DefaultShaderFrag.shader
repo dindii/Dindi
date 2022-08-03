@@ -77,6 +77,7 @@ void main()
 		vec3 diffuseWithAttenuation  = diffuse  * attenuation;
 		vec3 specularWithAttenuation = specular * attenuation;
 
+
 		temporaryResult += vec3(ambientWithAttenuation + diffuseWithAttenuation) + vec3(specularColor * specularWithAttenuation);
 	}
 

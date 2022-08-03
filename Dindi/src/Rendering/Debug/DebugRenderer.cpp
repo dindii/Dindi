@@ -67,6 +67,7 @@ namespace Dindi
 		}
 
 		//#TODO: Add render flags here. Like, if it is wireframe, opaque, if we are going to do depth test (to overlay geometry) or not etc.
+#ifdef DINDI_DEBUG
 		void DebugRenderer::Draw(EDebugShape shape, vec3& pos, vec3& color, float size, uint32_t flags)
 		{
 			bool wireframeMode = flags & EDebugRenderFlags::WIREFRAME;
@@ -95,5 +96,6 @@ namespace Dindi
 			DND_INTERNAL::LowLevelRenderer::SetWireframeMode(false);
 			DND_INTERNAL::LowLevelRenderer::SetOverlay(false);
 		}
+#endif
 	}
 }

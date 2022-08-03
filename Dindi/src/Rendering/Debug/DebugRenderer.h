@@ -33,7 +33,7 @@ namespace Dindi
 #ifdef DINDI_DEBUG
 			static void Draw(EDebugShape shape, vec3& pos, vec3& color, float size, uint32_t flags = EDebugRenderFlags::DEFAULT);
 #else
-			static void Draw(DebugShape shape, vec3& pos, vec3& color, float size, uint32_t flags = DebugRenderFlags::DEFAULT) {};
+			static void Draw(EDebugShape shape, vec3& pos, vec3& color, float size, uint32_t flags = EDebugRenderFlags::DEFAULT) {};
 #endif
 		private:
 			static Model* m_DebugShapes[Debug::EDebugShape::MAX];

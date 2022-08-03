@@ -96,10 +96,9 @@ namespace Dindi
 	
 	float Window::GetAspectRatio() const
 	{
+		//#WARNING This is kinda dumb because of precision issues (that I don't think we will have), please get a better way of doing this.
 		if (m_AspectRatio == 1.0f)
-		{
 			return (float)m_Width / (float)m_Height;
-		}
 
 		return m_AspectRatio;
 	}

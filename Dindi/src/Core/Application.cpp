@@ -140,7 +140,7 @@ namespace Dindi
 
 	void Application::LightUIInspector()
 	{
-		static constexpr int maxLightLabelSize = 50;
+		static constexpr int maxLightLabelSize = 128;
 		ImGui::Begin("Scene Lights");
 
 		for (int x = 0; x < m_ActiveScene->GetLights().size(); x++)
@@ -202,6 +202,7 @@ namespace Dindi
 				{
 					std::string path = FileDialog::OpenFile(".obj\0\0");
 					Model* newModel = new Model(path, vec3(0.0f, 0.0f, 0.0f), 1.0f);
+
 					if (newModel)
 						m_ActiveScene->AddEntity(newModel);
 					else

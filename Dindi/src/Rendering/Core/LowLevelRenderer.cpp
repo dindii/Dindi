@@ -94,34 +94,38 @@ namespace Dindi
 			glBindBuffer(GL_UNIFORM_BUFFER, PersistentData.handle);
 			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PersistentData.data), &PersistentData.data);
 
-			for (int32_t x = 0; x < scene->GetEntities().size(); x++)
+			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
-				//#TODO: It would have another For loop here to iterate the meshes of a model
-
 				Model* model = scene->GetEntities()[x];
 
-				glBindVertexArray(model->GetMesh()->GetVertexArrayObjectID());
-				glBindBuffer(GL_ARRAY_BUFFER, model->GetMesh()->GetVertexBufferObjectID());
+				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); x++)
+				{
+					//#TODO: It would have another For loop here to iterate the meshes of a model
 
-				Material* material = model->GetMaterial();
-				material->Bind();
-				
-				Mesh* mesh = model->GetMesh();
-				
-				mat4 modelTransform;
-				modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale({ model->GetScale() });
-				material->GetShader()->UploadUniformMat4("u_Transform", modelTransform);
+					Mesh* mesh = model->GetMeshes()[y];
 
-				//#TODO: Please, let's use elements to draw.
-				glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
+					glBindVertexArray(mesh->GetVertexArrayObjectID());
+					glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferObjectID());
+
+					Material* material = mesh->GetMaterial();
+					material->Bind();
+					
+					mat4 modelTransform;
+					modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale({ model->GetScale() });
+					
+					material->GetShader()->UploadUniformMat4("u_Transform", modelTransform);
+
+					//#TODO: Please, let's use elements to draw.
+					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
+				}
 			}
 
-//DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
+            //DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
 			//Draw cubes in light positions to debug.
 			if(app.GetApplicationState() == EApplicationState::EDITOR)
 				for (uint32_t x = 0; x < lights.size(); x++)
 				{
-					uint32_t flags = (Debug::EDebugRenderFlags::WIREFRAME);
+					uint32_t flags = (Debug::EDebugRenderFlags::WIREFRAME) | (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
 					Debug::DebugRenderer::Draw(Debug::EDebugShape::CUBE, lights[x].GetPosition(), lights[x].GetColor(), 0.25f, flags);
 				}
 		

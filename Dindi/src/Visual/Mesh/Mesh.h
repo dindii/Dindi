@@ -2,6 +2,7 @@
 #include "Rendering/Object/Renderable.h"
 #include "Math/vec2.h"
 #include "Rendering/Texture/Texture2D.h"
+#include "Visual/Material/Material.h"
 
 namespace Dindi
 {
@@ -10,8 +11,11 @@ namespace Dindi
 	class Mesh : public Renderable
 	{
 	public:
-		Mesh() : m_Material(nullptr) {};
-		Mesh(std::vector<vec3>&& vertices) noexcept;
+		Mesh(std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER);
+		Mesh(std::vector<vec3>&& vertices, std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER) noexcept;
+		Mesh(Material* material);
+		
+		~Mesh();
 
 		inline uint32_t GetVertexCount() const { return (uint32_t)m_VertexPositions.size(); }
 
@@ -20,6 +24,8 @@ namespace Dindi
 		void SetTextureCoordData  (std::vector<vec2>&& textureCoordData) noexcept { m_TextureCoord = textureCoordData; }
 
 		inline Material* GetMaterial() { return m_Material; }
+
+		//#TODO: SetMaterial
 
 		void RegisterData();
 	private:

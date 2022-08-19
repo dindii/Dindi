@@ -184,6 +184,7 @@
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
     <ClInclude Include="src\Utils\FileDialog.h" />
+    <ClInclude Include="src\Utils\DNDAssert.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">

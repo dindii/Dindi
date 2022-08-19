@@ -1,12 +1,13 @@
 #include "Dindipch.h"
 #include "Model.h"
 #include "Utils/ModelLoader.h"
+#include "Utils/DNDAssert.h"
 
 namespace Dindi
 {
 	//I will not take meshPath by reference because we can just use the root asset path macro with the actual asset file easier this way.
 	//No difference between RESOURCES_PATH + std::string(path) and  RESOURCES_PATH path, the later we can have more simplicity.
-	Model::Model(std::string meshPath, const vec3& modelPosition, const float modelScale, std::string vertexPath, std::string fragmentPath) :
+	Model::Model(std::string meshPath, const vec3& modelPosition, const float modelScale) :
 		m_Position(modelPosition), m_Scale(modelScale)
 	{								   
 		//#NOTE: Not sure if I want to allocate memory here but RAII would mess me up.
@@ -20,20 +21,22 @@ namespace Dindi
 		//So by default, we will just create materials with the default shaders and using the textures of the model
 
 		//Register loaded data layout. (Vertex positions, normals, texture coords etc on the shader.
-		m_Mesh->RegisterData();
-	}
-
-	Model::Model(std::vector<vec3>& vertex, std::string vertexPath, std::string fragmentPath) : m_Scale(1.0f)
-	{
-		m_Mesh = new Mesh(std::move(vertex));
-		m_Material = new Material(vertexPath, fragmentPath);
-		m_Mesh->RegisterData();
+		for (uint32_t x = 0; x < m_Mesh.size(); x++)
+		{
+			DND_ASSERT(m_Mesh[x], "The mesh is invalid, but we just created the mesh, check this!");
+			
+			if(m_Mesh[x])
+				m_Mesh[x]->RegisterData();
+		}
 	}
 
 	Model::~Model()
 	{
-		delete m_Mesh;
-		delete m_Material;
+		for (uint32_t x = 0; x < m_Mesh.size(); x++)
+		{
+			if (m_Mesh[x])
+				delete m_Mesh[x];
+		}
 	}
 
 }

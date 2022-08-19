@@ -60,8 +60,12 @@ namespace Dindi
 
 			memcpy(&cubeVertices[0], cubeVerticesArray, cubeNumVertices * sizeof(vec3));
 
-			//m_DebugShapes[EDebugShape::CUBE] = new Model(cubeVertices, RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderVert.shader", RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderFrag.shader");
-			m_DebugShapes[EDebugShape::CUBE] = new Model(cubeVertices, RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderVert.shader", RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderFrag.shader"); 
+			Model* temporaryCubeModel = new Model();
+			Mesh*  debugMesh = new Mesh(std::move(cubeVertices), RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderVert.shader", RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderFrag.shader");
+			
+			temporaryCubeModel->AddMesh(debugMesh);
+
+			m_DebugShapes[EDebugShape::CUBE] = temporaryCubeModel;
 			//CUBE --------------------------------------------------------
 
 		}
@@ -73,16 +77,18 @@ namespace Dindi
 			bool wireframeMode = flags & EDebugRenderFlags::WIREFRAME;
 			bool overlayMode   = flags & EDebugRenderFlags::NO_DEPTH_TESTING;
 
-			Mesh* mesh = m_DebugShapes[shape]->GetMesh();
+			//Usually, each Debug model will only have 01 mesh. This is more for primitives, like spheres, cubes, triangles etc...
+			//#NOTE: If you need more complex debug models with more meshes, you can easily expand this with a for loop or so.
+			Mesh* mesh = m_DebugShapes[shape]->GetMeshes()[0];
 
-			m_DebugShapes[shape]->GetMaterial()->Bind();
-			m_DebugShapes[shape]->GetMaterial()->GetShader()->UploadUniformFloat3("u_Color", color);
+			mesh->GetMaterial()->Bind();
+			mesh->GetMaterial()->GetShader()->UploadUniformFloat3("u_Color", color);
 
 			mat4 transform;
 			transform *= transform.Translate(pos);
 			transform *= transform.Scale(size);
 			
-			m_DebugShapes[shape]->GetMaterial()->GetShader()->UploadUniformMat4("u_Transform", transform);
+			mesh->GetMaterial()->GetShader()->UploadUniformMat4("u_Transform", transform);
 
 			glBindVertexArray(            mesh->GetVertexArrayObjectID());
 			glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferObjectID());

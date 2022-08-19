@@ -26,7 +26,7 @@ namespace Dindi
 		if (level == Level::DND_FATAL)
 		{
 			Flush();
-			DND_ASSERT(false);
+			__debugbreak();
 		}
 	}
 }

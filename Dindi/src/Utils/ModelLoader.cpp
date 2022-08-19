@@ -58,8 +58,12 @@ namespace Dindi
 		const std::vector<tinyobj::shape_t>& shapes = loader.GetShapes();
 		const std::vector<tinyobj::material_t>& materials = loader.GetMaterials();
 
+		std::vector<Mesh*>& meshToFill = modelToFill.GetMeshes();
+		
 		for (size_t s = 0; s < shapes.size(); s++)
 		{
+			meshToFill.emplace_back(new Mesh());
+
 			std::vector<vec3> temporaryVertexPositions;
 			std::vector<vec3> temporaryNormals;
 			std::vector<vec2> temporaryTextureCoords;
@@ -109,8 +113,7 @@ namespace Dindi
 				// per-face material
 				//shapes[s].mesh.material_ids[f];
 			}
-	
-			std::vector<Mesh*> meshToFill = modelToFill.GetMeshes();
+
 
 			meshToFill[s]->SetVertexPositionData(std::move(temporaryVertexPositions));
 			meshToFill[s]->SetNormalData        (std::move(temporaryNormals));

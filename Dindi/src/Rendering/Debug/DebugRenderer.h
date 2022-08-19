@@ -3,7 +3,7 @@
 #include "Visual/Model/Model.h"
 
 //#IMPORTANT: - Use it only for debugging purposes!
-//This debug renderer is not meant to be fast but flexible and immediate. It will submit a draw call everytime you call "Draw()"
+//This debug renderer is not meant to be fast but flexible and immediate. It will issue a draw call everytime you call "Draw()"
 //as well as upload some uniforms. Keep in mind that this must be only used in debug mode and it will be stripped in other build types.
 
 namespace Dindi

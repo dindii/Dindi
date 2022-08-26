@@ -21,6 +21,8 @@ namespace Dindi
 
 		GLenum internalFormat = 0, dataFormat = 0;
 
+		stbi_set_flip_vertically_on_load(true);
+
 		switch (channels)
 		{
 		case 1:

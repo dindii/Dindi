@@ -25,7 +25,7 @@ namespace Dindi
 
 		inline Material* GetMaterial() { return m_Material; }
 
-		//#TODO: SetMaterial
+		inline void SetMaterial(Material* mat) { m_Material = mat; }
 
 		void RegisterData();
 	private:

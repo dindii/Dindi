@@ -46,6 +46,9 @@ namespace Dindi
 			//debug
 			SetClearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
 
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 			//Backface culling.
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);
@@ -94,11 +97,12 @@ namespace Dindi
 			glBindBuffer(GL_UNIFORM_BUFFER, PersistentData.handle);
 			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PersistentData.data), &PersistentData.data);
 
+#if 1
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
 				Model* model = scene->GetEntities()[x];
 
-				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); x++)
+				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
 				{
 					//#TODO: It would have another For loop here to iterate the meshes of a model
 
@@ -119,7 +123,7 @@ namespace Dindi
 					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 				}
 			}
-
+#endif
             //DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
 			//Draw cubes in light positions to debug.
 			if(app.GetApplicationState() == EApplicationState::EDITOR)

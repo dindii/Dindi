@@ -30,7 +30,6 @@ layout(std140, binding = 1) uniform ConstantData
 	PointLight c_Lights[DND_MAX_LIGHTS];
 };
 
-
 void main()
 {
 	//outColor = vec4(sin(v_Time), 0.0f, cos(v_Time), 1.0f);
@@ -73,9 +72,13 @@ void main()
 		float distance = length(lightPos - v_FragPos);
 		float attenuation = 1.0f / (lightConstantAttenuation + lightLinearAttenuation * distance + lightQuadraticAttenuation * (distance * distance));
 
-		vec3 ambientWithAttenuation  = ambient  * attenuation;
-		vec3 diffuseWithAttenuation  = diffuse  * attenuation;
-		vec3 specularWithAttenuation = specular * attenuation;
+		//vec3 ambientWithAttenuation  = ambient  * attenuation;
+		//vec3 diffuseWithAttenuation  = diffuse  * attenuation;
+		//vec3 specularWithAttenuation = specular * attenuation;
+
+		vec3 ambientWithAttenuation  = ambient  * 1;
+		vec3 diffuseWithAttenuation  = diffuse  * 1;
+		vec3 specularWithAttenuation = specular * 1;
 
 
 		temporaryResult += vec3(ambientWithAttenuation + diffuseWithAttenuation) + vec3(specularColor * specularWithAttenuation);

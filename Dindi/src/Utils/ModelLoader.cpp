@@ -6,6 +6,8 @@
 #define TINYOBJLOADER_IMPLEMENTATION 1
 #include "../vendor/tinyobjloader/tiny_obj_loader.h"
 
+#include <unordered_map>
+
 namespace Dindi
 {
 	bool ModelLoader::Load(std::string filepath, Model& modelToFill)
@@ -58,9 +60,11 @@ namespace Dindi
 		const std::vector<tinyobj::shape_t>& shapes = loader.GetShapes();
 		const std::vector<tinyobj::material_t>& materials = loader.GetMaterials();
 
+		std::unordered_map<uint32_t, Material*> meshMaterial;
+
 		std::vector<Mesh*>& meshToFill = modelToFill.GetMeshes();
 		
-		for (size_t s = 0; s < shapes.size(); s++)
+		for (size_t shapeIndex = 0; shapeIndex < shapes.size(); shapeIndex++)
 		{
 			meshToFill.emplace_back(new Mesh());
 
@@ -68,17 +72,17 @@ namespace Dindi
 			std::vector<vec3> temporaryNormals;
 			std::vector<vec2> temporaryTextureCoords;
 
-			// Loop over faces(polygon)
 			size_t index_offset = 0;
-			for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
+			// Loop over faces(polygon)
+			for (size_t f = 0; f < shapes[shapeIndex].mesh.num_face_vertices.size(); f++)
 			{
-				size_t fv = size_t(shapes[s].mesh.num_face_vertices[f]);
+				size_t fv = size_t(shapes[shapeIndex].mesh.num_face_vertices[f]);
 
 				// Loop over vertices in the face.
 				for (size_t v = 0; v < fv; v++)
 				{
 					// access to vertex
-					tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+					tinyobj::index_t idx = shapes[shapeIndex].mesh.indices[index_offset + v];
 
 					//No indices support yet
 					//m_Indices.emplace_back(idx.vertex_index);
@@ -108,49 +112,52 @@ namespace Dindi
 						temporaryTextureCoords.emplace_back(tx, ty);
 					}
 				}
-				index_offset += fv;
 
-				// per-face material
-				//shapes[s].mesh.material_ids[f];
+				index_offset += fv;
 			}
 
-
-			meshToFill[s]->SetVertexPositionData(std::move(temporaryVertexPositions));
-			meshToFill[s]->SetNormalData        (std::move(temporaryNormals));
-			meshToFill[s]->SetTextureCoordData  (std::move(temporaryTextureCoords));
-
-			//#TODO: Make this dynamic, please. It is hardcoded for now. (the [0] of GetMaterials() part)
+			meshToFill[shapeIndex]->SetVertexPositionData(std::move(temporaryVertexPositions));
+			meshToFill[shapeIndex]->SetNormalData        (std::move(temporaryNormals));
+			meshToFill[shapeIndex]->SetTextureCoordData  (std::move(temporaryTextureCoords));
 
 			Texture2D *temporaryDiffuse = nullptr, *temporarySpecular = nullptr, *temporaryNormal = nullptr;
 
 			std::string dirPrefix = directory + "\\";
-
+#if 1
 			if (loader.GetMaterials().size())
 			{
-				if (loader.GetMaterials()[s].diffuse_texname.size())
-					temporaryDiffuse = new Texture2D(dirPrefix + loader.GetMaterials()[s].diffuse_texname);
+				if (!meshMaterial[shapes[shapeIndex].mesh.material_ids[0]])
+				{
+					//Material* auxMaterial = new Material();
 
-				if (loader.GetMaterials()[s].specular_texname.size())
-					temporarySpecular = new Texture2D(dirPrefix + loader.GetMaterials()[s].specular_texname);
-
-				//#TODO Probably i'm loading normal maps twice, one as texture and another as attributes, fix this later. Or find a way
-				//to detect if we have attributes but not maps and make it use only attributes.
-				if (loader.GetMaterials()[s].bump_texname.size())
-					temporaryNormal = new Texture2D(dirPrefix + loader.GetMaterials()[s].bump_texname);
+					if (loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].diffuse_texname.size())
+					{
+						temporaryDiffuse = new Texture2D(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].diffuse_texname);
+						meshToFill[shapeIndex]->GetMaterial()->SetDiffuseMap(temporaryDiffuse);
+					}
+	
+					if (loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].specular_texname.size())
+					{
+						temporarySpecular = new Texture2D(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].specular_texname);
+						meshToFill[shapeIndex]->GetMaterial()->SetSpecularMap(temporarySpecular);
+					}
+	
+					//#TODO Probably i'm loading normal maps twice, one as texture and another as attributes, fix this later. Or find a way
+					//to detect if we have attributes but not maps and make it use only attributes.
+					if (loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].bump_texname.size())
+					{
+						temporaryNormal = new Texture2D(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].bump_texname);
+						meshToFill[shapeIndex]->GetMaterial()->SetNormalMap(temporaryNormal);
+					}
+				
+					meshMaterial[shapes[shapeIndex].mesh.material_ids[0]] = meshToFill[shapeIndex]->GetMaterial();
+				}
+				else
+				{
+					meshToFill[shapeIndex]->SetMaterial(meshMaterial[shapes[shapeIndex].mesh.material_ids[0]]);
+				}
 			}
-			
-			Material* materialToFill;
-			materialToFill = modelToFill.GetMeshes()[s]->GetMaterial();
-
-			//Pass the ownership of the texture pointers to the material.
-			if(temporaryDiffuse)
-				materialToFill->SetDiffuseMap(temporaryDiffuse);
-			
-			if(temporarySpecular)
-				materialToFill->SetSpecularMap(temporarySpecular);
-			
-			if(temporaryNormal)
-				materialToFill->SetNormalMap(temporaryNormal);
+#endif
 		}
 
 		return true;

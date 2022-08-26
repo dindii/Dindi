@@ -20,6 +20,7 @@ namespace Dindi
 		//If the user want to assign a different material/shader to a mesh, it can simply use some sort of SetMaterial() function
 		//So by default, we will just create materials with the default shaders and using the textures of the model
 
+		//#TODO:Use the RegisterData on the low level rendering and inside itself.
 		//Register loaded data layout. (Vertex positions, normals, texture coords etc on the shader.
 		for (uint32_t x = 0; x < m_Mesh.size(); x++)
 		{

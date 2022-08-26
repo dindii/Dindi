@@ -18,6 +18,9 @@ namespace Dindi
 	{
 		m_Material = new Material(vertexPath, fragmentPath);
 		m_VertexPositions = vertices;
+		
+		//In this case, probably we are not being created by a Model but by ourselves.
+		RegisterData();
 	}
 	
 	Mesh::~Mesh()

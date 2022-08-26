@@ -20,6 +20,7 @@ namespace Dindi
 	//more data inside vertex attributes
 	void Renderable::RegisterMeshData(std::vector<vec3>& vertexPositions, std::vector<vec3>& vertexNormals, std::vector<vec2>& textCoords)
 	{
+		glBindVertexArray(m_VertexArrayObjectID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferObjectID);
 
 		size_t bufferSize = sizeof(vec3) * vertexPositions.size() + sizeof(vec3) * vertexNormals.size() + sizeof(vec2) * textCoords.size();

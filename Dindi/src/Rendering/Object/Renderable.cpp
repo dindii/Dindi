@@ -18,6 +18,7 @@ namespace Dindi
 
 	//This is a way to abstract away opengl buffers from the actual mesh data, this may get more complex if we need
 	//more data inside vertex attributes
+	//#TODO: Move this to a register function inside LowLevelRenderer with arbitrary num of arguments of arbitrary types.
 	void Renderable::RegisterMeshData(std::vector<vec3>& vertexPositions, std::vector<vec3>& vertexNormals, std::vector<vec2>& textCoords)
 	{
 		glBindVertexArray(m_VertexArrayObjectID);

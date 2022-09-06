@@ -132,21 +132,21 @@ namespace Dindi
 
 					if (loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].diffuse_texname.size())
 					{
-						temporaryDiffuse = new Texture2D(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].diffuse_texname);
+						temporaryDiffuse = Texture2D::Load(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].diffuse_texname);
 						meshToFill[shapeIndex]->GetMaterial()->SetDiffuseMap(temporaryDiffuse);
 					}
 	
 					if (loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].specular_texname.size())
 					{
-						temporarySpecular = new Texture2D(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].specular_texname);
+						temporarySpecular = Texture2D::Load(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].specular_texname);
 						meshToFill[shapeIndex]->GetMaterial()->SetSpecularMap(temporarySpecular);
 					}
 	
-					//#TODO Probably i'm loading normal maps twice, one as texture and another as attributes, fix this later. Or find a way
+					//#TODO Probably I'm loading normal maps twice, one as texture and another as attributes, fix this later. Or find a way
 					//to detect if we have attributes but not maps and make it use only attributes.
 					if (loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].bump_texname.size())
 					{
-						temporaryNormal = new Texture2D(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].bump_texname);
+						temporaryNormal = Texture2D::Load(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].bump_texname);
 						meshToFill[shapeIndex]->GetMaterial()->SetNormalMap(temporaryNormal);
 					}
 				

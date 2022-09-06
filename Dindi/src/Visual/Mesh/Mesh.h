@@ -28,6 +28,8 @@ namespace Dindi
 		inline void SetMaterial(Material* mat) { m_Material = mat; }
 
 		void RegisterData();
+
+		//#NOTE: Like, this is not meant to be a game engine, but It would nice to setup some sort of residency rule to deallocate stuff from gpu memory when it needs
 	private:
 		std::vector<uint32_t> m_Indices;
 		std::vector<vec3>     m_VertexPositions;

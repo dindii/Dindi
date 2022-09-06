@@ -185,6 +185,7 @@
     </ClInclude>
     <ClInclude Include="src\Utils\FileDialog.h" />
     <ClInclude Include="src\Utils\DNDAssert.h" />
+    <ClInclude Include="src\Utils\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -272,6 +273,7 @@
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
     <ClCompile Include="src\Utils\FileDialog.cpp" />
+    <ClCompile Include="src\Utils\AssetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Debug\DebugShaderFrag.shader" />

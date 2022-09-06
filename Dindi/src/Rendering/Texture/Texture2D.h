@@ -8,7 +8,7 @@ namespace Dindi
 	class Texture2D
 	{
 	public:
-		Texture2D(const std::string& path);
+		static Texture2D* Load(const std::string& path);
 		Texture2D(const uint8_t* data, const uint32_t width, const uint32_t height, const uint32_t channels = 4);
 		Texture2D();
 
@@ -25,6 +25,7 @@ namespace Dindi
 		bool operator!() { return m_RendererID == 0 || m_RendererID < 0; }
 		bool operator==(const Texture2D& other) const { return (this->m_RendererID == other.GetID()); };
 	private:
+		Texture2D(const std::string& path);
 		void LoadTextureFromData(const uint8_t* data, const uint32_t width, const uint32_t height, const uint32_t channels);
 
 	private:

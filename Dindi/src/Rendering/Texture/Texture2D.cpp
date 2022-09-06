@@ -4,16 +4,32 @@
 #include <stbi/stb_image.h>
 #include <glad/glad.h>
 #include "Utils/Logger.h"
+#include "Utils/AssetManager.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stbi/stb_image.h"
 
 namespace Dindi
 {
+
+	Texture2D* Texture2D::Load(const std::string& path)
+	{
+		Texture2D* texture = AssetManager::Get<Texture2D>(path);
+
+		if (!texture)
+		{
+			texture = new Texture2D(path);
+			AssetManager::Add<Texture2D>(path, texture);
+		}
+
+		return texture;
+	}
+
 	Texture2D::Texture2D() : m_Width(0), m_Height(0), m_InternalFormat(0), m_DataFormat(0), m_RendererID(0)
 	{
 	}
 
+	//#TODO: We have to split this function. We may want to upload data to the GPU later and not necessarily when it is created.
 	void Texture2D::LoadTextureFromData(const uint8_t* data, const uint32_t width, const uint32_t height, const uint32_t channels)
 	{
 		m_Width = width;

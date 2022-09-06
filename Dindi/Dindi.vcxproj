@@ -153,6 +153,7 @@
     <ClInclude Include="src\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Rendering\Shader\ShaderHotReloader.h" />
     <ClInclude Include="src\Rendering\Texture\Texture2D.h" />
+    <ClInclude Include="src\Utils\AssetManager.h" />
     <ClInclude Include="src\Utils\DeltaTime.h" />
     <ClInclude Include="src\Utils\DNDAssert.h" />
     <ClInclude Include="src\Utils\FileDialog.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="src\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Rendering\Shader\ShaderHotReloader.cpp" />
     <ClCompile Include="src\Rendering\Texture\Texture2D.cpp" />
+    <ClCompile Include="src\Utils\AssetManager.cpp" />
     <ClCompile Include="src\Utils\DeltaTime.cpp" />
     <ClCompile Include="src\Utils\FileDialog.cpp" />
     <ClCompile Include="src\Utils\Logger.cpp" />

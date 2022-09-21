@@ -32,9 +32,6 @@ layout(std140, binding = 1) uniform ConstantData
 
 void main()
 {
-	//outColor = vec4(sin(v_Time), 0.0f, cos(v_Time), 1.0f);
-	//outColor = texture(u_Diffuse, v_TexCoord) * vec4(sin(c_Time), 0.5f, cos(c_Time), 1.0f);
-
 	float lightConstantAttenuation  = 1.0f;
 	float lightLinearAttenuation    = 0.09f;
 	float lightQuadraticAttenuation = 0.032f;

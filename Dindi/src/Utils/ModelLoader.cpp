@@ -14,7 +14,7 @@ namespace Dindi
 	{
 		if (std::filesystem::path(filepath).extension() == ".obj")
 			return LoadOBJ(filepath, modelToFill);
-        
+
 		DND_LOG_ERROR("This type of file is not supported!");
 		return false;
 	}
@@ -26,7 +26,7 @@ namespace Dindi
 		//Quick workaround for the .mtl directory (this current one)
 		std::string directory;
 		const size_t last_slash_idx = filepath.rfind('/');
-		
+
 		if (std::string::npos != last_slash_idx)
 		{
 			directory = filepath.substr(0, last_slash_idx);
@@ -35,7 +35,7 @@ namespace Dindi
 		{
 			const size_t last_backslash_idx = filepath.rfind('\\');
 
-			if(std::string::npos != last_backslash_idx)
+			if (std::string::npos != last_backslash_idx)
 				directory = filepath.substr(0, last_backslash_idx);
 		}
 
@@ -47,7 +47,7 @@ namespace Dindi
 		{
 			if (!loader.Error().empty())
 				DND_LOG_ERROR("Failed to load .OBJ file: ", loader.Error());
-			
+
 			return false;
 		}
 
@@ -63,7 +63,7 @@ namespace Dindi
 		std::unordered_map<uint32_t, Material*> meshMaterial;
 
 		std::vector<Mesh*>& meshToFill = modelToFill.GetMeshes();
-		
+
 		for (size_t shapeIndex = 0; shapeIndex < shapes.size(); shapeIndex++)
 		{
 			meshToFill.emplace_back(new Mesh());
@@ -73,6 +73,7 @@ namespace Dindi
 			std::vector<vec2> temporaryTextureCoords;
 
 			size_t index_offset = 0;
+
 			// Loop over faces(polygon)
 			for (size_t f = 0; f < shapes[shapeIndex].mesh.num_face_vertices.size(); f++)
 			{
@@ -117,47 +118,36 @@ namespace Dindi
 			}
 
 			meshToFill[shapeIndex]->SetVertexPositionData(std::move(temporaryVertexPositions));
-			meshToFill[shapeIndex]->SetNormalData        (std::move(temporaryNormals));
-			meshToFill[shapeIndex]->SetTextureCoordData  (std::move(temporaryTextureCoords));
+			meshToFill[shapeIndex]->SetNormalData(std::move(temporaryNormals));
+			meshToFill[shapeIndex]->SetTextureCoordData(std::move(temporaryTextureCoords));
 
 			Texture2D *temporaryDiffuse = nullptr, *temporarySpecular = nullptr, *temporaryNormal = nullptr;
 
 			std::string dirPrefix = directory + "\\";
-#if 1
+
+			const tinyobj::material_t& meshMaterial = loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]];
+
 			if (loader.GetMaterials().size())
 			{
-				if (!meshMaterial[shapes[shapeIndex].mesh.material_ids[0]])
+				if (!meshMaterial.diffuse_texname.empty())
 				{
-					//Material* auxMaterial = new Material();
+					temporaryDiffuse = Texture2D::Load(dirPrefix + meshMaterial.diffuse_texname);
+					meshToFill[shapeIndex]->GetMaterial()->SetDiffuseMap(temporaryDiffuse);
+				}
 
-					if (loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].diffuse_texname.size())
-					{
-						temporaryDiffuse = Texture2D::Load(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].diffuse_texname);
-						meshToFill[shapeIndex]->GetMaterial()->SetDiffuseMap(temporaryDiffuse);
-					}
-	
-					if (loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].specular_texname.size())
-					{
-						temporarySpecular = Texture2D::Load(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].specular_texname);
-						meshToFill[shapeIndex]->GetMaterial()->SetSpecularMap(temporarySpecular);
-					}
-	
-					//#TODO Probably I'm loading normal maps twice, one as texture and another as attributes, fix this later. Or find a way
-					//to detect if we have attributes but not maps and make it use only attributes.
-					if (loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].bump_texname.size())
-					{
-						temporaryNormal = Texture2D::Load(dirPrefix + loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]].bump_texname);
-						meshToFill[shapeIndex]->GetMaterial()->SetNormalMap(temporaryNormal);
-					}
-				
-					meshMaterial[shapes[shapeIndex].mesh.material_ids[0]] = meshToFill[shapeIndex]->GetMaterial();
-				}
-				else
+				if (!meshMaterial.specular_texname.empty())
 				{
-					meshToFill[shapeIndex]->SetMaterial(meshMaterial[shapes[shapeIndex].mesh.material_ids[0]]);
+					temporarySpecular = Texture2D::Load(dirPrefix + meshMaterial.specular_texname);
+					meshToFill[shapeIndex]->GetMaterial()->SetSpecularMap(temporarySpecular);
 				}
+
+				if (!meshMaterial.bump_texname.empty())
+				{
+					temporaryNormal = Texture2D::Load(dirPrefix + meshMaterial.bump_texname);
+					meshToFill[shapeIndex]->GetMaterial()->SetNormalMap(temporaryNormal);
+				}
+
 			}
-#endif
 		}
 
 		return true;

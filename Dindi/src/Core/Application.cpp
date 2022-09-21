@@ -143,6 +143,14 @@ namespace Dindi
 	{
 		static constexpr int maxLightLabelSize = 128;
 
+		vec2 windowSize = { (float)m_ApplicationWindow->GetWidth(), (float)m_ApplicationWindow->GetHeight() };
+		
+		//So we can draw our inspector right after the menu bar
+		float menuBarHeight = 22.0f;
+
+		ImGui::SetNextWindowPos({  windowSize.x * 0.85f, 22.0f });
+		ImGui::SetNextWindowSize({ windowSize.x * 0.15f, windowSize.y });
+
 		ImGui::Begin("Scene Lights");
 		
 		for (int x = 0; x < m_ActiveScene->GetLights().size(); x++)

@@ -166,6 +166,7 @@
     <ClInclude Include="src\Visual\Model\Primitives\Cube.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="vendor\imgui\styles\ImguiCustomStyle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp" />

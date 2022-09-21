@@ -138,11 +138,13 @@ namespace Dindi
 		return m_ApplicationWindow->GetTime();
 	}
 
+	//#TODO - MOVE THIS TO A SEPARATED UI LAYER.
 	void Application::LightUIInspector()
 	{
 		static constexpr int maxLightLabelSize = 128;
-		ImGui::Begin("Scene Lights");
 
+		ImGui::Begin("Scene Lights");
+		
 		for (int x = 0; x < m_ActiveScene->GetLights().size(); x++)
 		{
 			PointLight& light0 = m_ActiveScene->GetLights()[x];
@@ -150,9 +152,9 @@ namespace Dindi
 			float pos[3] = { light0.GetPosition().x, light0.GetPosition().y, light0.GetPosition().z };
 			float color[3] = { light0.GetColor().x, light0.GetColor().y, light0.GetColor().z };
 
-			char lightLabel[maxLightLabelSize] = "Light Position ";
-			char lightColorLabel[maxLightLabelSize] = "Light Color ";
-			char lightRemoveLabel[maxLightLabelSize] = "Remove Light ";
+			char lightLabel[maxLightLabelSize] = "Position##";
+			char lightColorLabel[maxLightLabelSize] = "Color##";
+			char lightRemoveLabel[maxLightLabelSize] = "Delete##";
 
 			char number[maxLightLabelSize];
 
@@ -168,12 +170,11 @@ namespace Dindi
 			if (ImGui::SliderFloat3(lightLabel, pos, -50.0f, 50.0f))
 				light0.SetPosition({ pos[0], pos[1], pos[2], 0.0f });
 
-			ImGui::SameLine();
-			if (ImGui::Button(lightRemoveLabel))
-				m_ActiveScene->GetLights().erase(m_ActiveScene->GetLights().begin() + x);
-
 			if (ImGui::ColorEdit3(lightColorLabel, color))
 				light0.SetColor({ color[0], color[1], color[2], 0.0f });
+
+			if (ImGui::Button(lightRemoveLabel))
+				m_ActiveScene->GetLights().erase(m_ActiveScene->GetLights().begin() + x);
 
 			ImGui::NewLine();
 		}

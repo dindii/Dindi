@@ -186,6 +186,7 @@
     <ClInclude Include="src\Utils\FileDialog.h" />
     <ClInclude Include="src\Utils\DNDAssert.h" />
     <ClInclude Include="src\Utils\AssetManager.h" />
+    <ClInclude Include="vendor\imgui\styles\ImguiCustomStyle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">

@@ -17,7 +17,7 @@ namespace Dindi
 
 	public:
 		virtual ~Application();
-		void OnEvent(Event& e);
+		void OnEvent(Event	& e);
 		void Run();
 		void OnUpdate(DeltaTime& dt);
 		inline Window* GetWindow() { return m_ApplicationWindow; }

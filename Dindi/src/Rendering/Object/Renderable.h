@@ -14,7 +14,6 @@ namespace Dindi
 		//TEMPORARY, BEFORE ABSTRACTION
 		Renderable();
 	
-
 		unsigned int virtual GetVertexBufferObjectID() const { return m_VertexBufferObjectID; }
 		unsigned int virtual GetVertexArrayObjectID()  const { return m_VertexArrayObjectID; }
 		unsigned int virtual GetElementsCount() const { return m_Elements; }

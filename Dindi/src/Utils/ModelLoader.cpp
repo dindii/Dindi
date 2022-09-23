@@ -127,6 +127,7 @@ namespace Dindi
 
 			const tinyobj::material_t& meshMaterial = loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]];
 
+#if 0
 			if (loader.GetMaterials().size())
 			{
 				if (!meshMaterial.diffuse_texname.empty())
@@ -146,8 +147,8 @@ namespace Dindi
 					temporaryNormal = Texture2D::Load(dirPrefix + meshMaterial.bump_texname);
 					meshToFill[shapeIndex]->GetMaterial()->SetNormalMap(temporaryNormal);
 				}
-
 			}
+#endif
 		}
 
 		return true;

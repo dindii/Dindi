@@ -12,13 +12,15 @@
 namespace Dindi
 {
 
-	Texture2D* Texture2D::Load(const std::string& path)
+	std::shared_ptr<Texture2D> Texture2D::Load(const std::string& path)
 	{
-		Texture2D* texture = AssetManager::Get<Texture2D>(path);
+		std::shared_ptr<Texture2D> texture = AssetManager::Get<Texture2D>(path);
 
 		if (!texture)
 		{
-			texture = new Texture2D(path);
+			Texture2D* newTex = new Texture2D(path);
+			//texture = std::make_shared<Texture2D>(path);
+			texture.reset(newTex);
 			AssetManager::Add<Texture2D>(path, texture);
 		}
 

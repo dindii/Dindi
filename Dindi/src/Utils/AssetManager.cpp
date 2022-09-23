@@ -3,5 +3,5 @@
 
 namespace Dindi
 {
-	std::unordered_map<std::string, void*> AssetManager::m_AssetsHandles;
+	std::unordered_map<std::string, std::weak_ptr<void>> AssetManager::m_AssetsHandles;
 }

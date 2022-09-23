@@ -6,6 +6,10 @@
 
 #include <Rendering/Debug/DebugRenderer.h>
 
+//DEBUG ASSET MANAGER
+#include <Rendering/Texture/Texture2D.h>
+//#include <Utils/AssetManager.h>
+
 void RasterizerExample::OnAttach()
 {
 	//FROM HERE TO BELOW IS ALL DEBUG STUFF
@@ -19,8 +23,25 @@ void RasterizerExample::OnAttach()
 	SceneOne = new Dindi::Scene();
 	SceneOne->SetActiveCamera(m_DefaultEditorCamera);
 
-	Dindi::Model* model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza\\sponza.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 0.05f);
-	SceneOne->AddEntity(model);
+	//Dindi::Model* model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza\\sponza.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 0.05f);
+	//SceneOne->AddEntity(model);
+
+	{
+		std::shared_ptr<Dindi::Texture2D> tex = Dindi::Texture2D::Load(RESOURCES_PATH "Resources\\Models\\sponza\\lion.png");
+		{
+		
+			std::shared_ptr<Dindi::Texture2D> te1 = Dindi::Texture2D::Load(RESOURCES_PATH "Resources\\Models\\sponza\\lion.png");
+			
+			{
+				std::shared_ptr<Dindi::Texture2D> te2 = Dindi::Texture2D::Load(RESOURCES_PATH "Resources\\Models\\sponza\\lion.png");
+			}
+		
+		}
+	}
+
+
+
+	
 
 	app.SetActiveScene(SceneOne);
 }

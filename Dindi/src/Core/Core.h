@@ -1,7 +1,12 @@
 #pragma once
+
+#include <memory>
+
 //#NOTE: I don't think this will be a bottleneck but we should be aware. Our program is not so event driven, so we are ok.
 //but once this become a bottleneck in the profiler, change this system for a simple pack event system, like the MS one.
-#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
+//#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
+#define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+
 
 #define BIT(x) (1 << x)
 
@@ -33,3 +38,11 @@ enum EApplicationState
 
 //#NOTE: Please, when changing this, also change in the shaders.
 #define DND_MAX_LIGHTS 1000
+
+template<typename T>
+using Ref = std::shared_ptr<T>;
+template<typename T, typename ... Args>
+constexpr Ref<T> CreateRef(Args&& ... args)
+{
+	return std::make_shared<T>(std::forward<Args>(args) ...);
+}

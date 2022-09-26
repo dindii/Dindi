@@ -15,20 +15,20 @@ namespace Dindi
 	{
 		delete m_Shader;
 
-		if (m_diffuseMap)
-			delete m_diffuseMap;
-
-		if (m_specularMap)
-			delete m_specularMap;
-
-		if (m_normalMap)
-			delete m_normalMap;
-
-		if (m_roughnessMap)
-			delete m_roughnessMap;
-
-		if (m_ambientOcclusionMap)
-			delete m_ambientOcclusionMap;
+		//if (m_diffuseMap)
+		//	delete m_diffuseMap;
+		//
+		//if (m_specularMap)
+		//	delete m_specularMap;
+		//
+		//if (m_normalMap)
+		//	delete m_normalMap;
+		//
+		//if (m_roughnessMap)
+		//	delete m_roughnessMap;
+		//
+		//if (m_ambientOcclusionMap)
+		//	delete m_ambientOcclusionMap;
 	}
 
 	void Material::Bind() const
@@ -60,27 +60,27 @@ namespace Dindi
 		//and they all will be uploaded here (from member class data to glsl)
 	}
 
-	void Material::SetDiffuseMap(Texture2D* DiffuseMap)
+	void Material::SetDiffuseMap(Ref<Texture2D> DiffuseMap)
 	{
 		m_diffuseMap = DiffuseMap;
 	}
 
-	void Material::SetNormalMap(Texture2D* NormalMap)
+	void Material::SetNormalMap(Ref<Texture2D> NormalMap)
 	{
 		m_normalMap = NormalMap;
 	}
 
-	void Material::SetRoughnessMap(Texture2D* RoughnessMap)
+	void Material::SetRoughnessMap(Ref<Texture2D> RoughnessMap)
 	{
 		m_roughnessMap = RoughnessMap;
 	}
 
-	void Material::SetSpecularMap(Texture2D* SpecularMap)
+	void Material::SetSpecularMap(Ref<Texture2D> SpecularMap)
 	{
 		m_specularMap = SpecularMap;
 	}
 
-	void Material::SetAmbientOcclusionMap(Texture2D* AmbientOcclusionMap)
+	void Material::SetAmbientOcclusionMap(Ref<Texture2D> AmbientOcclusionMap)
 	{
 		m_ambientOcclusionMap = AmbientOcclusionMap;
 	}

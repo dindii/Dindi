@@ -2,6 +2,7 @@
 #include "Rendering/Shader/Shader.h"
 #include <string>
 #include "Rendering/Texture/Texture2D.h"
+#include <Core/Core.h>
 
 namespace Dindi
 {
@@ -16,20 +17,19 @@ namespace Dindi
 		void Bind() const;
 		inline Shader* GetShader() const { return m_Shader; }
 
-		void SetDiffuseMap         (Texture2D* DiffuseMap);
-		void SetNormalMap          (Texture2D* NormalMap);
-		void SetRoughnessMap       (Texture2D* RoughnessMap);
-		void SetSpecularMap        (Texture2D* SpecularMap);
-		void SetAmbientOcclusionMap(Texture2D* AmbientOcclusionMap);
+		void SetDiffuseMap         (Ref<Texture2D> DiffuseMap);
+		void SetNormalMap          (Ref<Texture2D> NormalMap);
+		void SetRoughnessMap       (Ref<Texture2D> RoughnessMap);
+		void SetSpecularMap        (Ref<Texture2D> SpecularMap);
+		void SetAmbientOcclusionMap(Ref<Texture2D> AmbientOcclusionMap);
 
 	private:
 		Shader* m_Shader;
 
-		Texture2D* m_diffuseMap		     = nullptr;
-		Texture2D* m_normalMap		     = nullptr;
-		Texture2D* m_roughnessMap	     = nullptr;
-		Texture2D* m_specularMap	     = nullptr;
-		Texture2D* m_ambientOcclusionMap = nullptr;
-
+		Ref<Texture2D> m_diffuseMap;
+		Ref<Texture2D> m_normalMap;
+		Ref<Texture2D> m_roughnessMap;
+		Ref<Texture2D> m_specularMap;
+		Ref<Texture2D> m_ambientOcclusionMap;
 	};
 }

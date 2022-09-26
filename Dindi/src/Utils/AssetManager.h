@@ -12,9 +12,6 @@ namespace Dindi
 		template<class T>
 		static std::shared_ptr<T> Get(const std::string& path)
 		{
-			//if (m_AssetsHandles[path])
-				//return std::static_pointer_cast<T>(m_AssetsHandles[path]);
-				
 			if (!m_AssetsHandles[path].expired())
 				return std::static_pointer_cast<T>(m_AssetsHandles[path].lock());
 		

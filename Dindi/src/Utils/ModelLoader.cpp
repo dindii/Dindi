@@ -6,7 +6,10 @@
 #define TINYOBJLOADER_IMPLEMENTATION 1
 #include "../vendor/tinyobjloader/tiny_obj_loader.h"
 
+
 #include <unordered_map>
+
+#include <Core/Core.h>
 
 namespace Dindi
 {
@@ -121,13 +124,13 @@ namespace Dindi
 			meshToFill[shapeIndex]->SetNormalData(std::move(temporaryNormals));
 			meshToFill[shapeIndex]->SetTextureCoordData(std::move(temporaryTextureCoords));
 
-			Texture2D *temporaryDiffuse = nullptr, *temporarySpecular = nullptr, *temporaryNormal = nullptr;
+			Ref<Texture2D> temporaryDiffuse, temporarySpecular, temporaryNormal;
 
 			std::string dirPrefix = directory + "\\";
 
 			const tinyobj::material_t& meshMaterial = loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]];
 
-#if 0
+#if 1
 			if (loader.GetMaterials().size())
 			{
 				if (!meshMaterial.diffuse_texname.empty())

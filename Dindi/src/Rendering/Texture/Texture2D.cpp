@@ -127,13 +127,7 @@ namespace Dindi
 
 	Texture2D::~Texture2D()
 	{
-		if (m_RendererID > 0)
-		{
-			glDeleteTextures(1, &m_RendererID);
-
-			//avoiding RAII problems
-			m_RendererID = -1;
-		}
+		glDeleteTextures(1, &m_RendererID);
 	}
 
 	void Texture2D::SetData(void* data)

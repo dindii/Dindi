@@ -11,10 +11,12 @@
 
 namespace Dindi
 {
+
+#if DINDI_DEBUG
 	std::vector<int64_t> ShaderHotReloader::m_LastTimeEdited;
 	std::vector<Shader*> ShaderHotReloader::m_DirtyShaders;
 	std::vector<Shader*> ShaderHotReloader::m_Shaders;
-
+#endif
 
 	void ShaderHotReloader::Init()
 	{
@@ -30,6 +32,19 @@ namespace Dindi
 	{
 		m_Shaders.emplace_back(&shader);
 		m_LastTimeEdited.emplace_back(LAST_SHADER_WRITE_TIME(shader));
+	}
+
+	void ShaderHotReloader::RemoveShader(Shader& shader)
+	{
+		for (uint32_t i = 0; i < m_Shaders.size(); i++)
+		{
+			if (m_Shaders[i]->GetID() == shader.GetID())
+			{
+				m_Shaders.erase(m_Shaders.begin() + i);
+				m_LastTimeEdited.erase(m_LastTimeEdited.begin() + i);
+				break;
+			}
+		}
 	}
 
 	void ShaderHotReloader::CheckForShaderFileChanges()

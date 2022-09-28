@@ -13,7 +13,8 @@ namespace Dindi
 		static void Init();
 		static void OnUpdate();
 		static void AddShader(Shader& shader);
-	
+		static void RemoveShader(Shader& shader);
+
 	private:
 		static void CheckForShaderFileChanges();
 		static void ReloadDirtyShaders();

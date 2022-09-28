@@ -92,8 +92,10 @@ namespace Dindi
 		glDeleteShader(vs);
 		glDeleteShader(fs);
 
+#ifdef DINDI_DEBUG
 		if(!hotreload)
 			ShaderHotReloader::AddShader(*this);
+#endif
 
 		return true;
 	}
@@ -136,6 +138,11 @@ namespace Dindi
 
 	Shader::~Shader()
 	{
+
+#ifdef DINDI_DEBUG
+			ShaderHotReloader::RemoveShader(*this);
+#endif
+
 		//Just to test some stuff without RAII interference
 		glDeleteProgram(m_RendererID);
 	}

@@ -8,7 +8,7 @@ namespace Dindi
 	class Texture2D
 	{
 	public:
-		static std::shared_ptr<Texture2D> Load(const std::string& path);
+		static Ref<Texture2D> Load(const std::string& path);
 		Texture2D(const uint8_t* data, const uint32_t width, const uint32_t height, const uint32_t channels = 4);
 		Texture2D();
 

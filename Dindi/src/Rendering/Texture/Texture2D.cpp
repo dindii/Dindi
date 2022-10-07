@@ -12,9 +12,9 @@
 namespace Dindi
 {
 
-	std::shared_ptr<Texture2D> Texture2D::Load(const std::string& path)
+	Ref<Texture2D> Texture2D::Load(const std::string& path)
 	{
-		std::shared_ptr<Texture2D> texture = AssetManager::Get<Texture2D>(path);
+		Ref<Texture2D> texture = AssetManager::Get<Texture2D>(path);
 
 		if (!texture)
 		{

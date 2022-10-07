@@ -15,7 +15,7 @@ namespace Dindi
 		Material(Shader* shader) : m_Shader(shader) {};
 		~Material();
 		void Bind() const;
-		inline Shader* GetShader() const { return m_Shader; }
+		inline Ref<Shader>& GetShader()  { return m_Shader; }
 
 		void SetDiffuseMap         (Ref<Texture2D> DiffuseMap);
 		void SetNormalMap          (Ref<Texture2D> NormalMap);
@@ -24,7 +24,7 @@ namespace Dindi
 		void SetAmbientOcclusionMap(Ref<Texture2D> AmbientOcclusionMap);
 
 	private:
-		Shader* m_Shader;
+		Ref<Shader> m_Shader;
 
 		Ref<Texture2D> m_diffuseMap;
 		Ref<Texture2D> m_normalMap;

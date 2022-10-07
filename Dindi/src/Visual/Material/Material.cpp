@@ -8,13 +8,11 @@ namespace Dindi
 
 	Material::Material(const std::string& vertexpath, const std::string& fragpath)
 	{
-		m_Shader = new Shader(vertexpath, fragpath);
+		m_Shader = Shader::Load(vertexpath, fragpath);
 	}
 
 	Material::~Material()
 	{
-		delete m_Shader;
-
 		//if (m_diffuseMap)
 		//	delete m_diffuseMap;
 		//

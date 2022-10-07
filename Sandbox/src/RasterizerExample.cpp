@@ -4,11 +4,6 @@
 #include <input/Input.h>
 #include <Math/Maths.h>
 
-#include <Rendering/Debug/DebugRenderer.h>
-
-//DEBUG ASSET MANAGER
-#include <Rendering/Texture/Texture2D.h>
-//#include <Utils/AssetManager.h>
 
 void RasterizerExample::OnAttach()
 {
@@ -22,7 +17,14 @@ void RasterizerExample::OnAttach()
 
 	SceneOne = new Dindi::Scene();
 	SceneOne->SetActiveCamera(m_DefaultEditorCamera);
+
 	
+	Dindi::Model* model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\backpack\\backpack.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	SceneOne->AddEntity(model);
+	
+	Dindi::Model* model1 = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza\\sponza.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 0.05f);
+	SceneOne->AddEntity(model1);
+
 	app.SetActiveScene(SceneOne);
 }
 

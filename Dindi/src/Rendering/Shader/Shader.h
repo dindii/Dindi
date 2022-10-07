@@ -1,6 +1,8 @@
 #pragma once
 #include "Math/mat4.h"
 #include <string>
+#include <Core/Core.h>
+#include <Rendering/Texture/Texture2D.h>
 
 //#NOTE The use of std::string here is kinda of a bad idea with the hot reloader because we don't want to
 // allocate memory every frame just for some checks. Profile this when we got some bottleneck.
@@ -10,7 +12,7 @@ namespace Dindi
 	class Shader
 	{
 	public:
-		Shader(const std::string& vertexSource, const std::string& fragmentSource);
+		static Ref<Shader> Load(const std::string& vertexSource, const std::string& fragmentSource);
 		Shader(const Shader& other) { *this = other; }
 		Shader() = default;
 		virtual ~Shader();
@@ -34,6 +36,8 @@ namespace Dindi
 
 		void operator=(const Shader& other) { m_RendererID = other.GetID(); }
 	private:
+		Shader(const std::string& vertexSource, const std::string& fragmentSource);
+		
 		virtual bool ParseShaderFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, bool hotreload = false);
 		virtual bool CreateShader(const std::string& vertexShaderSource, const std::string& fragmentShaderSource, bool hotreload = false);
 		virtual unsigned int CompileShader(unsigned int type, const std::string& source);

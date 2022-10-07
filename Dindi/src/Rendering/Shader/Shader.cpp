@@ -1,7 +1,8 @@
 #include "Dindipch.h"
 #include "Shader.h"
 #include <glad/glad.h>
-#include "Utils/Logger.h"
+#include <Utils/Logger.h>
+#include <Utils/AssetManager.h>
 
 #include <fstream>
 #include <sstream>
@@ -10,6 +11,27 @@
 
 namespace Dindi
 {
+	Ref<Shader> Shader::Load(const std::string& vertexSource, const std::string& fragmentSource)
+	{
+		//I will use the fragment shader path to define our shader to cache.
+		//Usually, we would make this shader cache system more robust but
+		//since for deferred shading it is pretty common to have a default vertex shader
+		//with different fragment shaders, it is good enough to identify shaders by its fragment in order to cache.
+		//Also, I don't think I will be using this quite a lot because it is not meant to be a proper game engine
+		//but a sandbox to test graphics. 
+		//This cache increased about 16 ms of the performance of the program because it avoids a lot of shader binding.
+		Ref<Shader> shader = AssetManager::Get<Shader>(fragmentSource);
+
+		if (!shader)
+		{
+			Shader* newTex = new Shader(vertexSource, fragmentSource);
+			shader.reset(newTex);
+			AssetManager::Add<Shader>(fragmentSource, shader);
+		}
+
+		return shader;
+	}
+
 	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
 		: m_VertexShaderFilepath(vertexSource), m_FragmentShaderFilepath(fragmentSource)
 	{

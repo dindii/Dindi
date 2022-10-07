@@ -187,6 +187,7 @@
     <ClInclude Include="src\Utils\DNDAssert.h" />
     <ClInclude Include="src\Utils\AssetManager.h" />
     <ClInclude Include="vendor\imgui\styles\ImguiCustomStyle.h" />
+    <ClInclude Include="src\GUI\UILayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -275,6 +276,7 @@
     </ClCompile>
     <ClCompile Include="src\Utils\FileDialog.cpp" />
     <ClCompile Include="src\Utils\AssetManager.cpp" />
+    <ClCompile Include="src\GUI\UILayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Debug\DebugShaderFrag.shader" />

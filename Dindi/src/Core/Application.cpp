@@ -8,10 +8,9 @@
 #include "Event/KeyEvent.h"
 #include "Math/Maths.h"
 #include "Visual/Model/Model.h"
-#include "GUI/GUI.h"
 #include "Visual/Light/Light.h"
 
-#include "Utils/FileDialog.h"
+#include <GUI/GUI.h>
 
 namespace Dindi
 {
@@ -39,6 +38,8 @@ namespace Dindi
 		Renderer::Init();
 		GUI::Init(this->m_ApplicationWindow);
 
+		m_UILayer.SetFrameDimensions(m_ApplicationWindow->GetWidth(), m_ApplicationWindow->GetHeight());
+
 		m_AppState = EApplicationState::EDITOR;
 	}
 
@@ -56,8 +57,13 @@ namespace Dindi
 
 		dispatcher.Dispatch<WindowResizeEvent>([&](WindowResizeEvent Event) -> bool
 		{
-			Renderer::SetViewport(0, 0, Event.GetWidth(), Event.GetHeight());
-			m_ActiveScene->GetActiveCamera()->RemakeProjection((float)Event.GetWidth(), (float)Event.GetHeight());
+			uint32_t newWidth = Event.GetWidth();
+			uint32_t newHeight = Event.GetHeight();
+
+			Renderer::SetViewport(0, 0, newWidth, newHeight);
+			m_ActiveScene->GetActiveCamera()->RemakeProjection((float)newWidth, (float)newHeight);
+			m_UILayer.SetFrameDimensions(newWidth, newHeight);
+
 			return true;
 		});
 
@@ -105,21 +111,17 @@ namespace Dindi
 	{
 		while (m_Running)
 		{
-			m_ApplicationWindow->OnUpdate();
-
-			Renderer::Clear();
-
-			m_DeltaTime.Tick();
-			Logger::Flush();
-
 			OnUpdate(m_DeltaTime);
-
-			ProcessEngineInterface();
 		}
 	}
 
 	void Application::OnUpdate(DeltaTime& dt)
 	{
+		m_DeltaTime.Tick();
+		
+		m_ApplicationWindow->OnUpdate();
+		Renderer::Clear();
+		Logger::Flush();
 
 		//This is just for when developing the shaders, removing this would save us some frame budget.
 #ifdef DINDI_DEBUG
@@ -127,6 +129,7 @@ namespace Dindi
 #endif
 		Renderer::Draw(m_ActiveScene);
 
+		m_UILayer.Update(dt);
 
 		for (Layer* layer : m_LayerStack)
 			layer->OnUpdate(dt);
@@ -137,109 +140,16 @@ namespace Dindi
 		//#TODO - Move to a Timer function class.
 		return m_ApplicationWindow->GetTime();
 	}
-
-	//#TODO - MOVE THIS TO A SEPARATED UI LAYER.
-	void Application::LightUIInspector()
-	{
-		static constexpr int maxLightLabelSize = 128;
-
-		vec2 windowSize = { (float)m_ApplicationWindow->GetWidth(), (float)m_ApplicationWindow->GetHeight() };
-		
-		//So we can draw our inspector right after the menu bar
-		float menuBarHeight = 22.0f;
-
-		ImGui::SetNextWindowPos({  windowSize.x * 0.85f, 22.0f });
-		ImGui::SetNextWindowSize({ windowSize.x * 0.15f, windowSize.y });
-
-		ImGui::Begin("Scene Lights");
-		
-		for (int x = 0; x < m_ActiveScene->GetLights().size(); x++)
-		{
-			PointLight& light0 = m_ActiveScene->GetLights()[x];
-
-			float pos[3] = { light0.GetPosition().x, light0.GetPosition().y, light0.GetPosition().z };
-			float color[3] = { light0.GetColor().x, light0.GetColor().y, light0.GetColor().z };
-
-			char lightLabel[maxLightLabelSize] = "Position##";
-			char lightColorLabel[maxLightLabelSize] = "Color##";
-			char lightRemoveLabel[maxLightLabelSize] = "Delete##";
-
-			char number[maxLightLabelSize];
-
-			sprintf(number, "%i", x);
-
-			//#NOTE: I don't think we will ever get a bottleneck from strcat not being fast enough to found \0, but I will keep and eye on this when profiling later.
-			//They're not safe by the way, but we are in a controlled environment.
-			//Kinda annoying to have to make every label unique
-			strcat(lightLabel, number);
-			strcat(lightColorLabel, number);
-			strcat(lightRemoveLabel, number);
-
-			if (ImGui::SliderFloat3(lightLabel, pos, -50.0f, 50.0f))
-				light0.SetPosition({ pos[0], pos[1], pos[2], 0.0f });
-
-			if (ImGui::ColorEdit3(lightColorLabel, color))
-				light0.SetColor({ color[0], color[1], color[2], 0.0f });
-
-			if (ImGui::Button(lightRemoveLabel))
-				m_ActiveScene->GetLights().erase(m_ActiveScene->GetLights().begin() + x);
-
-			ImGui::NewLine();
-		}
-		ImGui::End();
-	}
-
-	void Application::ModelUIInspector()
-	{
-		
-	}
-
-	void Application::ProcessEngineInterface()
-	{
-		GUI::Begin();
-
-		if (ImGui::BeginMainMenuBar())
-		{
-			if (ImGui::BeginMenu("New"))
-			{
-				if (ImGui::MenuItem("Light"))
-				{
-					m_ActiveScene->AddPointLight({ { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f } });
-				}
-				
-				if (ImGui::MenuItem("Model..."))
-				{
-					std::string path = FileDialog::OpenFile(".obj\0\0");
-					Model* newModel = new Model(path, vec3(0.0f, 0.0f, 0.0f), 1.0f);
-
-					if (newModel)
-						m_ActiveScene->AddEntity(newModel);
-					else
-						DND_LOG_ERROR("Couldn't open model file!");
-				}
-
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMainMenuBar();
-		}
-
-		LightUIInspector();
-		ModelUIInspector();
-
-		ImGui::Begin("Stats");
-		ImGui::Text("%.4f ms", m_DeltaTime.Milliseconds());
-		ImGui::End();
-
-		for (Layer* layer : m_LayerStack)
-			layer->OnUIRender();
-
-		GUI::End();
-	}
 	
 	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.emplace_back(layer);
 		layer->OnAttach();
+	}
+
+	void Application::SetActiveScene(Scene* scene)
+	{
+		m_ActiveScene = scene;
+		m_UILayer.SetScene(scene);
 	}
 }

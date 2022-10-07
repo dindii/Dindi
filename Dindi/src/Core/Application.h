@@ -4,6 +4,7 @@
 #include "Utils/DeltaTime.h"
 #include "Rendering/Scene/Scene.h"
 #include "Layer.h"
+#include <GUI/UILayer.h>
 
 namespace Dindi
 {
@@ -22,24 +23,20 @@ namespace Dindi
 		void OnUpdate(DeltaTime& dt);
 		inline Window* GetWindow() { return m_ApplicationWindow; }
 		inline static Application& GetInstance() { return *s_Instance; }
-		inline void SetActiveScene(Scene* scene) { m_ActiveScene = scene; }
+		void SetActiveScene(Scene* scene);
 		float GetTime() const;
-		void ProcessEngineInterface();
 		void PushLayer(Layer* layer);
 
 		inline EApplicationState GetApplicationState() const { return m_AppState; }
 		inline void TerminateProgram() { m_Running = false; }
 
 	private:
-		//Show Scene Lights and its properties in a GUI window
-		void LightUIInspector();
-		//Show Scene Models and its properties in a GUI Window
-		void ModelUIInspector();
-	private:
 		static inline Application* s_Instance = nullptr;
 
 		Window* m_ApplicationWindow;
 		DeltaTime m_DeltaTime;
+
+		UILayer m_UILayer;
 
 		std::vector<Layer*> m_LayerStack;
 	private:

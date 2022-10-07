@@ -137,6 +137,7 @@
     <ClInclude Include="src\Event\KeyEvent.h" />
     <ClInclude Include="src\Event\MouseEvent.h" />
     <ClInclude Include="src\GUI\GUI.h" />
+    <ClInclude Include="src\GUI\UILayer.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Math\Maths.h" />
     <ClInclude Include="src\Math\mat4.h" />
@@ -174,6 +175,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\GUI\GUI.cpp" />
+    <ClCompile Include="src\GUI\UILayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
     <ClCompile Include="src\Math\mat4.cpp" />
     <ClCompile Include="src\Math\vec2.cpp" />

@@ -18,8 +18,7 @@ void RasterizerExample::OnAttach()
 	SceneOne = new Dindi::Scene();
 	SceneOne->SetActiveCamera(m_DefaultEditorCamera);
 
-	
-	//Dindi::Model* model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\backpack\\backpack.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	//Dindi::Model* model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 0.05f);
 	//SceneOne->AddEntity(model);
 
 	app.SetActiveScene(SceneOne);

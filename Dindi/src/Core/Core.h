@@ -18,7 +18,6 @@
 
 #define DEFAULT_VERTEX_SHADER RESOURCES_PATH "Resources\\Shaders\\DefaultShaderVert.shader"
 #define DEFAULT_FRAGMENT_SHADER RESOURCES_PATH "Resources\\Shaders\\DefaultShaderFrag.shader"
-
 //Rendering stuff
 
 enum ERenderingMapSlot

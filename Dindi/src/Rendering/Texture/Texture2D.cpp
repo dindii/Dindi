@@ -120,8 +120,14 @@ namespace Dindi
 		int width = 0, height = 0, channels = 0;
 
 		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-		LoadTextureFromData(data, width, height, channels);
 
+		if (!data)
+		{
+			DND_LOG_ERROR("Could not load texture, please check the path!");
+			return;
+		}
+
+		LoadTextureFromData(data, width, height, channels);
 		stbi_image_free(data);
 	}
 

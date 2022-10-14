@@ -29,20 +29,32 @@ namespace Dindi
 		//Quick workaround for the .mtl directory (this current one)
 		std::string directory;
 		const size_t last_slash_idx = filepath.rfind('/');
+		size_t last_backslash_idx = 0;
+		size_t periodIdx = filepath.find('.');
+		const char* name;
 
 		if (std::string::npos != last_slash_idx)
 		{
 			directory = filepath.substr(0, last_slash_idx);
+			name = filepath.substr(last_slash_idx, periodIdx - last_slash_idx).c_str();
 		}
 		else
 		{
-			const size_t last_backslash_idx = filepath.rfind('\\');
+			last_backslash_idx = filepath.rfind('\\');
 
 			if (std::string::npos != last_backslash_idx)
 				directory = filepath.substr(0, last_backslash_idx);
+		
+			//name = filepath.substr(last_backslash_idx + 1, periodIdx - (last_backslash_idx + 1)).c_str();
+			name = filepath.substr(last_backslash_idx, periodIdx - last_backslash_idx).c_str();
 		}
 
+		modelToFill.SetName(name + 1);
+
 		readerConfig.mtl_search_path = directory;
+
+
+
 
 		tinyobj::ObjReader loader;
 
@@ -66,6 +78,7 @@ namespace Dindi
 		std::unordered_map<uint32_t, Material*> meshMaterial;
 
 		std::vector<Mesh*>& meshToFill = modelToFill.GetMeshes();
+		meshToFill.reserve(shapes.size());
 
 		for (size_t shapeIndex = 0; shapeIndex < shapes.size(); shapeIndex++)
 		{

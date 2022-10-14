@@ -109,6 +109,7 @@ namespace Dindi
 			if (ImGui::ColorEdit3(lightColorLabel, color))
 				light0.SetColor({ color[0], color[1], color[2], 0.0f });
 
+			//#TODO: Remove Function
 			if (ImGui::Button(lightRemoveLabel))
 				m_Scene->GetLights().erase(m_Scene->GetLights().begin() + x);
 
@@ -119,6 +120,52 @@ namespace Dindi
 	
 	void UILayer::ProcessModelInspector()
 	{
+		static constexpr int maxModelLabelSize = 128;
+
+		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
+
+		//So we can draw our inspector right after the menu bar
+		float menuBarHeight = 22.0f;
+
+		ImGui::SetNextWindowPos({ 0.0f, menuBarHeight });
+		ImGui::SetNextWindowSize({ windowSize.x * 0.15f, windowSize.y });
+
+		ImGui::Begin("Scene Models");
+
+		for (int x = 0; x < m_Scene->GetEntities().size(); x++)
+		{
+			Model* model = m_Scene->GetEntities()[x];
+
+			vec3 pos = model->GetPosition();
+			float scale = model->GetScale();
+
+			char ModelPosLabel[maxModelLabelSize] = "Position##";
+			char ModelScaleLabel[maxModelLabelSize] = "Scale##";
+			char ModelDeleteLabel[maxModelLabelSize] = "Delete##";
+
+			char number[maxModelLabelSize];
+
+			sprintf(number, "%i", x);
+
+			strcat(ModelPosLabel, number);
+			strcat(ModelScaleLabel, number);
+			strcat(ModelDeleteLabel, number);
+
+			ImGui::Text("%s",model->GetName().data());
+
+			if (ImGui::SliderFloat3(ModelPosLabel, &pos[0], -50.0f, 50.0f))
+				model->SetPosition({ pos[0], pos[1], pos[2] });
+
+			if (ImGui::SliderFloat(ModelScaleLabel, &scale, 0.0f, 5.0f))
+				model->SetScale(scale);
+
+			if (ImGui::Button(ModelDeleteLabel))
+				m_Scene->GetEntities().erase(m_Scene->GetEntities().begin() + x);
+
+			ImGui::NewLine();
+		}
+
+		ImGui::End();
 
 	}
 }

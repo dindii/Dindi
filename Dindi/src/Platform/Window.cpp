@@ -26,6 +26,7 @@ namespace Dindi
 
 		m_Window = glfwCreateWindow((int)width, (int)(height / aspectRatio), m_Name, NULL, NULL);
 
+
 		if(!m_Window)
 			DND_LOG_FATAL("Could not create window!");
 
@@ -33,6 +34,7 @@ namespace Dindi
 
 		//For any graphics api
 		glfwMakeContextCurrent(m_Window);
+	//	glfwSwapInterval(0);
 
 
 		//Set key callback 

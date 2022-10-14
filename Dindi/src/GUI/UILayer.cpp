@@ -23,14 +23,9 @@ namespace Dindi
 	void UILayer::ProcessPerformanceStats(const DeltaTime& dt)
 	{
 		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
-
-		float statsWindowHeight = 65.0f;
-		
-		//Turn this variable into a member. Several windows would like to know where our menu bar are.
-		float menuBarHeight = 22.0f;
-
-		ImGui::SetNextWindowPos({ windowSize.x * 0.78f, menuBarHeight });
-		ImGui::SetNextWindowSize({ windowSize.x * 0.07f, statsWindowHeight });
+	
+		ImGui::SetNextWindowPos({ windowSize.x * m_StatsWindowPosX, m_MenuBarHeight });
+		ImGui::SetNextWindowSize({ windowSize.x * m_StatsWindowWidth, m_StatsWindowHeight });
 
 		ImGui::Begin("Stats");
 		ImGui::Text("%.4f ms", dt.Milliseconds());
@@ -73,20 +68,19 @@ namespace Dindi
 
 		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
 
-		//So we can draw our inspector right after the menu bar
-		float menuBarHeight = 22.0f;
-
-		ImGui::SetNextWindowPos({ windowSize.x * 0.85f, menuBarHeight });
-		ImGui::SetNextWindowSize({ windowSize.x * 0.15f, windowSize.y });
+		ImGui::SetNextWindowPos({ windowSize.x * m_LightInspectorPosX, m_MenuBarHeight });
+		ImGui::SetNextWindowSize({ windowSize.x * m_LightInspectorWidth, windowSize.y });
 
 		ImGui::Begin("Scene Lights");
 
-		for (int x = 0; x < m_Scene->GetLights().size(); x++)
-		{
-			PointLight& light0 = m_Scene->GetLights()[x];
+		std::vector<PointLight>& sceneLights = m_Scene->GetLights();
 
-			float pos[3] = { light0.GetPosition().x, light0.GetPosition().y, light0.GetPosition().z };
-			float color[3] = { light0.GetColor().x, light0.GetColor().y, light0.GetColor().z };
+		for (int x = 0; x < sceneLights.size(); x++)
+		{
+			PointLight& light = sceneLights[x];
+
+			float pos[3] = { light.GetPosition().x, light.GetPosition().y, light.GetPosition().z };
+			float color[3] = { light.GetColor().x, light.GetColor().y, light.GetColor().z };
 
 			char lightLabel[maxLightLabelSize] = "Position##";
 			char lightColorLabel[maxLightLabelSize] = "Color##";
@@ -96,22 +90,18 @@ namespace Dindi
 
 			sprintf(number, "%i", x);
 
-			//#NOTE: I don't think we will ever get a bottleneck from strcat not being fast enough to found \0, but I will keep and eye on this when profiling later.
-			//They're not safe by the way, but we are in a controlled environment.
-			//Kinda annoying to have to make every label unique
 			strcat(lightLabel, number);
 			strcat(lightColorLabel, number);
 			strcat(lightRemoveLabel, number);
 
-			if (ImGui::SliderFloat3(lightLabel, pos, -50.0f, 50.0f))
-				light0.SetPosition({ pos[0], pos[1], pos[2], 0.0f });
+			if (ImGui::DragFloat3(lightLabel, pos, m_PositionSliderSpeed))
+				light.SetPosition({ pos[0], pos[1], pos[2], 0.0f });
 
 			if (ImGui::ColorEdit3(lightColorLabel, color))
-				light0.SetColor({ color[0], color[1], color[2], 0.0f });
+				light.SetColor({ color[0], color[1], color[2], 0.0f });
 
-			//#TODO: Remove Function
 			if (ImGui::Button(lightRemoveLabel))
-				m_Scene->GetLights().erase(m_Scene->GetLights().begin() + x);
+				sceneLights.erase(sceneLights.begin() + x);
 
 			ImGui::NewLine();
 		}
@@ -124,17 +114,16 @@ namespace Dindi
 
 		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
 
-		//So we can draw our inspector right after the menu bar
-		float menuBarHeight = 22.0f;
-
-		ImGui::SetNextWindowPos({ 0.0f, menuBarHeight });
-		ImGui::SetNextWindowSize({ windowSize.x * 0.15f, windowSize.y });
+		ImGui::SetNextWindowPos({ m_ModelInspectorWindowPosX, m_MenuBarHeight });
+		ImGui::SetNextWindowSize({ windowSize.x * m_ModelInspectorWindowWidth, windowSize.y });
 
 		ImGui::Begin("Scene Models");
 
-		for (int x = 0; x < m_Scene->GetEntities().size(); x++)
+		std::vector<Model*>& sceneEntities = m_Scene->GetEntities();
+
+		for (int x = 0; x < sceneEntities.size(); x++)
 		{
-			Model* model = m_Scene->GetEntities()[x];
+			Model* model = sceneEntities[x];
 
 			vec3 pos = model->GetPosition();
 			float scale = model->GetScale();
@@ -153,14 +142,14 @@ namespace Dindi
 
 			ImGui::Text("%s",model->GetName().data());
 
-			if (ImGui::SliderFloat3(ModelPosLabel, &pos[0], -50.0f, 50.0f))
+			if (ImGui::DragFloat3(ModelPosLabel, &pos[0], m_PositionSliderSpeed))
 				model->SetPosition({ pos[0], pos[1], pos[2] });
 
-			if (ImGui::SliderFloat(ModelScaleLabel, &scale, 0.0f, 5.0f))
+			if (ImGui::DragFloat(ModelScaleLabel, &scale, m_ScaleSliderSpeed))
 				model->SetScale(scale);
 
 			if (ImGui::Button(ModelDeleteLabel))
-				m_Scene->GetEntities().erase(m_Scene->GetEntities().begin() + x);
+				sceneEntities.erase(sceneEntities.begin() + x);
 
 			ImGui::NewLine();
 		}

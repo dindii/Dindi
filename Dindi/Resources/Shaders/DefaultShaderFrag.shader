@@ -69,13 +69,13 @@ void main()
 		float distance = length(lightPos - v_FragPos);
 		float attenuation = 1.0f / (lightConstantAttenuation + lightLinearAttenuation * distance + lightQuadraticAttenuation * (distance * distance));
 
-		//vec3 ambientWithAttenuation  = ambient  * attenuation;
-		//vec3 diffuseWithAttenuation  = diffuse  * attenuation;
-		//vec3 specularWithAttenuation = specular * attenuation;
+		vec3 ambientWithAttenuation  = ambient  * attenuation;
+		vec3 diffuseWithAttenuation  = diffuse  * attenuation;
+		vec3 specularWithAttenuation = specular * attenuation;
 
-		vec3 ambientWithAttenuation  = ambient  * 1;
-		vec3 diffuseWithAttenuation  = diffuse  * 1;
-		vec3 specularWithAttenuation = specular * 1;
+		//vec3 ambientWithAttenuation  = ambient  * 1;
+		//vec3 diffuseWithAttenuation  = diffuse  * 1;
+		//vec3 specularWithAttenuation = specular * 1;
 
 
 		temporaryResult += vec3(ambientWithAttenuation + diffuseWithAttenuation) + vec3(specularColor * specularWithAttenuation);

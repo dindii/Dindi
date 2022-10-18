@@ -338,7 +338,7 @@ namespace Dindi
 		   return *this;
 	}
 
-	mat4& mat4::Transpose()
+	mat4 mat4::Transposed()
 	{
 		mat4 temp(1.0f);
 
@@ -346,7 +346,7 @@ namespace Dindi
 			for (unsigned short int x = 0; x < 4; x++)
 				temp[y * x * 4] = elements[x * y * 4];
 
-		return *this;
+		return temp;
 	}
 
 	mat4 mat4::Transpose(const mat4& matrix)

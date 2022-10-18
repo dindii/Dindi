@@ -76,6 +76,9 @@
     <Filter Include="vendor\imgui\backends">
       <UniqueIdentifier>{27CEAEAF-933A-6AAA-5C2E-0208C8598C12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\imguizmo">
+      <UniqueIdentifier>{B36F5F1F-1FFB-CCE3-280C-50D8941629E4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Application.h">
@@ -103,6 +106,9 @@
       <Filter>src\Event</Filter>
     </ClInclude>
     <ClInclude Include="src\GUI\GUI.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\UILayer.h">
       <Filter>src\GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\Input\Input.h">
@@ -153,7 +159,16 @@
     <ClInclude Include="src\Rendering\Texture\Texture2D.h">
       <Filter>src\Rendering\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="src\Utils\AssetManager.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\DNDAssert.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\Utils\DeltaTime.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\FileDialog.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Utils\Logger.h">
@@ -183,11 +198,9 @@
     <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3.h">
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
-    <ClInclude Include="src\Utils\FileDialog.h" />
-    <ClInclude Include="src\Utils\DNDAssert.h" />
-    <ClInclude Include="src\Utils\AssetManager.h" />
-    <ClInclude Include="vendor\imgui\styles\ImguiCustomStyle.h" />
-    <ClInclude Include="src\GUI\UILayer.h" />
+    <ClInclude Include="vendor\imguizmo\ImGuizmo.h">
+      <Filter>vendor\imguizmo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -197,6 +210,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\GUI\GUI.cpp">
+      <Filter>src\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\UILayer.cpp">
       <Filter>src\GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\Input\Input.cpp">
@@ -244,7 +260,13 @@
     <ClCompile Include="src\Rendering\Texture\Texture2D.cpp">
       <Filter>src\Rendering\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utils\AssetManager.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
     <ClCompile Include="src\Utils\DeltaTime.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\FileDialog.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\Utils\Logger.cpp">
@@ -274,12 +296,8 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="src\Utils\FileDialog.cpp" />
-    <ClCompile Include="src\Utils\AssetManager.cpp" />
-    <ClCompile Include="src\GUI\UILayer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Shaders\Debug\DebugShaderFrag.shader" />
-    <None Include="Resources\Shaders\Debug\DebugShaderVert.shader" />
+    <ClCompile Include="vendor\imguizmo\ImGuizmo.cpp">
+      <Filter>vendor\imguizmo</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

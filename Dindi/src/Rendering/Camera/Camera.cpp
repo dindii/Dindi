@@ -25,7 +25,7 @@ namespace Dindi
 		UpdateCameraVectors();
 	}
 
-	mat4 Camera::getViewMatrix() const
+	mat4 Camera::GetViewMatrix() const
 	{
 		return m_ViewMatrix;
 	}

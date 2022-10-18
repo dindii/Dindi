@@ -34,7 +34,7 @@ namespace Dindi
 
 		 mat4 operator*=(const mat4& right);
 
-		 mat4& Transpose();
+		 mat4 Transposed();
 		 mat4& Invert();
 
 		 static mat4 Inverse(const mat4& matrix);

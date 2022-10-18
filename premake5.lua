@@ -48,11 +48,17 @@ project "Dindi"
 
 		"%{prj.name}/vendor/imgui/backends/imgui_impl_opengl3.cpp",
 		"%{prj.name}/vendor/imgui/backends/imgui_impl_opengl3.h",
+		
+		"%{prj.name}/vendor/imguizmo/ImGuizmo.cpp",
+		"%{prj.name}/vendor/imguizmo/ImGuizmo.h",
+
 	}
 
 	includedirs
 	{
 		"%{prj.name}/src",
+		"%{prj.name}/vendor/imguizmo",
+
 		"%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
 		"%{IncludeDir.stbi}",

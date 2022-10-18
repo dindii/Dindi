@@ -14,7 +14,7 @@ namespace Dindi
 		Camera(const float AR, const vec3& position);
 		//Camera() : m_Yaw(0.0f), m_Pitch(0.0f) {};
 
-		mat4 getViewMatrix() const;
+		mat4 GetViewMatrix() const;
 
 
 

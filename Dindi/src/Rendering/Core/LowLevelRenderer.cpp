@@ -78,7 +78,7 @@ namespace Dindi
 
 			//Persistent data (projection, camera, lights etc...)
 			Camera* camera = scene->GetActiveCamera();
-			mat4 viewProjectionMatrix = camera->GetProjection() * camera->getViewMatrix();
+			mat4 viewProjectionMatrix = camera->GetProjection() * camera->GetViewMatrix();
 
 			PersistentData.data.c_ViewProjection = viewProjectionMatrix;
 			PersistentData.data.c_Time = app.GetTime();

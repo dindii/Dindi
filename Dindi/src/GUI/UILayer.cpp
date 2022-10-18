@@ -15,6 +15,7 @@ namespace Dindi
 		ProcessMenu();
 		ProcessLightInspector();
 		ProcessModelInspector();
+		ProcessTransformGizmo();
 		ProcessPerformanceStats(dt);
 		
 		GUI::End();
@@ -157,4 +158,42 @@ namespace Dindi
 		ImGui::End();
 
 	}
+
+	void UILayer::ProcessTransformGizmo()
+	{
+		ImGuizmo::SetOrthographic(true);
+		
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+		ImGuizmo::SetDrawlist();
+
+
+
+		ImGuizmo::OPERATION transformOperation = ImGuizmo::OPERATION::SCALE;
+		ImGuizmo::MODE transformMode = ImGuizmo::MODE::LOCAL;
+
+		const mat4& cameraProjection = m_Scene->GetActiveCamera()->GetProjection();
+		const mat4& cameraView = m_Scene->GetActiveCamera()->GetViewMatrix();
+
+		//mat4 modelTransform;
+		//modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale({ model->GetScale() });
+		ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, mat4().elements);
+		ImGuizmo::DrawGrid(cameraView.elements, cameraProjection.elements, mat4().elements, 64 * 64);
+		//Model* model = nullptr;
+		
+	//	if (m_Scene->GetEntities().size() > 0)
+	//		model = m_Scene->GetEntities()[0];
+
+	//	if (model)
+		{
+			//mat4 modelTransform;
+			//modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale({ model->GetScale() });
+			//ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, modelTransform.elements);
+		}
+
+
+
+	}
+
 }

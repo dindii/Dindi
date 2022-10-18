@@ -3,8 +3,7 @@
 #include "Platform/Window.h"
 
 #include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
+#include "imguizmo.h"
 
 namespace Dindi
 {

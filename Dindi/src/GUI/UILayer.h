@@ -18,12 +18,14 @@ namespace Dindi
 		void ProcessMenu();
 		void ProcessLightInspector();
 		void ProcessModelInspector();
+		void ProcessTransformGizmo();
 		void ProcessPerformanceStats(const DeltaTime& dt);
 
 	private:
 		uint32_t m_FrameWidth = 0, m_FrameHeight = 0;
 		
 		Scene* m_Scene = nullptr;
+		Model* m_SelectedModel = nullptr;
 
 	private:
 		//Windows raw dimensions and ratios to be calculated with the window size.

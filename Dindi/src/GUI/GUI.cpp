@@ -1,6 +1,9 @@
 #include "Dindipch.h"
 #include "GUI.h"
 
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+
 #include "styles/ImguiCustomStyle.h"
 
 namespace Dindi
@@ -16,14 +19,16 @@ namespace Dindi
 		ImGui_ImplOpenGL3_Init(glsl_version);
 
 		ImGui::LoadStyle();
-
 	}
+
 	void GUI::Begin()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
+
 	void GUI::End()
 	{
 		ImGui::Render();

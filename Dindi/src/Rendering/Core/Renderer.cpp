@@ -21,6 +21,11 @@ namespace Dindi
 		DND_INTERNAL::LowLevelRenderer::SetViewport(x, y, width, height);
 	}
 
+	uint32_t Renderer::GetScreenOutputHandle()
+	{
+		return DND_INTERNAL::LowLevelRenderer::GetScreenOutputHandle();
+	}
+
 	void Renderer::Clear()
 	{
 		DND_INTERNAL::LowLevelRenderer::Clear();

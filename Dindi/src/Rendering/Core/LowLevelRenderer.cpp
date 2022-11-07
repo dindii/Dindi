@@ -11,6 +11,8 @@ namespace Dindi
 
 	namespace DND_INTERNAL
 	{
+		Framebuffer* LowLevelRenderer::m_ScreenOutput = nullptr;
+
 		//We are going to use only one UBO, so this doesn't need to be dynamic.
 		//This is static because we user don't need to mess with UBOs, he will not need and doesn't care either. This is internal for us.
 		static constexpr uint32_t ConstantBufferSlot = 1;
@@ -24,6 +26,7 @@ namespace Dindi
 
 		LowLevelRenderer::~LowLevelRenderer()
 		{
+			delete m_ScreenOutput;
 		}
 
 		void LowLevelRenderer::Init()
@@ -69,6 +72,8 @@ namespace Dindi
 #ifdef DINDI_DEBUG
 			Debug::DebugRenderer::Init();
 #endif
+
+			m_ScreenOutput = new Framebuffer();
 		}
 
 		void LowLevelRenderer::Draw(Scene* scene)
@@ -97,6 +102,8 @@ namespace Dindi
 			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PersistentData.data), &PersistentData.data);
 
 #if 1
+			m_ScreenOutput->Bind();
+
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
 				Model* model = scene->GetEntities()[x];
@@ -119,9 +126,12 @@ namespace Dindi
 					material->GetShader()->UploadUniformMat4("u_Transform", modelTransform);
 
 					//#TODO: Please, let's use elements to draw.
+
+					//#TODO FRAMEBUFFER: render the imgui window using this texture
 					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 				}
 			}
+
 #endif
             //DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
 			//Draw cubes in light positions to debug.
@@ -132,6 +142,7 @@ namespace Dindi
 					Debug::DebugRenderer::Draw(Debug::EDebugShape::CUBE, lights[x].GetPosition(), lights[x].GetColor(), 0.25f, flags);
 				}
 		
+			m_ScreenOutput->UnBind();
 		}
 
 		void LowLevelRenderer::Clear(const bool ColorBuffer /*= true*/, const bool DepthBuffer /*= true*/)

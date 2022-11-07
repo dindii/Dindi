@@ -4,6 +4,8 @@
 #include "Rendering/Scene/Scene.h"
 #include "Visual/Light/Light.h"
 
+#include <Rendering/Core/Framebuffer.h>
+
 namespace Dindi
 {
 
@@ -44,7 +46,12 @@ namespace Dindi
 			static unsigned int GenMesh(unsigned int nMeshes = 1);
 			static void SetWireframeMode(bool cond);
 			static void SetOverlay(bool cond);
-			static void DelMesh(unsigned int Mesh, unsigned int nMeshes = 1);			
+			static void DelMesh(unsigned int Mesh, unsigned int nMeshes = 1);		
+
+			static inline uint32_t GetScreenOutputHandle() { return m_ScreenOutput->GetRendererID(); }
+
+		private:
+			static Framebuffer* m_ScreenOutput;
 		};
 	}
 

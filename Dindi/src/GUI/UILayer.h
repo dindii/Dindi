@@ -19,6 +19,7 @@ namespace Dindi
 		void ProcessLightInspector();
 		void ProcessModelInspector();
 		void ProcessTransformGizmo();
+		void ProcessViewport();
 		void ProcessPerformanceStats(const DeltaTime& dt);
 
 	private:

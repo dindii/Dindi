@@ -103,6 +103,7 @@ namespace Dindi
 
 #if 1
 			m_ScreenOutput->Bind();
+			Clear();
 
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{

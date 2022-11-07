@@ -6,12 +6,15 @@
 #include <Utils/FileDialog.h>
 #include <Core/Application.h>
 
+#include <Rendering/Core/Renderer.h>
+
 namespace Dindi
 {
 	void UILayer::Update(const DeltaTime& dt)
 	{
 		GUI::Begin();
 
+		ProcessViewport();
 		ProcessMenu();
 		ProcessLightInspector();
 		ProcessModelInspector();
@@ -159,6 +162,15 @@ namespace Dindi
 
 	}
 
+	void UILayer::ProcessViewport()
+	{
+		ImGui::Begin("Viewport");
+		
+		ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), {1366, 768}, { 0,1 }, { 1,0 });
+
+		ImGui::End();
+	}
+
 	void UILayer::ProcessTransformGizmo()
 	{
 		ImGuizmo::SetOrthographic(true);
@@ -176,20 +188,18 @@ namespace Dindi
 		const mat4& cameraProjection = m_Scene->GetActiveCamera()->GetProjection();
 		const mat4& cameraView = m_Scene->GetActiveCamera()->GetViewMatrix();
 
-		//mat4 modelTransform;
-		//modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale({ model->GetScale() });
-		ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, mat4().elements);
-		ImGuizmo::DrawGrid(cameraView.elements, cameraProjection.elements, mat4().elements, 64 * 64);
-		//Model* model = nullptr;
+		//ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, mat4().elements);
+		//ImGuizmo::DrawGrid(cameraView.elements, cameraProjection.elements, mat4().elements, 64 * 64);
+		Model* model = nullptr;
 		
-	//	if (m_Scene->GetEntities().size() > 0)
-	//		model = m_Scene->GetEntities()[0];
+		if (m_Scene->GetEntities().size() > 0)
+			model = m_Scene->GetEntities()[0];
 
-	//	if (model)
+		if (model)
 		{
-			//mat4 modelTransform;
-			//modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale({ model->GetScale() });
-			//ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, modelTransform.elements);
+			mat4 modelTransform;
+			modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale({ model->GetScale() });
+			ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, modelTransform.elements);
 		}
 
 

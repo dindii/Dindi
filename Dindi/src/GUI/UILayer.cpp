@@ -18,9 +18,8 @@ namespace Dindi
 		ProcessMenu();
 		ProcessLightInspector();
 		ProcessModelInspector();
-		ProcessTransformGizmo();
 		ProcessPerformanceStats(dt);
-		
+
 		GUI::End();
 	}
 
@@ -164,10 +163,13 @@ namespace Dindi
 
 	void UILayer::ProcessViewport()
 	{
-		ImGui::Begin("Viewport");
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove);
 		
 		ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), {1366, 768}, { 0,1 }, { 1,0 });
-
+		
+		//This must use the same ImGui window to draw the gizmo, so it is necessary to keep it in the same Begin-End call
+		ProcessTransformGizmo();
+		
 		ImGui::End();
 	}
 
@@ -181,29 +183,32 @@ namespace Dindi
 		ImGuizmo::SetDrawlist();
 
 
-
-		ImGuizmo::OPERATION transformOperation = ImGuizmo::OPERATION::SCALE;
-		ImGuizmo::MODE transformMode = ImGuizmo::MODE::LOCAL;
+		ImGuizmo::OPERATION transformOperation = ImGuizmo::OPERATION::TRANSLATE;
+		ImGuizmo::MODE transformMode = ImGuizmo::MODE::WORLD;
 
 		const mat4& cameraProjection = m_Scene->GetActiveCamera()->GetProjection();
 		const mat4& cameraView = m_Scene->GetActiveCamera()->GetViewMatrix();
 
-		//ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, mat4().elements);
-		//ImGuizmo::DrawGrid(cameraView.elements, cameraProjection.elements, mat4().elements, 64 * 64);
 		Model* model = nullptr;
 		
+		//DEBUG
 		if (m_Scene->GetEntities().size() > 0)
 			model = m_Scene->GetEntities()[0];
 
 		if (model)
 		{
 			mat4 modelTransform;
-			modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale({ model->GetScale() });
+			modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale(model->GetScale());
 			ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, modelTransform.elements);
+			
+			float translation[3] = {};
+			float rotation[3]    = {};
+			float scale[3]       = {};
+
+			ImGuizmo::DecomposeMatrixToComponents(modelTransform.elements, translation, rotation, scale);
+
+			model->SetPosition({ translation[0], translation[1], translation[2]});
+			model->SetScale({ scale[0] });
 		}
-
-
-
 	}
-
 }

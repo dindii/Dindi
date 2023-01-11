@@ -1,4 +1,5 @@
 #include "Dindipch.h"
+
 #include "UILayer.h"
 
 #include <GUI/GUI.h>
@@ -14,7 +15,10 @@ namespace Dindi
 	{		
 		GUI::Begin();
 
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ProcessViewport();
+		ImGui::PopStyleVar();
+	
 		ProcessMenu();
 		ProcessLightInspector();
 		ProcessModelInspector();
@@ -163,9 +167,7 @@ namespace Dindi
 	}
 
 	void UILayer::ProcessViewport()
-	{
-	
-
+	{		
 		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
 
 		//#TODO - Turn those values into variables.
@@ -179,14 +181,12 @@ namespace Dindi
 
 		sceneCamera->RemakeProjection(viewportDims.x, viewportDims.y);
 
-	//	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), { windowSize.x * m_ViewportPosX, windowSize.y }, { 0,1 }, { 1,0 });
 		
 		//This must use the same ImGui window to draw the gizmo, so it is necessary to keep it in the same Begin-End call
 		ProcessTransformGizmo();
 		
-		//ImGui::PopStyleVar(ImGuiStyleVar_WindowPadding);
 		ImGui::End();
 
 	}
@@ -198,7 +198,12 @@ namespace Dindi
 		
 		ImVec2 parentWindowPos = ImGui::GetWindowPos();
 		ImVec2 parentWindowSize = { (float)ImGui::GetWindowWidth(), (float)ImGui::GetWindowHeight() };
-		ImGuizmo::SetRect(parentWindowPos.x, parentWindowPos.y, parentWindowSize.x, parentWindowSize.y);
+
+
+		ImVec2 imageSize = ImGui::GetItemRectSize();
+		ImVec2 imagePos = ImGui::GetItemRectMin();
+
+		ImGuizmo::SetRect(imagePos.x, imagePos.y, imageSize.x, imageSize.y);
 
 		ImGuizmo::OPERATION transformOperation = ImGuizmo::OPERATION::TRANSLATE;
 		ImGuizmo::MODE transformMode = ImGuizmo::MODE::WORLD;

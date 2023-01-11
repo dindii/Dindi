@@ -135,6 +135,9 @@
     <ClInclude Include="src\Rendering\Camera\Camera.h">
       <Filter>src\Rendering\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering\Core\Framebuffer.h">
+      <Filter>src\Rendering\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Rendering\Core\LowLevelRenderer.h">
       <Filter>src\Rendering\Core</Filter>
     </ClInclude>
@@ -201,7 +204,6 @@
     <ClInclude Include="vendor\imguizmo\ImGuizmo.h">
       <Filter>vendor\imguizmo</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering\Core\Framebuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -236,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="src\Rendering\Camera\Camera.cpp">
       <Filter>src\Rendering\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Core\Framebuffer.cpp">
+      <Filter>src\Rendering\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering\Core\LowLevelRenderer.cpp">
       <Filter>src\Rendering\Core</Filter>
@@ -300,6 +305,5 @@
     <ClCompile Include="vendor\imguizmo\ImGuizmo.cpp">
       <Filter>vendor\imguizmo</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\Core\Framebuffer.cpp" />
   </ItemGroup>
 </Project>

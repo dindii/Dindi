@@ -24,6 +24,7 @@ namespace Dindi
 		inline Window* GetWindow() { return m_ApplicationWindow; }
 		inline static Application& GetInstance() { return *s_Instance; }
 		void SetActiveScene(Scene* scene);
+		Scene* GetActiveScene() { return m_ActiveScene; }
 		float GetTime() const;
 		void PushLayer(Layer* layer);
 

@@ -141,11 +141,12 @@ namespace Dindi
 
 			std::string dirPrefix = directory + "\\";
 
-			const tinyobj::material_t& meshMaterial = loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]];
 
 #if 1
 			if (loader.GetMaterials().size())
 			{
+				const tinyobj::material_t& meshMaterial = loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]];
+				
 				if (!meshMaterial.diffuse_texname.empty())
 				{
 					temporaryDiffuse = Texture2D::Load(dirPrefix + meshMaterial.diffuse_texname);

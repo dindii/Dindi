@@ -11,7 +11,7 @@
 namespace Dindi
 {
 	void UILayer::Update(const DeltaTime& dt)
-	{
+	{		
 		GUI::Begin();
 
 		ProcessViewport();
@@ -70,6 +70,7 @@ namespace Dindi
 		static constexpr int maxLightLabelSize = 128;
 
 		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
+
 
 		ImGui::SetNextWindowPos({ windowSize.x * m_LightInspectorPosX, m_MenuBarHeight });
 		ImGui::SetNextWindowSize({ windowSize.x * m_LightInspectorWidth, windowSize.y });
@@ -163,25 +164,41 @@ namespace Dindi
 
 	void UILayer::ProcessViewport()
 	{
-		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove);
-		
-		ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), {1366, 768}, { 0,1 }, { 1,0 });
+	
+
+		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
+
+		//#TODO - Turn those values into variables.
+		ImGui::SetNextWindowPos({ windowSize.x * m_ModelInspectorWindowWidth, m_MenuBarHeight });
+		ImGui::SetNextWindowSize({ windowSize.x * m_ViewportPosX, windowSize.y });
+
+		vec2 viewportDims(windowSize.x * m_ViewportPosX, windowSize.y);
+
+		Application& app = Application::GetInstance();
+		Camera* sceneCamera = app.GetActiveScene()->GetActiveCamera();
+
+		sceneCamera->RemakeProjection(viewportDims.x, viewportDims.y);
+
+	//	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), { windowSize.x * m_ViewportPosX, windowSize.y }, { 0,1 }, { 1,0 });
 		
 		//This must use the same ImGui window to draw the gizmo, so it is necessary to keep it in the same Begin-End call
 		ProcessTransformGizmo();
 		
+		//ImGui::PopStyleVar(ImGuiStyleVar_WindowPadding);
 		ImGui::End();
+
 	}
 
 	void UILayer::ProcessTransformGizmo()
 	{
-		ImGuizmo::SetOrthographic(true);
-		
-		ImGuiIO& io = ImGui::GetIO();
-		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-
+		ImGuizmo::SetOrthographic(false);
 		ImGuizmo::SetDrawlist();
-
+		
+		ImVec2 parentWindowPos = ImGui::GetWindowPos();
+		ImVec2 parentWindowSize = { (float)ImGui::GetWindowWidth(), (float)ImGui::GetWindowHeight() };
+		ImGuizmo::SetRect(parentWindowPos.x, parentWindowPos.y, parentWindowSize.x, parentWindowSize.y);
 
 		ImGuizmo::OPERATION transformOperation = ImGuizmo::OPERATION::TRANSLATE;
 		ImGuizmo::MODE transformMode = ImGuizmo::MODE::WORLD;
@@ -198,17 +215,22 @@ namespace Dindi
 		if (model)
 		{
 			mat4 modelTransform;
-			modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale(model->GetScale());
+			modelTransform = mat4::Translate(model->GetPosition());// *mat4::Scale(model->GetScale());
+
 			ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, modelTransform.elements);
 			
-			float translation[3] = {};
-			float rotation[3]    = {};
-			float scale[3]       = {};
+			vec3 translation, rotation, scale;
 
-			ImGuizmo::DecomposeMatrixToComponents(modelTransform.elements, translation, rotation, scale);
+			ImGuizmo::DecomposeMatrixToComponents(modelTransform.elements, translation.elements, rotation.elements, scale.elements);
 
-			model->SetPosition({ translation[0], translation[1], translation[2]});
-			model->SetScale({ scale[0] });
+			//DND_LOG_TRACE("Guizmo Translation: ", translation);
+			//DND_LOG_TRACE("Guizmo Rotation: ", rotation);
+			//DND_LOG_TRACE("Guizmo Scale: ", scale);
+
+			model->SetPosition(translation);
+		//	model->SetScale({ scale[0] });
 		}
+		
+
 	}
 }

@@ -197,7 +197,7 @@ namespace Dindi
 		float a = q / AR;
 		float b = (Near + Far) / (Near - Far);
 		float c = (2.0f * Near * Far) / (Near - Far);
-
+		
 		result[0 + 0 * 4] = a;
 		result[1 + 1 * 4] = q;
 		result[2 + 2 * 4] = b;

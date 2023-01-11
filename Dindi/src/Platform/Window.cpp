@@ -83,7 +83,6 @@ namespace Dindi
 		//#TODO: This AA is temporary, I guess I will not use MSAA, but please put this 4 to a config file, maybe. 
 		//#WARNING: check if this will make my life harder with the g-buffer.
 		glfwWindowHint(GLFW_SAMPLES, 4);
-
 	}
 	
 	Window::~Window()

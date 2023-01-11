@@ -4,6 +4,7 @@
 #include <input/Input.h>
 #include <Math/Maths.h>
 
+Dindi::Model* model = nullptr;
 
 void RasterizerExample::OnAttach()
 {
@@ -18,8 +19,12 @@ void RasterizerExample::OnAttach()
 	SceneOne = new Dindi::Scene();
 	SceneOne->SetActiveCamera(m_DefaultEditorCamera);
 
-	//Dindi::Model* model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 0.05f);
-	//SceneOne->AddEntity(model);
+	//DEBUG
+	m_DefaultEditorCamera->SetCameraYaw(0.0f);
+	m_DefaultEditorCamera->SetCameraPitch(0.0f);
+	model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\cube.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	SceneOne->AddPointLight({Dindi::vec4(0.0f), Dindi::vec4(1.0f)});
+	SceneOne->AddEntity(model);
 
 	app.SetActiveScene(SceneOne);
 }
@@ -41,7 +46,7 @@ void RasterizerExample::OnUpdate(Dindi::DeltaTime& dt)
 
 void RasterizerExample::OnEvent(Dindi::Event& event)
 {
-	//DND_LOG_TRACE(event);
+	DND_LOG_TRACE(event);
 }
 
 void RasterizerExample::MoveCamera(Dindi::DeltaTime& dt)
@@ -75,7 +80,7 @@ void RasterizerExample::LookAround()
 	Dindi::vec2 MousePosition = Dindi::Input::GetMousePosition();
 	Dindi::Camera* sceneCamera = SceneOne->GetActiveCamera();
 
-	sceneCamera->SetCameraYaw(  Dindi::toRadians(MousePosition.x));
+	sceneCamera->SetCameraYaw(Dindi::toRadians(MousePosition.x));
 	sceneCamera->SetCameraPitch(Dindi::toRadians(MousePosition.y));
 }
 

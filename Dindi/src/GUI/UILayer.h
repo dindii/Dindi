@@ -44,5 +44,7 @@ namespace Dindi
 
 		const float m_ModelInspectorWindowPosX = 0.0f;
 		const float m_ModelInspectorWindowWidth = 0.15f;
+
+		const float m_ViewportPosX = 0.702f;
 	};
 }

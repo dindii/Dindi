@@ -1,20 +1,37 @@
 #pragma once
 #include <Rendering/Scene/Scene.h>
+#include <Core/Layer.h>
 
 namespace Dindi
 {
-	class UILayer
+	enum EditMode
+	{
+		BEGIN,
+		EditModeMin = 0,
+
+		Translate = EditModeMin,
+		Rotation,
+		Scale,
+
+		EditModeMax = Scale,
+		END
+	};
+
+	class UILayer : public Layer
 	{
 	public:
 		UILayer(uint32_t frameWidth, uint32_t frameHeight) : m_FrameWidth(frameWidth), m_FrameHeight(frameHeight) {};
 		UILayer() : m_FrameWidth(0), m_FrameHeight(0), m_Scene(nullptr) {};
 
+		virtual void OnUpdate(const Dindi::DeltaTime& dt) override;
+		virtual void OnEvent(Dindi::Event& event) override;
+		virtual void OnAttach()   override;
+		virtual void OnDetach()   override;
+		virtual void OnUIRender() override {};
+	private:
 		void SetFrameDimensions(uint32_t width, uint32_t height) { m_FrameWidth = width; m_FrameHeight = height; };
 		void SetScene(Scene* scene) { m_Scene = scene; }
-		
 
-		void Update(const DeltaTime& dt);
-	private:
 		void ProcessMenu();
 		void ProcessLightInspector();
 		void ProcessModelInspector();
@@ -29,6 +46,8 @@ namespace Dindi
 		Model* m_SelectedModel = nullptr;
 
 	private:
+
+		EditMode m_EditMode = EditMode::Translate;
 		//Windows raw dimensions and ratios to be calculated with the window size.
 		//#TODO: Check if I will have to turn those >1.0f dimensions into ratio (screen percentage) dimensions
 

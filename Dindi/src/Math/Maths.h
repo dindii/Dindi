@@ -5,9 +5,10 @@
 
 namespace Dindi
 {
-	inline int clamp(const int min, const int max,  const int val)
+	template<typename T>
+	inline T clamp(const T min, const T max,  const T val)
 	{
-		int aux = 0;
+		T aux = 0;
 
 		if (val < min)
 		{
@@ -22,6 +23,16 @@ namespace Dindi
 
 		return val;
 	}
+
+	inline vec3 clamp(const vec3& min, const vec3& max, const vec3& val)
+	{
+		float x = clamp<float>(min.x, max.x, val.x);
+		float y = clamp<float>(min.y, max.y, val.y);
+		float z = clamp<float>(min.z, max.z, val.z);
+
+		return { x, y, z };
+	}
+
 
 	inline uint8_t floatToByte(const float f)
 	{

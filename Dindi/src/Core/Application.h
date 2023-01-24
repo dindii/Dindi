@@ -37,7 +37,7 @@ namespace Dindi
 		Window* m_ApplicationWindow;
 		DeltaTime m_DeltaTime;
 
-		UILayer m_UILayer;
+		UILayer* m_UILayer;
 
 		std::vector<Layer*> m_LayerStack;
 	private:

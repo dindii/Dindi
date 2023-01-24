@@ -22,11 +22,13 @@ namespace Dindi
 	{
 	}
 
+#ifdef DINDI_DEBUG
 	void ShaderHotReloader::OnUpdate()
 	{
 		CheckForShaderFileChanges();
 		ReloadDirtyShaders();
 	}
+#endif
 
 	void ShaderHotReloader::AddShader(Shader& shader)
 	{

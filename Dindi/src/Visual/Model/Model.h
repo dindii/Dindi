@@ -15,6 +15,9 @@ namespace Dindi
 		void SetPosition(const vec3& newPos) { m_Position = newPos; }
 		inline vec3 GetPosition() const { return m_Position; }
 
+		void SetRotation(const vec3& newRot) { m_Rotation = newRot; }
+		inline vec3 GetRotation() const { return m_Rotation; }
+
 		void SetScale(const float newScale) { m_Scale = newScale; }
 		inline float GetScale() const { return m_Scale; }
 		inline std::string_view GetName() { return { m_Name }; }
@@ -24,8 +27,13 @@ namespace Dindi
 		inline void AddMesh(Mesh* const newMesh) { m_Mesh.emplace_back(newMesh); };
 		
 
+		void SetTransform(const mat4& transform) { m_Transform = transform; }
+		mat4 GetTransform() const { return m_Transform; }
+
 	private:
-		vec3 m_Position;
+		mat4 m_Transform;
+
+		vec3 m_Position, m_Rotation;
 		float m_Scale; //#TODO: Non-uniform scale, I'm just lazy to do this right now.
 		std::vector<Mesh*> m_Mesh;
 		std::string m_Name;

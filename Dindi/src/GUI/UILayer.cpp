@@ -9,9 +9,16 @@
 
 #include <Rendering/Core/Renderer.h>
 
+#include <Event/ApplicationEvent.h>
+#include <Event/KeyEvent.h>
+
+#include <Input/Input.h>
+
+#include <Math/Maths.h>
+
 namespace Dindi
 {
-	void UILayer::Update(const DeltaTime& dt)
+	void UILayer::OnUpdate(const DeltaTime& dt)
 	{		
 		GUI::Begin();
 
@@ -25,6 +32,56 @@ namespace Dindi
 		ProcessPerformanceStats(dt);
 
 		GUI::End();
+	}
+
+	void UILayer::OnEvent(Dindi::Event& event)
+	{
+		EventDispatcher dispatcher(event);
+			
+		dispatcher.Dispatch<WindowResizeEvent>([&](WindowResizeEvent Event) -> bool
+		{
+			SetFrameDimensions(Event.GetWidth(), Event.GetHeight());
+			
+			return false;
+		});
+
+		dispatcher.Dispatch<SceneChangeEvent>([&](SceneChangeEvent Event) -> bool
+		{
+			SetScene(Event.GetScene());
+
+			return false;
+		});
+
+		dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent Event) -> bool
+			{
+				switch (Event.GetKeyCode())
+				{
+				case DND_KEY_TAB:
+				{
+					//Make a selector for the editor mode (translate, rotate and scale)
+					uint8_t fooEnum = (uint8_t)m_EditMode;
+					fooEnum++;
+					fooEnum %= EditMode::END;
+					m_EditMode = (EditMode)fooEnum;
+
+					return true;
+				}   break;
+
+				default:
+					return false;
+				}
+			});
+
+	}
+
+	void UILayer::OnAttach()
+	{
+
+	}
+
+	void UILayer::OnDetach()
+	{
+
 	}
 
 	void UILayer::ProcessPerformanceStats(const DeltaTime& dt)
@@ -191,22 +248,50 @@ namespace Dindi
 
 	}
 
+	ImGuizmo::OPERATION GetImGuizmoOperation(const EditMode editMode)
+	{
+		ImGuizmo::OPERATION operation;
+
+		//This could be an index access..
+		switch (editMode)
+		{
+			case EditMode::Translate:
+			{
+				operation = ImGuizmo::OPERATION::TRANSLATE;
+			} break;
+
+			case EditMode::Rotation:
+			{
+				operation = ImGuizmo::OPERATION::ROTATE;
+			} break;
+
+			case EditMode::Scale:
+			{
+				operation = ImGuizmo::OPERATION::SCALE;
+			} break;
+
+			default:
+			{
+				DND_LOG_WARNING("Invalid Edit Mode!");
+				operation = ImGuizmo::OPERATION::TRANSLATE;
+			}
+		}
+
+		return operation;
+	}
+
 	void UILayer::ProcessTransformGizmo()
 	{
 		ImGuizmo::SetOrthographic(false);
 		ImGuizmo::SetDrawlist();
-		
-		ImVec2 parentWindowPos = ImGui::GetWindowPos();
-		ImVec2 parentWindowSize = { (float)ImGui::GetWindowWidth(), (float)ImGui::GetWindowHeight() };
-
 
 		ImVec2 imageSize = ImGui::GetItemRectSize();
 		ImVec2 imagePos = ImGui::GetItemRectMin();
 
 		ImGuizmo::SetRect(imagePos.x, imagePos.y, imageSize.x, imageSize.y);
 
-		ImGuizmo::OPERATION transformOperation = ImGuizmo::OPERATION::TRANSLATE;
-		ImGuizmo::MODE transformMode = ImGuizmo::MODE::WORLD;
+		ImGuizmo::OPERATION transformOperation = GetImGuizmoOperation(m_EditMode);
+		ImGuizmo::MODE transformMode = ImGuizmo::MODE::LOCAL;
 
 		const mat4& cameraProjection = m_Scene->GetActiveCamera()->GetProjection();
 		const mat4& cameraView = m_Scene->GetActiveCamera()->GetViewMatrix();
@@ -219,8 +304,7 @@ namespace Dindi
 
 		if (model)
 		{
-			mat4 modelTransform;
-			modelTransform = mat4::Translate(model->GetPosition());// *mat4::Scale(model->GetScale());
+			mat4 modelTransform = model->GetTransform();
 
 			ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, modelTransform.elements);
 			
@@ -228,12 +312,10 @@ namespace Dindi
 
 			ImGuizmo::DecomposeMatrixToComponents(modelTransform.elements, translation.elements, rotation.elements, scale.elements);
 
-			//DND_LOG_TRACE("Guizmo Translation: ", translation);
-			//DND_LOG_TRACE("Guizmo Rotation: ", rotation);
-			//DND_LOG_TRACE("Guizmo Scale: ", scale);
+			vec3 deltaRotation = rotation - model->GetRotation();
 
 			model->SetPosition(translation);
-		//	model->SetScale({ scale[0] });
+			model->SetRotation(model->GetRotation() + deltaRotation);
 		}
 		
 

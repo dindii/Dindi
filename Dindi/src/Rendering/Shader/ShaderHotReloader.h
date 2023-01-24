@@ -11,7 +11,12 @@ namespace Dindi
 		ShaderHotReloader() = default;
 
 		static void Init();
+
+#ifdef DINDI_DEBUG
 		static void OnUpdate();
+#else
+		static void OnUpdate() {};
+#endif
 		static void AddShader(Shader& shader);
 		static void RemoveShader(Shader& shader);
 

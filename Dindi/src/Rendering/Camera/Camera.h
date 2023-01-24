@@ -18,7 +18,7 @@ namespace Dindi
 
 
 
-		void AddCameraTargetPosition(vec3 pos, DeltaTime& dt);
+		void AddCameraTargetPosition(vec3 pos, const DeltaTime& dt);
 
 		inline void SetCameraTarget(vec3& target) { m_CameraTarget = target; }
 		void SetCameraPosition(vec3& position);

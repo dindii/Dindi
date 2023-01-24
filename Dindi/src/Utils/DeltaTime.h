@@ -8,8 +8,9 @@ namespace Dindi
 		DeltaTime();
 		void Tick();
 
-		operator float() { return deltaTime; }
+		operator float() const { return deltaTime; }
 		float Milliseconds() const { return deltaTime * 1000; }
+		
 	
 	private:
 		float currentTime;

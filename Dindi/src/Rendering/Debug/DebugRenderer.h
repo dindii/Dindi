@@ -15,7 +15,8 @@ namespace Dindi
 			NONE = -1,
 			
 			CUBE,
-			
+			LINE,
+
 			MAX
 		};
 
@@ -31,9 +32,18 @@ namespace Dindi
 		public:
 			static void Init();
 #ifdef DINDI_DEBUG
-			static void Draw(EDebugShape shape, vec3& pos, vec3& color, float size, uint32_t flags = EDebugRenderFlags::DEFAULT);
+			/*
+			* @briefing: Draws a shape in the desired position, with the desired color.
+			* @param - The desired shape to draw (CUBEs, LINEs etc)
+			* @param - Position of the shape
+			* @param [OPTIONAL] - This is used for LINES only, it is the end of the line. Ignore if you are not using LINE as the shape.
+			* @param - Color of the shape
+			* @param - Size of the shape. If the shape is a LINE, it will be the line thickness
+			* @param - Flags to render. You can have WIREFRAME mode and NO DEPTH TESTING that will always pass the depth test (it will be in front of everything).
+			*/
+			static void DrawShape(EDebugShape shape, const vec3& pos, const vec3& secondPos, const vec3& color, float size, uint32_t flags = EDebugRenderFlags::DEFAULT);
 #else
-			static void Draw(EDebugShape shape, vec3& pos, vec3& color, float size, uint32_t flags = EDebugRenderFlags::DEFAULT) {};
+			static void DrawShape(EDebugShape shape, const vec3& pos, const vec3& secondPos, const vec3& color, float size, uint32_t flags = EDebugRenderFlags::DEFAULT) {};
 #endif
 		private:
 			static Model* m_DebugShapes[Debug::EDebugShape::MAX];

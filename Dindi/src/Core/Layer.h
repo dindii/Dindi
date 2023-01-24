@@ -17,7 +17,7 @@ namespace Dindi
 		virtual void OnDetach() = 0;
 
 		virtual void OnUIRender() = 0;
-		virtual void OnUpdate(DeltaTime& dt) = 0;
+		virtual void OnUpdate(const DeltaTime& dt) = 0;
 		virtual void OnEvent(Event& event) = 0;
 	};
 }

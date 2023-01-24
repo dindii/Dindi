@@ -26,8 +26,11 @@ namespace Dindi
 
 		size_t bufferSize = sizeof(vec3) * vertexPositions.size() + sizeof(vec3) * vertexNormals.size() + sizeof(vec2) * textCoords.size();
 
-		glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
-		
+		if(m_Flags & RenderFlags::Static)
+			glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
+		else if(m_Flags & RenderFlags::Stream)
+			glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STREAM_DRAW);
+
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vec3) * vertexPositions.size(), vertexPositions.data());
 		glBufferSubData(GL_ARRAY_BUFFER, sizeof(vec3) * vertexPositions.size(), (sizeof(vec3) * vertexNormals.size()), vertexNormals.data());
 		glBufferSubData(GL_ARRAY_BUFFER, (sizeof(vec3) * vertexPositions.size()) + (sizeof(vec3) * vertexNormals.size()), (sizeof(vec2) * textCoords.size()), textCoords.data());

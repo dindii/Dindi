@@ -54,7 +54,7 @@ namespace Dindi
 	}
 
 	//For Free look fps camera
-	void Camera::AddCameraTargetPosition(vec3 pos, DeltaTime& dt)
+	void Camera::AddCameraTargetPosition(vec3 pos, const DeltaTime& dt)
 	{
 		pos *= dt;
 

@@ -121,9 +121,18 @@ namespace Dindi
 					Material* material = mesh->GetMaterial();
 					material->Bind();
 					
-					mat4 modelTransform;
-					modelTransform = mat4::Translate(model->GetPosition()) * mat4::Scale({ model->GetScale() });
+					vec3 modelRotation = model->GetRotation();
+
+					mat4 rotationTransform  = mat4::Rotate(modelRotation.z, { 0.0f, 0.0f, 1.0f });
+					rotationTransform	   *= mat4::Rotate(modelRotation.y, { 0.0f, 1.0f, 0.0f });
+					rotationTransform      *= mat4::Rotate(modelRotation.x, { 1.0f, 0.0f, 0.0f });
 					
+					mat4 modelTransform;
+					modelTransform = mat4::Translate(model->GetPosition()) * rotationTransform * mat4::Scale({ model->GetScale() });
+					
+					//Cache transform
+					model->SetTransform(modelTransform);
+
 					material->GetShader()->UploadUniformMat4("u_Transform", modelTransform);
 
 					//#TODO: Please, let's use elements to draw.
@@ -140,9 +149,9 @@ namespace Dindi
 				for (uint32_t x = 0; x < lights.size(); x++)
 				{
 					uint32_t flags = (Debug::EDebugRenderFlags::WIREFRAME) | (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-					Debug::DebugRenderer::Draw(Debug::EDebugShape::CUBE, lights[x].GetPosition(), lights[x].GetColor(), 0.25f, flags);
+					Debug::DebugRenderer::DrawShape(Debug::EDebugShape::CUBE, lights[x].GetPosition(), { 0.0f }, lights[x].GetColor(), 0.25f, flags);
 				}
-		
+
 			m_ScreenOutput->UnBind();
 		}
 

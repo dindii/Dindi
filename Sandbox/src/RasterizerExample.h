@@ -11,7 +11,7 @@ public:
 	virtual void OnUIRender() override;
 	virtual void OnAttach()   override;
 	virtual void OnDetach()   override;
-	virtual void OnUpdate(Dindi::DeltaTime& dt) override;
+	virtual void OnUpdate(const Dindi::DeltaTime& dt) override;
 	virtual void OnEvent(Dindi::Event& event) override;
 
 private:
@@ -20,6 +20,6 @@ private:
 
 	float m_DefaultEditorCameraSpeed;
 
-	void MoveCamera(Dindi::DeltaTime& dt);
+	void MoveCamera(const Dindi::DeltaTime& dt);
 	void LookAround();
 };

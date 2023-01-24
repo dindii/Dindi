@@ -38,7 +38,8 @@ namespace Dindi
 		Renderer::Init();
 		GUI::Init(this->m_ApplicationWindow);
 
-		m_UILayer.SetFrameDimensions(m_ApplicationWindow->GetWidth(), m_ApplicationWindow->GetHeight());
+		m_UILayer = new UILayer(m_ApplicationWindow->GetWidth(), m_ApplicationWindow->GetHeight());
+		PushLayer(m_UILayer);
 
 		m_AppState = EApplicationState::EDITOR;
 	}
@@ -62,9 +63,8 @@ namespace Dindi
 
 			Renderer::SetViewport(0, 0, newWidth, newHeight);
 			m_ActiveScene->GetActiveCamera()->RemakeProjection((float)newWidth, (float)newHeight);
-			m_UILayer.SetFrameDimensions(newWidth, newHeight);
 
-			return true;
+			return false;
 		});
 
 
@@ -102,7 +102,6 @@ namespace Dindi
 			}
 		});
 
-
 		for (Layer* layer : m_LayerStack)
 			layer->OnEvent(e);
 	}
@@ -110,9 +109,7 @@ namespace Dindi
 	void Application::Run()
 	{
 		while (m_Running)
-		{
 			OnUpdate(m_DeltaTime);
-		}
 	}
 
 	void Application::OnUpdate(DeltaTime& dt)
@@ -124,12 +121,10 @@ namespace Dindi
 		Logger::Flush();
 
 		//This is just for when developing the shaders, removing this would save us some frame budget.
-#ifdef DINDI_DEBUG
-		ShaderHotReloader::OnUpdate();
-#endif
-		Renderer::Draw(m_ActiveScene);
 
-		m_UILayer.Update(dt);
+		ShaderHotReloader::OnUpdate();
+
+		Renderer::Draw(m_ActiveScene);
 
 		for (Layer* layer : m_LayerStack)
 			layer->OnUpdate(dt);
@@ -150,6 +145,8 @@ namespace Dindi
 	void Application::SetActiveScene(Scene* scene)
 	{
 		m_ActiveScene = scene;
-		m_UILayer.SetScene(scene);
+		
+		SceneChangeEvent changeSceneEvent(scene);
+		OnEvent(changeSceneEvent);
 	}
 }

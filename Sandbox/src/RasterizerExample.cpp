@@ -38,7 +38,7 @@ void RasterizerExample::OnUIRender()
 {
 }
 
-void RasterizerExample::OnUpdate(Dindi::DeltaTime& dt)
+void RasterizerExample::OnUpdate(const Dindi::DeltaTime& dt)
 {
 	LookAround();
 	MoveCamera(dt);
@@ -49,7 +49,7 @@ void RasterizerExample::OnEvent(Dindi::Event& event)
 	DND_LOG_TRACE(event);
 }
 
-void RasterizerExample::MoveCamera(Dindi::DeltaTime& dt)
+void RasterizerExample::MoveCamera(const Dindi::DeltaTime& dt)
 {
 	Dindi::vec3 IntendedCameraPosition;
 

@@ -143,6 +143,7 @@
     <ClInclude Include="src\Math\vec2.h" />
     <ClInclude Include="src\Math\vec3.h" />
     <ClInclude Include="src\Math\vec4.h" />
+    <ClInclude Include="src\Physics\Trace.h" />
     <ClInclude Include="src\Platform\Window.h" />
     <ClInclude Include="src\Rendering\Camera\Camera.h" />
     <ClInclude Include="src\Rendering\Core\Framebuffer.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="src\Math\vec2.cpp" />
     <ClCompile Include="src\Math\vec3.cpp" />
     <ClCompile Include="src\Math\vec4.cpp" />
+    <ClCompile Include="src\Physics\Trace.cpp" />
     <ClCompile Include="src\Platform\Window.cpp" />
     <ClCompile Include="src\Rendering\Camera\Camera.cpp" />
     <ClCompile Include="src\Rendering\Core\Framebuffer.cpp" />

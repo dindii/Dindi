@@ -2,13 +2,17 @@
 #include "Application.h"
 #include "Rendering/Core/Renderer.h"
 #include "Rendering/Shader/ShaderHotReloader.h"
+#include "Rendering/Debug/DebugRenderer.h"
 #include "Input/Input.h"
 
 #include "Event/ApplicationEvent.h"
 #include "Event/KeyEvent.h"
+#include "Event/MouseEvent.h"
 #include "Math/Maths.h"
 #include "Visual/Model/Model.h"
 #include "Visual/Light/Light.h"
+
+#include <Physics/Trace.h>
 
 #include <GUI/GUI.h>
 
@@ -68,6 +72,34 @@ namespace Dindi
 		});
 
 
+		dispatcher.Dispatch<MouseButtonPressedEvent>([&](MouseButtonPressedEvent Event) -> bool
+		{
+				switch (Event.GetMouseButton())
+				{
+				case DND_MOUSE_BUTTON_1:
+				{
+					vec3 mouseToWorld = Trace::CastRay((float)m_ApplicationWindow->GetMouseX(), (float)m_ApplicationWindow->GetMouseY(), *m_ActiveScene->GetActiveCamera());
+
+					//#TODO - Replace this for a WHILE-STEP ray caster.
+					mouseToWorld.z *= 5.0f;
+
+					Debug::DebugShapeContext sc;
+					sc.firstPosition = m_ActiveScene->GetActiveCamera()->GetCameraPos();
+					sc.secondPosition = mouseToWorld;
+					sc.shapeColor = { 1.0f, 0.0f, 1.0f };
+					sc.shapeLifetime = 5000.0f;
+					sc.shapeType = Debug::EDebugShape::LINE;
+
+					Debug::DebugRenderer::DrawShape(sc);
+					
+					return false;
+				} break;
+
+				default:
+					return false;
+				}
+		});
+
 		dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent Event) -> bool
 		{
 			switch (Event.GetKeyCode())
@@ -97,6 +129,7 @@ namespace Dindi
 
 					return true;
 				}   break;
+
 				default:
 					return false;
 			}

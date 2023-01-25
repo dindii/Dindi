@@ -3,7 +3,7 @@
 #include "Visual/Model/Model.h"
 
 //#IMPORTANT: - Use it only for debugging purposes!
-//This debug renderer is not meant to be fast but flexible and immediate. It will issue a draw call everytime you call "Draw()"
+//This debug renderer is not meant to be fast but flexible and immediate. It will issue a draw call every time you call "Draw()"
 //as well as upload some uniforms. Keep in mind that this must be only used in debug mode and it will be stripped in other build types.
 
 namespace Dindi
@@ -27,11 +27,35 @@ namespace Dindi
 			NO_DEPTH_TESTING = BIT(2)
 		};
 
+		struct DebugShapeContext
+		{
+		public:
+			EDebugShape shapeType = EDebugShape::NONE;
+			vec3 firstPosition;
+			vec3 secondPosition;
+			vec3 shapeColor;
+			float shapeSize = 1.0f;
+			uint32_t shapeLifetime = 0;
+			uint32_t shapeRenderFlags = EDebugRenderFlags::DEFAULT;
+
+			bool Tick();
+
+		private:
+			bool m_FirstTick = true;
+			time_t m_AliveUntil = 0;
+		};
+
 		class DebugRenderer
 		{
 		public:
 			static void Init();
 #ifdef DINDI_DEBUG
+			static void SubmitDraw();
+			static void DrawShape(const DebugShapeContext& debugShapeContext);
+			
+
+
+		private:
 			/*
 			* @briefing: Draws a shape in the desired position, with the desired color.
 			* @param - The desired shape to draw (CUBEs, LINEs etc)
@@ -41,12 +65,13 @@ namespace Dindi
 			* @param - Size of the shape. If the shape is a LINE, it will be the line thickness
 			* @param - Flags to render. You can have WIREFRAME mode and NO DEPTH TESTING that will always pass the depth test (it will be in front of everything).
 			*/
-			static void DrawShape(EDebugShape shape, const vec3& pos, const vec3& secondPos, const vec3& color, float size, uint32_t flags = EDebugRenderFlags::DEFAULT);
-#else
-			static void DrawShape(EDebugShape shape, const vec3& pos, const vec3& secondPos, const vec3& color, float size, uint32_t flags = EDebugRenderFlags::DEFAULT) {};
+			static void ImmediateDebugDrawShape(const DebugShapeContext& debugShapeContext);
+#else																													   
+			static void ImmediateDebugDrawShape(const DebugShapeContext& debugShapeContext) {};
 #endif
 		private:
 			static Model* m_DebugShapes[Debug::EDebugShape::MAX];
+			static std::vector<DebugShapeContext> m_OnFlyDrawCalls;
 		};
 	}
 

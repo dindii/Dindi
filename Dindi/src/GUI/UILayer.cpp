@@ -290,6 +290,10 @@ namespace Dindi
 
 		ImGuizmo::SetRect(imagePos.x, imagePos.y, imageSize.x, imageSize.y);
 
+		//Renderer::SetViewport(0, 0, imageSize.x, imageSize.y);
+
+		//Application::GetInstance().GetActiveScene()->GetActiveCamera()->SetAspectRatio(imageSize.x / imageSize.y);
+
 		ImGuizmo::OPERATION transformOperation = GetImGuizmoOperation(m_EditMode);
 		ImGuizmo::MODE transformMode = ImGuizmo::MODE::LOCAL;
 

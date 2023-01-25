@@ -72,11 +72,19 @@ namespace Dindi
 		glfwSetWindowCloseCallback(m_Window, WindowCloseCallbackFunc);
 
 
+	
+
 		//Set window mouse moved callback
 		auto WindowMouseMovedCallback = [](GLFWwindow* window, double xpos, double ypos)
 		{
-			static_cast<Window*>(glfwGetWindowUserPointer(window))->cursorPositionCallback(window, xpos, ypos);
+			Window* ourWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+			ourWindow->cursorPositionCallback(window, xpos, ypos);
+
+			//caching mouse positions
+			ourWindow->SetCacheMousePos(xpos, ypos);
 		};
+
+		
 	
 		glfwSetCursorPosCallback(m_Window, WindowMouseMovedCallback);
 

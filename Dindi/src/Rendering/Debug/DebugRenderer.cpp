@@ -4,11 +4,14 @@
 #include "Rendering/Core/LowLevelRenderer.h"
 
 #include <glad/glad.h>
+#include <chrono>
+
 namespace Dindi
 {
 	namespace Debug
 	{
 		Model* DebugRenderer::m_DebugShapes[EDebugShape::MAX];
+		std::vector<DebugShapeContext> DebugRenderer::m_OnFlyDrawCalls;
 
 		void DebugRenderer::Init()
 		{
@@ -95,30 +98,58 @@ namespace Dindi
 
 		}
 
+		void DebugRenderer::SubmitDraw()
+		{
+			for (uint32_t i = 0; i < m_OnFlyDrawCalls.size(); i++)
+			{
+				DebugShapeContext& shapeContext = m_OnFlyDrawCalls[i];
+				bool isAlive = shapeContext.Tick();
+
+				if (!isAlive)
+				{
+					m_OnFlyDrawCalls.erase(m_OnFlyDrawCalls.begin() + i);
+					continue;
+				}
+
+				ImmediateDebugDrawShape(shapeContext);
+			}
+		}
+		void DebugRenderer::DrawShape(const DebugShapeContext& debugShapeContext)
+		{
+			if (debugShapeContext.shapeLifetime > 0.0f)
+			{
+				m_OnFlyDrawCalls.emplace_back(std::move(debugShapeContext));
+				return;
+			}
+
+			ImmediateDebugDrawShape(debugShapeContext);
+
+		}
+
 		//#TODO: Add render flags here. Like, if it is wire frame, opaque, if we are going to do depth test (to overlay geometry) or not etc.
 #ifdef DINDI_DEBUG
-		void DebugRenderer::DrawShape(EDebugShape shape, const vec3& pos, const vec3& secondPos, const vec3& color, float size, uint32_t flags)
+		void DebugRenderer::ImmediateDebugDrawShape(const DebugShapeContext& debugShapeContext)
 		{
-			bool wireframeMode = flags & EDebugRenderFlags::WIREFRAME;
-			bool overlayMode   = flags & EDebugRenderFlags::NO_DEPTH_TESTING;
+			bool wireframeMode = debugShapeContext.shapeRenderFlags & EDebugRenderFlags::WIREFRAME;
+			bool overlayMode   = debugShapeContext.shapeRenderFlags & EDebugRenderFlags::NO_DEPTH_TESTING;
 
-			bool isLine = (shape == EDebugShape::LINE);
+			bool isLine = (debugShapeContext.shapeRenderFlags == EDebugShape::LINE);
 
 			//Usually, each Debug model will only have 01 mesh. This is more for primitives, like spheres, cubes, triangles etc...
 			//#NOTE: If you need more complex debug models with more meshes, you can easily expand this with a for loop or so.
-			Mesh* mesh = m_DebugShapes[shape]->GetMeshes()[0];
+			Mesh* mesh = m_DebugShapes[debugShapeContext.shapeType]->GetMeshes()[0];
 
 			mesh->GetMaterial()->Bind();
-			mesh->GetMaterial()->GetShader()->UploadUniformFloat3("u_Color", color);
+			mesh->GetMaterial()->GetShader()->UploadUniformFloat3("u_Color", debugShapeContext.shapeColor);
 
 			mat4 transform;
-			transform *= transform.Translate(pos);
+			transform *= transform.Translate(debugShapeContext.firstPosition);
 
 			if (isLine)
-				glLineWidth((uint32_t)size);
+				glLineWidth((uint32_t)debugShapeContext.shapeSize);
 			else
 			{
-				transform *= transform.Scale(size);
+				transform *= transform.Scale(debugShapeContext.shapeSize);
 				glLineWidth(1.0f);
 			}
 			
@@ -136,8 +167,8 @@ namespace Dindi
 			if(isLine)
 			{
 				static std::vector<vec3> linePoints(2);
-				linePoints[0] = pos;
-				linePoints[1] = secondPos;
+				linePoints[0] = debugShapeContext.firstPosition;
+				linePoints[1] = debugShapeContext.secondPosition;
 
 				mesh->SetVertexPositionData(std::move(linePoints));
 				mesh->RegisterData();
@@ -153,5 +184,22 @@ namespace Dindi
 			DND_INTERNAL::LowLevelRenderer::SetOverlay(false);
 		}
 #endif
+
+		bool DebugShapeContext::Tick()
+		{
+			if (m_FirstTick)
+			{
+				m_FirstTick = false;
+
+				std::chrono::duration now = std::chrono::system_clock::now().time_since_epoch();
+				m_AliveUntil = std::chrono::duration_cast<std::chrono::milliseconds>(now).count() + shapeLifetime;
+			}
+
+			std::chrono::duration now = std::chrono::system_clock::now().time_since_epoch();
+			time_t actualTime = std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
+
+			return (m_AliveUntil >= actualTime);
+		}
+
 	}
 }

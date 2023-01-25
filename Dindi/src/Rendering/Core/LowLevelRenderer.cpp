@@ -143,13 +143,23 @@ namespace Dindi
 			}
 
 #endif
+			//Draw all shapes in the queue
+			Debug::DebugRenderer::SubmitDraw();
+
             //DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
 			//Draw cubes in light positions to debug.
 			if(app.GetApplicationState() == EApplicationState::EDITOR)
 				for (uint32_t x = 0; x < lights.size(); x++)
 				{
-					uint32_t flags = (Debug::EDebugRenderFlags::WIREFRAME) | (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-					Debug::DebugRenderer::DrawShape(Debug::EDebugShape::CUBE, lights[x].GetPosition(), { 0.0f }, lights[x].GetColor(), 0.25f, flags);
+					Debug::DebugShapeContext shapeContext;
+
+					shapeContext.firstPosition = lights[x].GetPosition();
+					shapeContext.shapeColor = lights[x].GetColor();
+					shapeContext.shapeSize = 0.5f;
+					shapeContext.shapeRenderFlags = (Debug::EDebugRenderFlags::WIREFRAME) | (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
+					shapeContext.shapeType = Debug::EDebugShape::CUBE;
+
+					Debug::DebugRenderer::DrawShape(shapeContext);
 				}
 
 			m_ScreenOutput->UnBind();

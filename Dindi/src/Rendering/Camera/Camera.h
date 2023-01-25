@@ -42,6 +42,8 @@ namespace Dindi
 		inline void SetCameraLag(bool val) { m_CameraLag = val; }
 		inline void SetCameraLagValue(float LagVal) { m_LagVal = LagVal; }
 
+		inline void SetAspectRatio(float AR) { UpdateCameraVectors();  m_AspectRatio = AR; }
+
 		void RemakeProjection(float newWidth, float newHeight);
 
 		inline void LockCamera(bool lockCamera) { m_CameraLock = lockCamera; }

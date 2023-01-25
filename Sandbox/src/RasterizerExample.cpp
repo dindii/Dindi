@@ -4,6 +4,10 @@
 #include <input/Input.h>
 #include <Math/Maths.h>
 
+#include <Event/ApplicationEvent.h>
+#include <Event/KeyEvent.h>
+#include <Event/MouseEvent.h>
+
 Dindi::Model* model = nullptr;
 
 void RasterizerExample::OnAttach()

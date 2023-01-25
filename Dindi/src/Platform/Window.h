@@ -23,9 +23,13 @@ namespace Dindi
 		float GetAspectRatio() const;
 		float GetTime() const;
 		inline void setEventCallback(const EventCallbackFn& callback) { EventCallback = callback; }
-
 	
+		inline uint32_t GetMouseX() const { return m_MouseX; }
+		inline uint32_t GetMouseY() const { return m_MouseY; }
+
 	private:
+		inline void SetCacheMousePos(uint32_t x, uint32_t y) { m_MouseX = x; m_MouseY = y; }
+
 		void pollEvents(); 
 		void swapBuffers();
 
@@ -41,5 +45,6 @@ namespace Dindi
 		const char* m_Name;
 		float m_AspectRatio;
 		uint32_t m_Width, m_Height;
+		uint32_t m_MouseX = 0, m_MouseY = 0;
 	};
 }

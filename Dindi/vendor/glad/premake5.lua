@@ -2,7 +2,8 @@ project "Glad"
     kind "StaticLib"
     language "C"
 	staticruntime "on"
-    
+    toolset "v141"
+
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
@@ -28,7 +29,7 @@ project "Glad"
         symbols "on"             -- Deixamos on os debug symbols
         
      filter "configurations:Release"
-	 	defines "DINDI_RELEASE"
+	 	defines "DINDI_DEBUG"
         runtime "Release"
         optimize "on"            -- Ripamos todas as configurações de debug e otimizamos o projeto
 

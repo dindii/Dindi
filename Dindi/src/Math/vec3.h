@@ -28,8 +28,8 @@ namespace Dindi
 
 		static float Length(const vec3& vec);
 		static float Length2(const vec3& vec);
-		static vec3 Normalize(const vec3& vec)
-			;
+		static vec3 Normalize(const vec3& vec);
+		float Distance(const vec3& other) const;
 		static vec3 Cross(const vec3& first, const vec3& second);
 		static float Dot(const vec3& first, const vec3& second);
 
@@ -61,12 +61,14 @@ namespace Dindi
 		vec3& operator*=(const vec3& other);
 		vec3& operator/=(const vec3& other);
 
+
 		vec3& operator*=(const float& other);
 
 
 		bool operator==(const vec3& other);
 		bool operator!=(const vec3& other);
-
+		bool operator>(const vec3& other);
+		bool operator<(const vec3& other);
 		float& operator[](uint8_t index) { return elements[index]; }
 		float operator[](uint8_t index) const { return elements[index]; }
 

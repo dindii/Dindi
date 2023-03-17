@@ -84,6 +84,27 @@ namespace Dindi
 
 	}
 
+	bool UILayer::IsHovering() const
+	{
+		return ImGuizmo::IsOver() || ImGui::IsAnyItemHovered();
+	}
+
+	Dindi::vec2 UILayer::GetViewportMousePosition() const
+	{
+		Application& app = Application::GetInstance();
+		Window* appWindow = app.GetWindow();
+
+		float mx = (float)appWindow->GetMouseX() - (float)m_ViewportMinX;
+		float my = (float)appWindow->GetMouseY() - (float)m_ViewportMinY;
+
+		return { mx, my };
+	}
+
+	Dindi::vec2 UILayer::GetViewportSize() const
+	{
+		return { (float)m_ViewportSizeX, (float)m_ViewportSizeY };
+	}
+
 	void UILayer::ProcessPerformanceStats(const DeltaTime& dt)
 	{
 		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
@@ -97,6 +118,18 @@ namespace Dindi
 	}
 
 	
+	void UILayer::CacheViewportMinPos(uint32_t width, uint32_t height)
+	{
+		m_ViewportMinX = width;
+		m_ViewportMinY = height;
+	}
+
+	void UILayer::CacheViewportSize(uint32_t width, uint32_t height)
+	{
+		m_ViewportSizeX = width;
+		m_ViewportSizeY = height;
+	}
+
 	void UILayer::ProcessMenu()
 	{
 		if (ImGui::BeginMainMenuBar())
@@ -233,11 +266,6 @@ namespace Dindi
 
 		vec2 viewportDims(windowSize.x * m_ViewportPosX, windowSize.y);
 
-		Application& app = Application::GetInstance();
-		Camera* sceneCamera = app.GetActiveScene()->GetActiveCamera();
-
-		sceneCamera->RemakeProjection(viewportDims.x, viewportDims.y);
-
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), { windowSize.x * m_ViewportPosX, windowSize.y }, { 0,1 }, { 1,0 });
 		
@@ -286,13 +314,12 @@ namespace Dindi
 		ImGuizmo::SetDrawlist();
 
 		ImVec2 imageSize = ImGui::GetItemRectSize();
+		CacheViewportSize(imageSize.x, imageSize.y);
+
 		ImVec2 imagePos = ImGui::GetItemRectMin();
-
+		CacheViewportMinPos(imagePos.x, imagePos.y);
+		
 		ImGuizmo::SetRect(imagePos.x, imagePos.y, imageSize.x, imageSize.y);
-
-		//Renderer::SetViewport(0, 0, imageSize.x, imageSize.y);
-
-		//Application::GetInstance().GetActiveScene()->GetActiveCamera()->SetAspectRatio(imageSize.x / imageSize.y);
 
 		ImGuizmo::OPERATION transformOperation = GetImGuizmoOperation(m_EditMode);
 		ImGuizmo::MODE transformMode = ImGuizmo::MODE::LOCAL;
@@ -300,15 +327,15 @@ namespace Dindi
 		const mat4& cameraProjection = m_Scene->GetActiveCamera()->GetProjection();
 		const mat4& cameraView = m_Scene->GetActiveCamera()->GetViewMatrix();
 
-		Model* model = nullptr;
 		
 		//DEBUG
-		if (m_Scene->GetEntities().size() > 0)
-			model = m_Scene->GetEntities()[0];
+		PickupContext model = Application::GetInstance().GetPickedObject();
 
-		if (model)
+		if (model.selectedModel || model.selectedMesh)
 		{
-			mat4 modelTransform = model->GetTransform();
+			vec3 halfAABB = (model.selectedMesh->GetAABB().GetMin() + model.selectedMesh->GetAABB().GetMax()) / 2;
+			vec3 position = model.ignoreMesh ? model.selectedModel->GetPosition() : halfAABB;
+			mat4 modelTransform = mat4::Translate(position);
 
 			ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, modelTransform.elements);
 			
@@ -316,10 +343,13 @@ namespace Dindi
 
 			ImGuizmo::DecomposeMatrixToComponents(modelTransform.elements, translation.elements, rotation.elements, scale.elements);
 
-			vec3 deltaRotation = rotation - model->GetRotation();
+			if (!model.ignoreMesh)
+				translation -= halfAABB;
 
-			model->SetPosition(translation);
-			model->SetRotation(model->GetRotation() + deltaRotation);
+			vec3 deltaRotation = rotation - model.selectedModel->GetRotation();
+
+			vec3 meshPos = model.selectedMesh->GetPosition();
+			model.ignoreMesh ? model.selectedModel->SetPosition(translation) : model.selectedMesh->SetPosition(meshPos + translation);
 		}
 		
 

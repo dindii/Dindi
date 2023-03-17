@@ -16,7 +16,7 @@ namespace Dindi
 		AppTick, AppUpdate, AppRender,
 		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
-		SceneChange
+		SceneChange, AppInitialized
 	};
 
 	/**

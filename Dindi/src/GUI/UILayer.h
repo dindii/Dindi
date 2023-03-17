@@ -28,7 +28,16 @@ namespace Dindi
 		virtual void OnAttach()   override;
 		virtual void OnDetach()   override;
 		virtual void OnUIRender() override {};
+
+		bool IsHovering() const;
+
+		inline vec2 GetViewportMin() const { return { (float)m_ViewportMinX, (float)m_ViewportMinY }; }
+		vec2 GetViewportMousePosition() const;
+		vec2 GetViewportSize() const;
+		float GetViewportAspectRatio() const { return (float)m_ViewportSizeX / (float)m_ViewportSizeY; }
 	private:
+		void CacheViewportMinPos(uint32_t width, uint32_t height);
+		void CacheViewportSize(uint32_t width, uint32_t height);
 		void SetFrameDimensions(uint32_t width, uint32_t height) { m_FrameWidth = width; m_FrameHeight = height; };
 		void SetScene(Scene* scene) { m_Scene = scene; }
 
@@ -41,7 +50,9 @@ namespace Dindi
 
 	private:
 		uint32_t m_FrameWidth = 0, m_FrameHeight = 0;
-		
+		uint32_t m_ViewportSizeX = 0, m_ViewportSizeY = 0;
+		uint32_t m_ViewportMinX = 0, m_ViewportMinY = 0;
+
 		Scene* m_Scene = nullptr;
 		Model* m_SelectedModel = nullptr;
 
@@ -65,5 +76,6 @@ namespace Dindi
 		const float m_ModelInspectorWindowWidth = 0.15f;
 
 		const float m_ViewportPosX = 0.702f;
+
 	};
 }

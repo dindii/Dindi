@@ -7,6 +7,7 @@
 #include <Event/ApplicationEvent.h>
 #include <Event/KeyEvent.h>
 #include <Event/MouseEvent.h>
+#include <Input/Input.h>
 
 Dindi::Model* model = nullptr;
 
@@ -15,7 +16,11 @@ void RasterizerExample::OnAttach()
 	//FROM HERE TO BELOW IS ALL DEBUG STUFF
 	Dindi::Application& app = Dindi::Application::GetInstance();
 
-	m_DefaultEditorCamera = new Dindi::Camera(app.GetWindow()->GetAspectRatio(), Dindi::vec3(0.0f, 0.0f, 5.0f));
+	//m_DefaultEditorCamera = new Dindi::Camera(app.GetWindow()->GetAspectRatio(), Dindi::vec3(0.0f, 0.0f, 5.0f));
+
+	//#TEMPORARY CHANGE ME
+	float windowAR = Dindi::Application::GetInstance().GetWindow()->GetAspectRatio();
+	m_DefaultEditorCamera = new Dindi::Camera(windowAR, Dindi::vec3(0.0f, 0.0f, 5.0f));
 	m_DefaultEditorCameraSpeed = 10.0f;
 	m_DefaultEditorCamera->SetCameraLag(true);
 	m_DefaultEditorCamera->SetCameraLagValue(0.15f);
@@ -28,7 +33,7 @@ void RasterizerExample::OnAttach()
 	m_DefaultEditorCamera->SetCameraPitch(0.0f);
 	model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\cube.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 	SceneOne->AddPointLight({Dindi::vec4(0.0f), Dindi::vec4(1.0f)});
-	SceneOne->AddEntity(model);
+//	SceneOne->AddEntity(model);
 
 	app.SetActiveScene(SceneOne);
 }
@@ -50,7 +55,21 @@ void RasterizerExample::OnUpdate(const Dindi::DeltaTime& dt)
 
 void RasterizerExample::OnEvent(Dindi::Event& event)
 {
-	DND_LOG_TRACE(event);
+	Dindi::EventDispatcher dispatcher(event);
+
+
+	dispatcher.Dispatch<Dindi::InitializeEvent>([&](Dindi::InitializeEvent Event) -> bool
+	{
+		Dindi::Application& app = Dindi::Application::GetInstance();
+
+		float UIAspectRatio = app.GetUILayer()->GetViewportAspectRatio();
+		float actualFov = app.GetActiveScene()->GetActiveCamera()->GetFieldOfView();
+
+		m_DefaultEditorCamera->SetProjection(UIAspectRatio, actualFov);
+
+		return true;
+	});
+
 }
 
 void RasterizerExample::MoveCamera(const Dindi::DeltaTime& dt)

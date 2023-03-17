@@ -114,5 +114,15 @@ namespace Dindi
 	private:
 		Scene* m_Scene;
 	};
+
+	class InitializeEvent : public Event
+	{
+	public:
+		InitializeEvent() {};
+
+
+		EVENT_CLASS_TYPE(AppInitialized);
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	};
 }
 

@@ -2,6 +2,7 @@
 #include "Visual/Material/Material.h"
 #include "Visual/Mesh/Mesh.h"
 #include <string_view>
+#include <Physics/AABB.h>
 
 namespace Dindi
 {
@@ -24,12 +25,19 @@ namespace Dindi
 		void SetName(std::string_view name) { m_Name = name; }
 
 		inline std::vector<Mesh*>& GetMeshes() { return m_Mesh; }
+		
+		void SortMeshesBasedOnAABBSize(bool greaterThan);
+
 		inline void AddMesh(Mesh* const newMesh) { m_Mesh.emplace_back(newMesh); };
 		
-
-		void SetTransform(const mat4& transform) { m_Transform = transform; }
+		void SetWorldAABB(const AABB& aabb) { m_AABB.SetMin(aabb.GetMin()); m_AABB.SetMax(aabb.GetMax()); }
+		void SetAABB(const AABB& aabb) { m_AABB = aabb; }
+		AABB GetAABB() const { return m_AABB; }
+		void SetTransform(const mat4& transform);
 		mat4 GetTransform() const { return m_Transform; }
 
+	private:
+		void BuildAABB();
 	private:
 		mat4 m_Transform;
 
@@ -37,5 +45,6 @@ namespace Dindi
 		float m_Scale; //#TODO: Non-uniform scale, I'm just lazy to do this right now.
 		std::vector<Mesh*> m_Mesh;
 		std::string m_Name;
+		AABB m_AABB;
 	};
 }

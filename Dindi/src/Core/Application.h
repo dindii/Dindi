@@ -5,6 +5,7 @@
 #include "Rendering/Scene/Scene.h"
 #include "Layer.h"
 #include <GUI/UILayer.h>
+#include <Utils/PickupContext.h>
 
 namespace Dindi
 {
@@ -28,9 +29,14 @@ namespace Dindi
 		float GetTime() const;
 		void PushLayer(Layer* layer);
 
+		UILayer* GetUILayer() { return m_UILayer; }
+
+		PickupContext GetPickedObject() const { return m_SelectedEntity; }
+
 		inline EApplicationState GetApplicationState() const { return m_AppState; }
 		inline void TerminateProgram() { m_Running = false; }
-
+	private:
+		void PickObject(bool meshOnly);
 	private:
 		static inline Application* s_Instance = nullptr;
 
@@ -39,6 +45,8 @@ namespace Dindi
 
 		UILayer* m_UILayer;
 
+		PickupContext m_SelectedEntity;
+
 		std::vector<Layer*> m_LayerStack;
 	private:
 		bool m_Running = true;
@@ -46,6 +54,7 @@ namespace Dindi
 	private:
 		Scene* m_ActiveScene;
 		bool m_MouseLockedAndInvisible = true;
+		bool m_AppInitialized = false;
 
 		EApplicationState m_AppState;
 	};

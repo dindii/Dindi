@@ -14,6 +14,7 @@ namespace Dindi
 
 
 		static vec3 CastRay(const float x, const float y, const Camera& camera);
+		static vec3 CastRay(const float x, const float y, const float width, const float height, const mat4& projection, const mat4& view);
 
 
 	private:

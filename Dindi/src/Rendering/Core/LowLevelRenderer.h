@@ -47,6 +47,7 @@ namespace Dindi
 			static void SetWireframeMode(bool cond);
 			static void SetOverlay(bool cond);
 			static void DelMesh(unsigned int Mesh, unsigned int nMeshes = 1);		
+			static void RemakeFramebuffers(uint32_t width, uint32_t height);
 
 			static inline uint32_t GetScreenOutputHandle() { return m_ScreenOutput->GetRendererID(); }
 

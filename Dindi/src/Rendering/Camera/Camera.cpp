@@ -11,10 +11,10 @@
 
 namespace Dindi
 {
-	Camera::Camera(const float AR, const vec3& position) : m_Yaw(0.0f), m_Pitch(0.0f), m_FOV(70.0f),
+	Camera::Camera(const float AR, const vec3& position) : m_Yaw(0.0f), m_Pitch(0.0f), m_AspectRatio(AR), m_FOV(70.0f),
 		m_CameraLag(false)
 	{
-		m_Projection = mat4::Perspective(m_FOV /*zoom*/, AR, 0.1f, 100.0f);
+		m_Projection = mat4::Perspective(m_FOV /*zoom*/, m_AspectRatio, 1.0f, 100.0f);
 
 		m_CameraPos = position;
 
@@ -53,46 +53,70 @@ namespace Dindi
 		}
 	}
 
+	void Camera::SetCameraYaw(float Yaw)
+	{
+		if (!m_CameraLock)
+		{
+			UpdateCameraVectors();
+			m_Yaw = Yaw; 
+		}
+	}
+	
+	void Camera::SetCameraPitch(float Pitch)
+	{
+		if (!m_CameraLock)
+		{
+			UpdateCameraVectors();
+			m_Pitch = Pitch;
+		}
+	}
+
 	//For Free look fps camera
 	void Camera::AddCameraTargetPosition(vec3 pos, const DeltaTime& dt)
 	{
-		pos *= dt;
+		if (!m_CameraLock)
+		{
+			pos *= dt;
 
-		vec3 target = m_CameraTarget;
-		target += ((m_FacingDirection * pos.z) + (m_CameraRight * pos.x)) + (m_CameraUp * pos.y);
+			vec3 target = m_CameraTarget;
+			target += ((m_FacingDirection * pos.z) + (m_CameraRight * pos.x)) + (m_CameraUp * pos.y);
 
-		m_CameraTarget = target;
+			m_CameraTarget = target;
 
-		SetCameraPosition(m_CameraTarget);
+			SetCameraPosition(m_CameraTarget);
+		}
 	}
 
 	void Camera::SetCameraPosition(vec3& pos)
 	{
-		if (m_CameraLag)
+		if (!m_CameraLock)
 		{
-			m_DesiredPos = pos;
-			vec3 lerped = vec3::lerp(m_CameraPos, m_DesiredPos, m_LagVal);
+			if (m_CameraLag)
+			{
+				m_DesiredPos = pos;
+				vec3 lerped = vec3::lerp(m_CameraPos, m_DesiredPos, m_LagVal);
 
-			UpdateCameraVectors();
+				UpdateCameraVectors();
 
-			m_CameraPos = lerped;
-		}
-		else
-		{
-			m_CameraPos = pos;
-			UpdateCameraVectors();
+				m_CameraPos = lerped;
+			}
+			else
+			{
+				m_CameraPos = pos;
+				UpdateCameraVectors();
+			}
 		}
 	}
 
-	void Camera::SetProjection(float AR)
+	void Camera::SetProjection(float AR, float FOV)
 	{
 		//#TODO: More params
-		m_Projection = mat4::Perspective(m_FOV /*zoom*/, AR, 1.0f, 100.0f);
+		m_Projection = mat4::Perspective(FOV /*zoom*/, AR, 1.0f, 100.0f);
 	}
 
 	void Camera::RemakeProjection(float newWidth, float newHeight)
 	{//#TODO: More params
 		float NewAspectRatio = newWidth / newHeight;
-		SetProjection(NewAspectRatio);
+		SetProjection(NewAspectRatio, m_FOV);
 	}
 }

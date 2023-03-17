@@ -127,11 +127,28 @@ namespace Dindi
 					rotationTransform	   *= mat4::Rotate(modelRotation.y, { 0.0f, 1.0f, 0.0f });
 					rotationTransform      *= mat4::Rotate(modelRotation.x, { 1.0f, 0.0f, 0.0f });
 					
+
+					mat4 translationTransform = mat4::Translate(mesh->GetPosition() + model->GetPosition());
+
 					mat4 modelTransform;
-					modelTransform = mat4::Translate(model->GetPosition()) * rotationTransform * mat4::Scale({ model->GetScale() });
+					modelTransform = translationTransform * rotationTransform * mat4::Scale({ model->GetScale() });
 					
 					//Cache transform
 					model->SetTransform(modelTransform);
+
+					AABB aabb = model->GetAABB();
+					vec3 min = translationTransform * aabb.GetLocalMin();
+					vec3 max = translationTransform * aabb.GetLocalMax();
+
+					aabb.SetMin(min);
+					aabb.SetMax(max);
+
+
+					model->SetWorldAABB(aabb);
+
+					//#TODO: Instead of using GetoffsetAABB, try to use the cached transform of the model...
+					AABB meshWorldAABB = mesh->GetOffsetAABB(mesh->GetPosition() + model->GetPosition(), model->GetScale());
+					mesh->SetWorldAABB(meshWorldAABB);
 
 					material->GetShader()->UploadUniformMat4("u_Transform", modelTransform);
 
@@ -206,6 +223,11 @@ namespace Dindi
 			{
 				glDeleteBuffers(nMeshes, &Mesh);
 			}
+		}
+
+		void LowLevelRenderer::RemakeFramebuffers(uint32_t width, uint32_t height)
+		{
+			m_ScreenOutput->Remake();
 		}
 
 		void LowLevelRenderer::SetOverlay(bool cond)

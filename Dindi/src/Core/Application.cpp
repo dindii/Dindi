@@ -16,6 +16,9 @@
 
 #include <GUI/GUI.h>
 
+#include <Physics/AABB.h>
+
+
 namespace Dindi
 {
 
@@ -60,12 +63,30 @@ namespace Dindi
 	{
 		EventDispatcher dispatcher(e);
 
+		dispatcher.Dispatch<MouseMovedEvent>([&](MouseMovedEvent Event) -> bool
+		{
+			int dx = 204;
+			int dy = 44;
+
+			float mx = (float)m_ApplicationWindow->GetMouseX() - dx;
+			float my = (float)m_ApplicationWindow->GetMouseY() - dy;
+
+		//	DND_LOG_TRACE("\nMX: ", (uint32_t)mx, " MY: ", (uint32_t)my);
+
+
+			float yaw = m_ActiveScene->GetActiveCamera()->GetCameraYaw();
+			float pitch = m_ActiveScene->GetActiveCamera()->GetCameraYaw();
+			
+
+			return false;
+		});
+
 		dispatcher.Dispatch<WindowResizeEvent>([&](WindowResizeEvent Event) -> bool
 		{
 			uint32_t newWidth = Event.GetWidth();
 			uint32_t newHeight = Event.GetHeight();
 
-			Renderer::SetViewport(0, 0, newWidth, newHeight);
+			Renderer::OnContextResize(0, 0, newWidth, newHeight);
 			m_ActiveScene->GetActiveCamera()->RemakeProjection((float)newWidth, (float)newHeight);
 
 			return false;
@@ -78,19 +99,11 @@ namespace Dindi
 				{
 				case DND_MOUSE_BUTTON_1:
 				{
-					vec3 mouseToWorld = Trace::CastRay((float)m_ApplicationWindow->GetMouseX(), (float)m_ApplicationWindow->GetMouseY(), *m_ActiveScene->GetActiveCamera());
-
-					//#TODO - Replace this for a WHILE-STEP ray caster.
-					mouseToWorld.z *= 5.0f;
-
-					Debug::DebugShapeContext sc;
-					sc.firstPosition = m_ActiveScene->GetActiveCamera()->GetCameraPos();
-					sc.secondPosition = mouseToWorld;
-					sc.shapeColor = { 1.0f, 0.0f, 1.0f };
-					sc.shapeLifetime = 5000.0f;
-					sc.shapeType = Debug::EDebugShape::LINE;
-
-					Debug::DebugRenderer::DrawShape(sc);
+					if (!m_UILayer->IsHovering())
+					{
+						bool meshOnly = Input::IsKeyPressed(DND_KEY_LEFT_SHIFT);
+						PickObject(meshOnly);
+					}
 					
 					return false;
 				} break;
@@ -112,11 +125,13 @@ namespace Dindi
 
 				case DND_KEY_F2:
 				{
+					Camera* camera = m_ActiveScene->GetActiveCamera();
+
 					m_MouseLockedAndInvisible = !m_MouseLockedAndInvisible;
-
+					
 					Input::HideAndLockCursor(m_MouseLockedAndInvisible);
-					m_ActiveScene->GetActiveCamera()->LockCamera(!m_MouseLockedAndInvisible);
-
+					camera->LockCamera(!m_MouseLockedAndInvisible);
+					
 					return true;
 				}   break;
 
@@ -130,6 +145,12 @@ namespace Dindi
 					return true;
 				}   break;
 
+				case DND_KEY_F4:
+				{
+					m_SelectedEntity.selectedMesh = nullptr;
+					m_SelectedEntity.selectedModel = nullptr;
+				}
+
 				default:
 					return false;
 			}
@@ -139,10 +160,120 @@ namespace Dindi
 			layer->OnEvent(e);
 	}
 
+	void Application::PickObject(bool meshOnly)
+	{
+		Camera* camera = m_ActiveScene->GetActiveCamera();
+
+		//Viewport dimensions
+		vec2 viewportDims = m_UILayer->GetViewportSize();
+
+		//Window coords translated to viewport coords (windowCoord - viewportMin)
+		vec2 viewportMouseCoords = m_UILayer->GetViewportMousePosition();
+
+		const mat4& proj = camera->GetProjection();
+		const mat4& view = camera->GetViewMatrix();
+
+		//The easiest fix is to simply divide by cos(angle of ray - viewAngle) and use that as the distance
+		float   distancePerStep = 1.0f;
+
+		uint32_t steps = 1;
+		while (steps < 128)
+		{
+			//#TODO: adjust to have a little offset always behind the camera.
+			vec3 direction = Trace::CastRay(viewportMouseCoords.x, viewportMouseCoords.y, viewportDims.x, viewportDims.y, proj, view);
+			vec3 finalTrace = camera->GetCameraPos() + direction * distancePerStep;
+
+			Debug::DebugShapeContext sc;
+			sc.firstPosition = finalTrace;
+			sc.shapeColor = { 0.4f, 0.1f, 0.4f };
+			sc.shapeLifetime = 5000;
+			sc.shapeRenderFlags = Debug::EDebugRenderFlags::NO_DEPTH_TESTING | Debug::EDebugRenderFlags::WIREFRAME;
+			sc.shapeSize = 0.1f;
+			sc.shapeType = Debug::EDebugShape::CUBE;
+
+			Debug::DebugRenderer::DrawShape(sc);
+
+			std::vector<Model*>& entities = m_ActiveScene->GetEntities();
+
+			bool shouldExit = false;
+
+			for (uint32_t i = 0; i < entities.size(); i++)
+				for(uint32_t m = 0; m < entities[i]->GetMeshes().size(); m++)
+				{
+					AABB toCheckCollisionAABB;
+
+					meshOnly ? toCheckCollisionAABB = entities[i]->GetMeshes()[m]->GetAABB() : toCheckCollisionAABB = entities[i]->GetAABB();
+					
+					if (toCheckCollisionAABB.CheckCollision(m_ActiveScene->GetActiveCamera()->GetCameraPos()))
+						continue;
+
+					if (toCheckCollisionAABB.CheckCollision(finalTrace))
+					{
+						m_SelectedEntity.selectedModel = entities[i];
+						m_SelectedEntity.selectedMesh = entities[i]->GetMeshes()[m];
+						m_SelectedEntity.ignoreMesh = !meshOnly;
+
+						shouldExit = true;
+						break;
+					}
+
+					if (shouldExit)
+						break;
+				}
+
+			if (shouldExit)
+				break;
+
+			distancePerStep += 0.7f;
+			steps++;
+		}
+
+	//	Debug::DebugRenderer::ClearQueue();
+
+		std::vector<Model*>& entities = m_ActiveScene->GetEntities();
+		for (uint32_t i = 0; i < entities.size(); i++)
+			for (uint32_t m = 0; m < entities[i]->GetMeshes().size(); m++)
+			{
+				Debug::DebugShapeContext sc;
+				//sc.firstPosition = entities[i]->GetMeshes()[m]->GetOffsetAABB(entities[i]->GetPosition()).GetMin();
+				sc.firstPosition = entities[i]->GetMeshes()[m]->GetAABB().GetMin();
+				sc.shapeColor = entities[i]->GetMeshes()[m]->GetAABB().GetAABBSize() / 256;
+				sc.shapeLifetime = 5000;
+				sc.shapeRenderFlags = Debug::EDebugRenderFlags::NO_DEPTH_TESTING | Debug::EDebugRenderFlags::WIREFRAME;
+				sc.shapeSize = 0.1f;
+				sc.shapeType = Debug::EDebugShape::CUBE;
+
+				Debug::DebugRenderer::DrawShape(sc);
+
+				Debug::DebugShapeContext sc2;
+			//	sc2.firstPosition = entities[i]->GetMeshes()[m]->GetOffsetAABB(entities[i]->GetPosition()).GetMax();
+				sc2.firstPosition = entities[i]->GetMeshes()[m]->GetAABB().GetMax();
+				sc2.shapeColor = entities[i]->GetMeshes()[m]->GetAABB().GetAABBSize() / 256;
+				sc2.shapeLifetime = 5000;
+				sc2.shapeRenderFlags = Debug::EDebugRenderFlags::NO_DEPTH_TESTING | Debug::EDebugRenderFlags::WIREFRAME;
+				sc2.shapeSize = 0.1f;
+				sc2.shapeType = Debug::EDebugShape::CUBE;
+
+				Debug::DebugRenderer::DrawShape(sc2);
+			}
+
+
+	}
+
 	void Application::Run()
 	{
 		while (m_Running)
+		{
 			OnUpdate(m_DeltaTime);
+
+			if (!m_AppInitialized)
+			{
+				m_AppInitialized = true;
+				
+				InitializeEvent initEvent;
+				OnEvent(initEvent);
+			}
+		}
 	}
 
 	void Application::OnUpdate(DeltaTime& dt)
@@ -161,6 +292,8 @@ namespace Dindi
 
 		for (Layer* layer : m_LayerStack)
 			layer->OnUpdate(dt);
+		
+
 	}
 
 	float Application::GetTime() const

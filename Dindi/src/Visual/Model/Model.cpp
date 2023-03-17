@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "Utils/ModelLoader.h"
 #include "Utils/DNDAssert.h"
+#include <algorithm>
 
 namespace Dindi
 {
@@ -14,6 +15,8 @@ namespace Dindi
 		//m_Mesh = new Mesh();
 		//m_Material = new Material(vertexPath, fragmentPath);
 		ModelLoader::Load(meshPath, *this);
+		
+		BuildAABB();
 		
 		//#TODO - NOW - We have to create a material for each mesh so the loader can register a texture in this material. 
 		//Probably we will create in the runtime and assign its maps. This all will be by default.
@@ -29,6 +32,8 @@ namespace Dindi
 			if(m_Mesh[x])
 				m_Mesh[x]->RegisterData();
 		}
+
+		SortMeshesBasedOnAABBSize(false);
 	}
 
 	Model::~Model()
@@ -38,6 +43,43 @@ namespace Dindi
 			if (m_Mesh[x])
 				delete m_Mesh[x];
 		}
+	}
+
+	void Model::SortMeshesBasedOnAABBSize(bool greaterThan)
+	{
+		if(greaterThan)
+			std::sort(m_Mesh.begin(), m_Mesh.end(), [](Mesh* a, Mesh* b) { return a->GetAABB().GetAABBSize() > b->GetAABB().GetAABBSize(); });
+		else
+			std::sort(m_Mesh.begin(), m_Mesh.end(), [](Mesh* a, Mesh* b) { return a->GetAABB().GetAABBSize() < b->GetAABB().GetAABBSize(); });
+	}
+
+	void Model::SetTransform(const mat4& transform)
+	{
+		m_Transform = transform;
+	}
+
+	void Model::BuildAABB()
+	{
+		vec3 minBoundaries, maxBoundaries;
+
+		for (uint32_t i = 0; i < m_Mesh.size(); i++)
+		{
+			AABB meshAABB = m_Mesh[i]->GetAABB();
+
+
+			vec3 meshMinAABB = meshAABB.GetLocalMin();
+
+			if (meshMinAABB < minBoundaries)
+				minBoundaries = meshMinAABB;
+			
+
+			vec3 meshMaxAABB = meshAABB.GetLocalMax();
+
+			if (meshMaxAABB > maxBoundaries)
+				maxBoundaries = meshMaxAABB;
+		}
+
+		SetAABB({ minBoundaries, maxBoundaries });
 	}
 
 }

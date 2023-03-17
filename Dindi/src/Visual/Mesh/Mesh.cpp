@@ -21,6 +21,7 @@ namespace Dindi
 		
 		//In this case, probably we are not being created by a Model but by ourselves.
 		RegisterData();
+		BuildAABB();
 	}
 	
 	Mesh::~Mesh()
@@ -33,4 +34,51 @@ namespace Dindi
 	{
 		RegisterMeshData(m_VertexPositions, m_Normal, m_TextureCoord);
 	}
+
+	Dindi::AABB Mesh::GetOffsetAABB(const vec3& offset, const vec3& scale)
+	{
+		//#TODO: Add a "Dirt" flag
+		mat4 transform;
+		transform = mat4::Translate(offset) * mat4::Scale(scale);
+
+		vec3 min = m_AABB.GetLocalMin();
+		vec3 max = m_AABB.GetLocalMax();
+
+		min = transform * min;
+		max = transform * max;
+
+		return { min, max};
+	}
+
+	void Mesh::BuildAABB()
+	{
+		vec3 minBoundaries = m_VertexPositions[0], maxBoundaries = m_VertexPositions[0];
+
+		for (uint32_t vpi = 0; vpi < m_VertexPositions.size(); vpi++)
+		{
+			if (m_VertexPositions[vpi].x < minBoundaries.x)
+				minBoundaries.x = m_VertexPositions[vpi].x;
+
+			if (m_VertexPositions[vpi].y < minBoundaries.y)
+				minBoundaries.y = m_VertexPositions[vpi].y;
+
+			if (m_VertexPositions[vpi].z < minBoundaries.z)
+				minBoundaries.z = m_VertexPositions[vpi].z;
+		}
+		
+		for (uint32_t vpi = 0; vpi < m_VertexPositions.size(); vpi++)
+		{
+			if (m_VertexPositions[vpi].x > maxBoundaries.x)
+				maxBoundaries.x = m_VertexPositions[vpi].x;
+
+			if (m_VertexPositions[vpi].y > maxBoundaries.y)
+				maxBoundaries.y = m_VertexPositions[vpi].y;
+
+			if (m_VertexPositions[vpi].z > maxBoundaries.z)
+				maxBoundaries.z = m_VertexPositions[vpi].z;
+		}
+		
+		m_AABB = AABB(minBoundaries, maxBoundaries);
+	}
+
 }

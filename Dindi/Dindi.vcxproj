@@ -93,7 +93,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Dindipch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DINDI_PLATFORM_WINDOWS;DINDI_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DINDI_PLATFORM_WINDOWS;DINDI_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\imguizmo;vendor\Glad\include;vendor\imgui;vendor\stbi;vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -143,7 +143,9 @@
     <ClInclude Include="src\Math\vec2.h" />
     <ClInclude Include="src\Math\vec3.h" />
     <ClInclude Include="src\Math\vec4.h" />
+    <ClInclude Include="src\Physics\AABB.h" />
     <ClInclude Include="src\Physics\Trace.h" />
+    <ClInclude Include="src\Physics\Util.h" />
     <ClInclude Include="src\Platform\Window.h" />
     <ClInclude Include="src\Rendering\Camera\Camera.h" />
     <ClInclude Include="src\Rendering\Core\Framebuffer.h" />
@@ -161,6 +163,7 @@
     <ClInclude Include="src\Utils\FileDialog.h" />
     <ClInclude Include="src\Utils\Logger.h" />
     <ClInclude Include="src\Utils\ModelLoader.h" />
+    <ClInclude Include="src\Utils\PickupContext.h" />
     <ClInclude Include="src\Visual\Light\Light.h" />
     <ClInclude Include="src\Visual\Material\Material.h" />
     <ClInclude Include="src\Visual\Mesh\Mesh.h" />
@@ -182,6 +185,7 @@
     <ClCompile Include="src\Math\vec2.cpp" />
     <ClCompile Include="src\Math\vec3.cpp" />
     <ClCompile Include="src\Math\vec4.cpp" />
+    <ClCompile Include="src\Physics\AABB.cpp" />
     <ClCompile Include="src\Physics\Trace.cpp" />
     <ClCompile Include="src\Platform\Window.cpp" />
     <ClCompile Include="src\Rendering\Camera\Camera.cpp" />

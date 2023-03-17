@@ -22,8 +22,6 @@ namespace Dindi
 
 		inline void SetCameraTarget(vec3& target) { m_CameraTarget = target; }
 		void SetCameraPosition(vec3& position);
-		inline void SetCameraYaw(float Yaw) { UpdateCameraVectors(); m_Yaw = Yaw; }
-		inline void SetCameraPitch(float Pitch) { UpdateCameraVectors(); m_Pitch = Pitch; }
 
 		inline vec3 GetCameraTarget() const { return m_CameraTarget; }
 		inline vec3 GetCameraFacingDirection() const { return m_FacingDirection; }
@@ -34,16 +32,19 @@ namespace Dindi
 		inline float GetCameraYaw() const { return m_Yaw; }
 		inline float GetCameraPitch() const { return m_Pitch; }
 
+		void Camera::SetCameraPitch(float Pitch);
+		void Camera::SetCameraYaw(float Yaw);
+
 		inline mat4 GetProjection() const { return m_Projection; }
 
-		inline void SetProjection(float AR);
+		void SetProjection(float AR, float FOV);
 		inline void SetViewMatrix(mat4& view) { m_ViewMatrix = view; }
 		inline void SetFieldOfView(const float FOV) { m_FOV = FOV; }
 		inline void SetCameraLag(bool val) { m_CameraLag = val; }
 		inline void SetCameraLagValue(float LagVal) { m_LagVal = LagVal; }
 
 		inline void SetAspectRatio(float AR) { UpdateCameraVectors();  m_AspectRatio = AR; }
-
+		inline float GetAspectRatio() const { return m_AspectRatio; }
 		void RemakeProjection(float newWidth, float newHeight);
 
 		inline void LockCamera(bool lockCamera) { m_CameraLock = lockCamera; }

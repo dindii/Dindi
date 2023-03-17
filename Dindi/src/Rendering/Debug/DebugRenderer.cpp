@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 #include <chrono>
 
+#ifdef DINDI_DEBUG
 namespace Dindi
 {
 	namespace Debug
@@ -114,9 +115,10 @@ namespace Dindi
 				ImmediateDebugDrawShape(shapeContext);
 			}
 		}
+
 		void DebugRenderer::DrawShape(const DebugShapeContext& debugShapeContext)
 		{
-			if (debugShapeContext.shapeLifetime > 0.0f)
+			if (debugShapeContext.shapeLifetime > 0)
 			{
 				m_OnFlyDrawCalls.emplace_back(std::move(debugShapeContext));
 				return;
@@ -126,14 +128,19 @@ namespace Dindi
 
 		}
 
+
+		void DebugRenderer::ClearQueue()
+		{
+			m_OnFlyDrawCalls.clear();
+		}
+
 		//#TODO: Add render flags here. Like, if it is wire frame, opaque, if we are going to do depth test (to overlay geometry) or not etc.
-#ifdef DINDI_DEBUG
 		void DebugRenderer::ImmediateDebugDrawShape(const DebugShapeContext& debugShapeContext)
 		{
 			bool wireframeMode = debugShapeContext.shapeRenderFlags & EDebugRenderFlags::WIREFRAME;
 			bool overlayMode   = debugShapeContext.shapeRenderFlags & EDebugRenderFlags::NO_DEPTH_TESTING;
 
-			bool isLine = (debugShapeContext.shapeRenderFlags == EDebugShape::LINE);
+			bool isLine = (debugShapeContext.shapeType == EDebugShape::LINE);
 
 			//Usually, each Debug model will only have 01 mesh. This is more for primitives, like spheres, cubes, triangles etc...
 			//#NOTE: If you need more complex debug models with more meshes, you can easily expand this with a for loop or so.
@@ -183,7 +190,6 @@ namespace Dindi
 			DND_INTERNAL::LowLevelRenderer::SetWireframeMode(false);
 			DND_INTERNAL::LowLevelRenderer::SetOverlay(false);
 		}
-#endif
 
 		bool DebugShapeContext::Tick()
 		{
@@ -203,3 +209,4 @@ namespace Dindi
 
 	}
 }
+#endif

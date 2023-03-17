@@ -68,6 +68,11 @@ namespace Dindi
 		}
 	}
 
+	float vec3::Distance(const vec3& other) const
+	{
+		return sqrt(pow(x - other.x, 2) + pow(y - other.y, 2) + pow(z - other.z, 2) * 1.0);
+	}
+
 	vec3  vec3::Normalized()
 	{
 		float length = this->Length();
@@ -190,6 +195,16 @@ namespace Dindi
 	Dindi::vec3& vec3::operator*=(const float& other)
 	{
 		return multiply(other);
+	}
+
+	bool vec3::operator>(const vec3& other)
+	{
+		return (this->x > other.x && this->y > other.y && this->z > other.z);
+	}
+
+	bool vec3::operator<(const vec3& other)
+	{
+		return (this->x < other.x && this->y < other.y && this->z < other.z);
 	}
 
 	vec3& vec3::operator-=(const vec3& other)

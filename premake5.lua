@@ -32,6 +32,7 @@ project "Dindi"
 	language "C++"
 	cppdialect "C++17"
 	staticruntime "on"
+	toolset "v141"  
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("bin-int/" .. outputdir .. "/%{prj.name}")

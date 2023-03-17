@@ -136,13 +136,13 @@ namespace Dindi
 			meshToFill[shapeIndex]->SetVertexPositionData(std::move(temporaryVertexPositions));
 			meshToFill[shapeIndex]->SetNormalData(std::move(temporaryNormals));
 			meshToFill[shapeIndex]->SetTextureCoordData(std::move(temporaryTextureCoords));
+			meshToFill[shapeIndex]->SetPosition(modelToFill.GetPosition());
 
 			Ref<Texture2D> temporaryDiffuse, temporarySpecular, temporaryNormal;
 
 			std::string dirPrefix = directory + "\\";
 
 
-#if 1
 			if (loader.GetMaterials().size())
 			{
 				const tinyobj::material_t& meshMaterial = loader.GetMaterials()[shapes[shapeIndex].mesh.material_ids[0]];
@@ -165,7 +165,6 @@ namespace Dindi
 					meshToFill[shapeIndex]->GetMaterial()->SetNormalMap(temporaryNormal);
 				}
 			}
-#endif
 		}
 
 		return true;

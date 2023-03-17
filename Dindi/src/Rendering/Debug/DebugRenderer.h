@@ -48,11 +48,11 @@ namespace Dindi
 		class DebugRenderer
 		{
 		public:
-			static void Init();
 #ifdef DINDI_DEBUG
+			static void Init();
 			static void SubmitDraw();
 			static void DrawShape(const DebugShapeContext& debugShapeContext);
-			
+			static void ClearQueue();
 
 
 		private:
@@ -66,12 +66,19 @@ namespace Dindi
 			* @param - Flags to render. You can have WIREFRAME mode and NO DEPTH TESTING that will always pass the depth test (it will be in front of everything).
 			*/
 			static void ImmediateDebugDrawShape(const DebugShapeContext& debugShapeContext);
-#else																													   
+#else				
+			static void Init() {};
+			static void SubmitDraw() {};
+			static void DrawShape(const DebugShapeContext& debugShapeContext) {};
 			static void ImmediateDebugDrawShape(const DebugShapeContext& debugShapeContext) {};
+			static void ClearQueue() {};
 #endif
+
+#ifdef DINDI_DEBUG
 		private:
 			static Model* m_DebugShapes[Debug::EDebugShape::MAX];
 			static std::vector<DebugShapeContext> m_OnFlyDrawCalls;
+#endif
 		};
 	}
 

@@ -9,7 +9,7 @@ namespace Dindi
 	class Model
 	{
 	public:
-		Model() : m_Scale(0.0f) {};
+		Model() : m_Scale(0.0f), m_Dirty(false) {};
 		Model(std::string modelPath, const vec3& modelPosition, const float modelScale);
 		~Model();
 
@@ -36,9 +36,12 @@ namespace Dindi
 		void SetTransform(const mat4& transform);
 		mat4 GetTransform() const { return m_Transform; }
 
+		inline void SetDirty(bool dirty) { m_Dirty = dirty; }
+		inline bool GetDirty() const { return m_Dirty; }
+
+		void BuildAABB(bool setLocalSpace = false);
 	private:
-		void BuildAABB();
-	private:
+		//#OBS We kinda iterate a lot over models and meshes. It would be nice to memory-align and make this struct cache friendly.
 		mat4 m_Transform;
 
 		vec3 m_Position, m_Rotation;
@@ -46,5 +49,6 @@ namespace Dindi
 		std::vector<Mesh*> m_Mesh;
 		std::string m_Name;
 		AABB m_AABB;
+		bool m_Dirty;
 	};
 }

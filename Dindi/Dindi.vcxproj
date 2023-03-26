@@ -19,20 +19,20 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Dindi</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -93,7 +93,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Dindipch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DINDI_PLATFORM_WINDOWS;DINDI_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DINDI_PLATFORM_WINDOWS;DINDI_DEBUG;%(PreprocessorDefinitions);DINDI_DEBUG</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\imguizmo;vendor\Glad\include;vendor\imgui;vendor\stbi;vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -160,10 +160,11 @@
     <ClInclude Include="src\Utils\AssetManager.h" />
     <ClInclude Include="src\Utils\DNDAssert.h" />
     <ClInclude Include="src\Utils\DeltaTime.h" />
+    <ClInclude Include="src\Utils\EntityPicker.h" />
     <ClInclude Include="src\Utils\FileDialog.h" />
     <ClInclude Include="src\Utils\Logger.h" />
+    <ClInclude Include="src\Utils\EntityPickerContext.h" />
     <ClInclude Include="src\Utils\ModelLoader.h" />
-    <ClInclude Include="src\Utils\PickupContext.h" />
     <ClInclude Include="src\Visual\Light\Light.h" />
     <ClInclude Include="src\Visual\Material\Material.h" />
     <ClInclude Include="src\Visual\Mesh\Mesh.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="src\Rendering\Texture\Texture2D.cpp" />
     <ClCompile Include="src\Utils\AssetManager.cpp" />
     <ClCompile Include="src\Utils\DeltaTime.cpp" />
+    <ClCompile Include="src\Utils\EntityPicker.cpp" />
     <ClCompile Include="src\Utils\FileDialog.cpp" />
     <ClCompile Include="src\Utils\Logger.cpp" />
     <ClCompile Include="src\Utils\ModelLoader.cpp" />

@@ -97,6 +97,15 @@ namespace Dindi
 		return aux;
 	}
 
+	bool vec3::CloseOrEqual(const vec3& first, const vec3& second)
+	{
+		constexpr float epsilon = std::numeric_limits<float>::epsilon();
+			
+		return (std::abs(first.x - second.x) <= epsilon &&
+			    std::abs(first.y - second.y) <= epsilon &&
+			    std::abs(first.z - second.z) <= epsilon);
+	}
+
 	vec3  vec3::Cross(const vec3& other)
 	{
 		return vec3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);

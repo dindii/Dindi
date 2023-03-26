@@ -15,6 +15,7 @@
 #include <Input/Input.h>
 
 #include <Math/Maths.h>
+#include <Utils/EntityPicker.h>
 
 namespace Dindi
 {
@@ -115,6 +116,7 @@ namespace Dindi
 		ImGui::Begin("Stats");
 		ImGui::Text("%.4f ms", dt.Milliseconds());
 		ImGui::End();
+	
 	}
 
 	
@@ -266,7 +268,7 @@ namespace Dindi
 
 		vec2 viewportDims(windowSize.x * m_ViewportPosX, windowSize.y);
 
-		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBringToFrontOnFocus);
 		ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), { windowSize.x * m_ViewportPosX, windowSize.y }, { 0,1 }, { 1,0 });
 		
 		//This must use the same ImGui window to draw the gizmo, so it is necessary to keep it in the same Begin-End call
@@ -328,8 +330,8 @@ namespace Dindi
 		const mat4& cameraView = m_Scene->GetActiveCamera()->GetViewMatrix();
 
 		
-		//DEBUG
-		PickupContext model = Application::GetInstance().GetPickedObject();
+
+		EntityPickerContext model = EntityPicker::GetLatestPickedEntity();
 
 		if (model.selectedModel || model.selectedMesh)
 		{
@@ -342,6 +344,12 @@ namespace Dindi
 			vec3 translation, rotation, scale;
 
 			ImGuizmo::DecomposeMatrixToComponents(modelTransform.elements, translation.elements, rotation.elements, scale.elements);
+			
+
+			if (vec3::CloseOrEqual(position, translation))
+			{
+				return;
+			}
 
 			if (!model.ignoreMesh)
 				translation -= halfAABB;
@@ -350,6 +358,8 @@ namespace Dindi
 
 			vec3 meshPos = model.selectedMesh->GetPosition();
 			model.ignoreMesh ? model.selectedModel->SetPosition(translation) : model.selectedMesh->SetPosition(meshPos + translation);
+
+			model.selectedModel->SetDirty(true);
 		}
 		
 

@@ -192,9 +192,6 @@
     <ClInclude Include="src\Utils\ModelLoader.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="src\Utils\PickupContext.h">
-      <Filter>src\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="src\Visual\Light\Light.h">
       <Filter>src\Visual\Light</Filter>
     </ClInclude>
@@ -219,6 +216,8 @@
     <ClInclude Include="vendor\imguizmo\ImGuizmo.h">
       <Filter>vendor\imguizmo</Filter>
     </ClInclude>
+    <ClInclude Include="src\Utils\EntityPicker.h" />
+    <ClInclude Include="src\Utils\EntityPickerContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -326,5 +325,6 @@
     <ClCompile Include="vendor\imguizmo\ImGuizmo.cpp">
       <Filter>vendor\imguizmo</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utils\EntityPicker.cpp" />
   </ItemGroup>
 </Project>

@@ -33,6 +33,8 @@ namespace Dindi
 		static vec3 Cross(const vec3& first, const vec3& second);
 		static float Dot(const vec3& first, const vec3& second);
 
+		static bool CloseOrEqual(const vec3& first, const vec3& second);
+		
 		float Dot(const vec3& other) const;
 		vec3 Cross(const vec3& other);
 

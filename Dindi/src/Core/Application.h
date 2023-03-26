@@ -5,7 +5,6 @@
 #include "Rendering/Scene/Scene.h"
 #include "Layer.h"
 #include <GUI/UILayer.h>
-#include <Utils/PickupContext.h>
 
 namespace Dindi
 {
@@ -31,8 +30,6 @@ namespace Dindi
 
 		UILayer* GetUILayer() { return m_UILayer; }
 
-		PickupContext GetPickedObject() const { return m_SelectedEntity; }
-
 		inline EApplicationState GetApplicationState() const { return m_AppState; }
 		inline void TerminateProgram() { m_Running = false; }
 	private:
@@ -44,8 +41,6 @@ namespace Dindi
 		DeltaTime m_DeltaTime;
 
 		UILayer* m_UILayer;
-
-		PickupContext m_SelectedEntity;
 
 		std::vector<Layer*> m_LayerStack;
 	private:

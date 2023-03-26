@@ -109,6 +109,12 @@ namespace Dindi
 			{
 				Model* model = scene->GetEntities()[x];
 
+				if (model->GetDirty())
+				{
+					model->BuildAABB();
+					model->SetDirty(false);
+				}
+
 				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
 				{
 					//#TODO: It would have another For loop here to iterate the meshes of a model
@@ -135,16 +141,6 @@ namespace Dindi
 					
 					//Cache transform
 					model->SetTransform(modelTransform);
-
-					AABB aabb = model->GetAABB();
-					vec3 min = translationTransform * aabb.GetLocalMin();
-					vec3 max = translationTransform * aabb.GetLocalMax();
-
-					aabb.SetMin(min);
-					aabb.SetMax(max);
-
-
-					model->SetWorldAABB(aabb);
 
 					//#TODO: Instead of using GetoffsetAABB, try to use the cached transform of the model...
 					AABB meshWorldAABB = mesh->GetOffsetAABB(mesh->GetPosition() + model->GetPosition(), model->GetScale());

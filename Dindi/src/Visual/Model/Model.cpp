@@ -9,14 +9,14 @@ namespace Dindi
 	//I will not take meshPath by reference because we can just use the root asset path macro with the actual asset file easier this way.
 	//No difference between RESOURCES_PATH + std::string(path) and  RESOURCES_PATH path, the later we can have more simplicity.
 	Model::Model(std::string meshPath, const vec3& modelPosition, const float modelScale) :
-		m_Position(modelPosition), m_Scale(modelScale)
+		m_Position(modelPosition), m_Scale(modelScale), m_Dirty(false)
 	{								   
 		//#NOTE: Not sure if I want to allocate memory here but RAII would mess me up.
 		//m_Mesh = new Mesh();
 		//m_Material = new Material(vertexPath, fragmentPath);
 		ModelLoader::Load(meshPath, *this);
 		
-		BuildAABB();
+		BuildAABB(true);
 		
 		//#TODO - NOW - We have to create a material for each mesh so the loader can register a texture in this material. 
 		//Probably we will create in the runtime and assign its maps. This all will be by default.
@@ -58,7 +58,7 @@ namespace Dindi
 		m_Transform = transform;
 	}
 
-	void Model::BuildAABB()
+	void Model::BuildAABB(bool setLocalSpace)
 	{
 		vec3 minBoundaries, maxBoundaries;
 
@@ -66,20 +66,42 @@ namespace Dindi
 		{
 			AABB meshAABB = m_Mesh[i]->GetAABB();
 
-
-			vec3 meshMinAABB = meshAABB.GetLocalMin();
-
-			if (meshMinAABB < minBoundaries)
-				minBoundaries = meshMinAABB;
+			vec3 meshMinAABB = meshAABB.GetMin();
 			
 
-			vec3 meshMaxAABB = meshAABB.GetLocalMax();
+			if (meshMinAABB.x <= minBoundaries.x)
+				minBoundaries.x = meshMinAABB.x;
 
-			if (meshMaxAABB > maxBoundaries)
-				maxBoundaries = meshMaxAABB;
+			if (meshMinAABB.y <= minBoundaries.y)
+				minBoundaries.y = meshMinAABB.y;
+
+			if (meshMinAABB.z <= minBoundaries.z)
+				minBoundaries.z = meshMinAABB.z;
+			
+
+			vec3 meshMaxAABB = meshAABB.GetMax();
+
+			if (meshMaxAABB.x >= maxBoundaries.x)
+				maxBoundaries.x = meshMaxAABB.x;
+
+			if (meshMaxAABB.y >= maxBoundaries.y)
+				maxBoundaries.y = meshMaxAABB.y;
+
+			if (meshMaxAABB.z >= maxBoundaries.z)
+				maxBoundaries.z = meshMaxAABB.z;
 		}
 
-		SetAABB({ minBoundaries, maxBoundaries });
+		if (setLocalSpace)
+		{
+			m_AABB = { minBoundaries, maxBoundaries };
+			return;
+		}
+
+		m_AABB = { minBoundaries, maxBoundaries };
+
+		//m_AABB.SetLocalMin(minBoundaries);
+		//m_AABB.SetLocalMax(maxBoundaries);
+
 	}
 
 }

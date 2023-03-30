@@ -13,6 +13,9 @@ namespace Dindi
 {
 	EntityPickerContext EntityPicker::m_CachedEntity = {};
 
+	uint32_t EntityPicker::m_RayMaxSteps = 128;
+	float EntityPicker::m_AdditionalDistancePerStep = 0.7f;
+
 	const EntityPickerContext EntityPicker::PickEntity(const EntityPickerMode mode)
 	{
 		Application& app = Application::GetInstance();
@@ -36,24 +39,29 @@ namespace Dindi
 
 		EntityPickerContext selectedEntity = {};
 
+		vec3 cameraPos = camera->GetCameraPos();
+
 		uint32_t steps = 1;
-		while (steps < 128)
+		while (steps < m_RayMaxSteps)
 		{
 			//#TODO: adjust to have a little offset always behind the camera.
 			vec3 direction = Trace::CastRay(viewportMouseCoords.x, viewportMouseCoords.y, viewportDims.x, viewportDims.y, proj, view);
-			vec3 finalTrace = camera->GetCameraPos() + direction * distancePerStep;
+			vec3 finalTrace = cameraPos + direction * distancePerStep;
 
 			std::vector<Model*>& entities = scene->GetEntities();
 
 			for (uint32_t i = 0; i < entities.size(); i++)
 				for (uint32_t m = 0; m < entities[i]->GetMeshes().size(); m++)
 				{
-					//#TODO We are wasting iterations when we only want the model. Fix this with a branch or so
 					AABB toCheckCollisionAABB;
+		
+					if (mode == EntityPickerMode::MeshOnly)
+						toCheckCollisionAABB = entities[i]->GetMeshes()[m]->GetAABB();
+					else
+						toCheckCollisionAABB = entities[i]->GetAABB();
 
-					mode == EntityPickerMode::MeshOnly ? toCheckCollisionAABB = entities[i]->GetMeshes()[m]->GetAABB() : toCheckCollisionAABB = entities[i]->GetAABB();
-
-					if (toCheckCollisionAABB.CheckCollision(camera->GetCameraPos()))
+					//If we are inside the object, we wont be able to get it. Otherwise it would stop us from getting any other object
+					if (toCheckCollisionAABB.CheckCollision(cameraPos))
 						continue;
 
 					if (toCheckCollisionAABB.CheckCollision(finalTrace))
@@ -66,10 +74,14 @@ namespace Dindi
 
 						return selectedEntity;
 					}
+
+					//If we are checking for the model, we can leave out in the first collision check as the global model AABB will not change over the meshes.
+					if (mode == EntityPickerMode::ModelOnly)
+						break;
 				}
 
 
-			distancePerStep += 0.7f;
+			distancePerStep += m_AdditionalDistancePerStep;
 			steps++;
 		}
 

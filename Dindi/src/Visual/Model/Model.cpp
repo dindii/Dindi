@@ -98,10 +98,16 @@ namespace Dindi
 		}
 
 		m_AABB = { minBoundaries, maxBoundaries };
+	}
 
-		//m_AABB.SetLocalMin(minBoundaries);
-		//m_AABB.SetLocalMax(maxBoundaries);
+	std::pair<Dindi::vec3, Dindi::vec3> Model::GetPickablePosition() const
+	{
+		return { std::make_pair(m_Position, vec3(0.0f)) };
+	}
 
+	Dindi::AABB Model::GetPickableAABB() const
+	{
+		return GetAABB();
 	}
 
 }

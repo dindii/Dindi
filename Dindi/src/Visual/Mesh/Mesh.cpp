@@ -1,17 +1,13 @@
 #include "Dindipch.h"
 #include "Mesh.h"
 #include "Utils/Logger.h"
+#include "Visual/Model/Model.h"
 
 namespace Dindi
 {	
 	Mesh::Mesh(std::string vertexPath /*= DEFAULT_VERTEX_SHADER*/, std::string fragmentPath /*= DEFAULT_FRAGMENT_SHADER*/) : m_Material(nullptr)
 	{
 		m_Material = new Material(vertexPath, fragmentPath);
-	}
-
-	Mesh::Mesh(Material* material)
-	{
-		m_Material = material;
 	}
 
 	Mesh::Mesh(std::vector<vec3>&& vertices, std::string vertexPath /*= DEFAULT_VERTEX_SHADER*/, std::string fragmentPath /*= DEFAULT_FRAGMENT_SHADER*/) noexcept
@@ -49,6 +45,24 @@ namespace Dindi
 
 		return { min, max};
 	}
+
+	void Mesh::SetPickablePosition(const vec3& pos)
+	{
+		SetPosition(m_Position + pos);
+	}
+
+	std::pair<Dindi::vec3, Dindi::vec3> Mesh::GetPickablePosition() const
+	{
+		vec3 halfAABB = (m_AABB.GetMin() + m_AABB.GetMax()) / 2;
+
+		return { std::make_pair(halfAABB, halfAABB) };
+	}
+
+	Dindi::AABB Mesh::GetPickableAABB() const
+	{
+		return GetAABB();
+	}
+
 
 	void Mesh::BuildAABB()
 	{

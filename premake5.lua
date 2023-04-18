@@ -87,7 +87,7 @@ project "Dindi"
 	symbols "on"
 
 	filter "configurations:Release"
-	defines "DINDI_RELEASE"
+	defines "DINDI_DEBUG"
 	runtime "Release"
 	optimize "Debug"
 
@@ -105,6 +105,7 @@ project "Dindi"
 	language "C++"
 	cppdialect "C++17"
 	staticruntime "on"
+	toolset "v141"  
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -143,7 +144,7 @@ project "Dindi"
 	symbols "on"
 
 	filter "configurations:Release"
-	defines "DINDI_RELEASE"
+	defines "DINDI_DEBUG"
 	runtime "Release"
 	optimize "Debug"
 

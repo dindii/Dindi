@@ -183,6 +183,12 @@
     <ClInclude Include="src\Utils\DeltaTime.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\Utils\EntityPicker.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\EntityPickerContext.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\Utils\FileDialog.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
@@ -216,8 +222,6 @@
     <ClInclude Include="vendor\imguizmo\ImGuizmo.h">
       <Filter>vendor\imguizmo</Filter>
     </ClInclude>
-    <ClInclude Include="src\Utils\EntityPicker.h" />
-    <ClInclude Include="src\Utils\EntityPickerContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -292,6 +296,9 @@
     <ClCompile Include="src\Utils\DeltaTime.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utils\EntityPicker.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
     <ClCompile Include="src\Utils\FileDialog.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
@@ -325,6 +332,5 @@
     <ClCompile Include="vendor\imguizmo\ImGuizmo.cpp">
       <Filter>vendor\imguizmo</Filter>
     </ClCompile>
-    <ClCompile Include="src\Utils\EntityPicker.cpp" />
   </ItemGroup>
 </Project>

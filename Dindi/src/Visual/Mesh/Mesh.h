@@ -4,17 +4,17 @@
 #include "Rendering/Texture/Texture2D.h"
 #include "Visual/Material/Material.h"
 #include <Physics/AABB.h>
+#include <Interactable/Pickable.h>
 
 namespace Dindi
 {
 	//#NOTE: Model will have many meshes support, but each mesh will have its own texture.
 	
-	class Mesh : public Renderable
+	class Mesh : public Renderable, public Pickable
 	{
 	public:
 		Mesh(std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER);
 		Mesh(std::vector<vec3>&& vertices, std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER) noexcept;
-		Mesh(Material* material);
 		
 		~Mesh();
 
@@ -40,8 +40,11 @@ namespace Dindi
 
 
 		inline void SetPosition(const vec3& pos) { m_Position = pos; }
+		void SetPickablePosition(const vec3& pos) override;
 		vec3 GetPosition() const { return m_Position; }
 
+		std::pair<vec3, vec3> GetPickablePosition() const;
+		AABB GetPickableAABB() const;
 
 		//#NOTE: Like, this is not meant to be a game engine, but It would nice to setup some sort of residency rule to deallocate stuff from gpu memory when it needs
 	private:

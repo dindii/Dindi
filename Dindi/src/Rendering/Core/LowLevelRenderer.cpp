@@ -109,10 +109,10 @@ namespace Dindi
 			{
 				Model* model = scene->GetEntities()[x];
 
-				if (model->GetDirty())
+				//if (model->GetDirty())
 				{
 					model->BuildAABB();
-					model->SetDirty(false);
+					//model->SetDirty(false);
 				}
 
 				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)

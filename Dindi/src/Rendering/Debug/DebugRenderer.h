@@ -6,6 +6,8 @@
 //This debug renderer is not meant to be fast but flexible and immediate. It will issue a draw call every time you call "Draw()"
 //as well as upload some uniforms. Keep in mind that this must be only used in debug mode and it will be stripped in other build types.
 
+#define LIGHT_DEBUG_BOX_SIZE 1
+
 namespace Dindi
 {
 	namespace Debug
@@ -81,5 +83,4 @@ namespace Dindi
 #endif
 		};
 	}
-
 }

@@ -17,8 +17,8 @@ namespace Dindi
 		void Bind();
 		void UnBind();
 
-		inline uint32_t GetColorAttachmentHandle() const { return m_ColorAttachment; }
 		inline uint32_t GetRendererID() const { return m_RendererID; }
+		inline uint32_t GetOutputImage() const { return m_ColorAttachment; }
 
 	private:
 		uint32_t m_RendererID;

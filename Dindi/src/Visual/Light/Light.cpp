@@ -5,13 +5,6 @@
 
 namespace Dindi
 {
-
-	//PointLight::PointLight(const vec3& position, const vec3& color, const float strength) : m_Position(position)
-	//{
-	//	SetColor(color);
-	//	SetStrength(strength);
-	//}
-
 	PointLight::PointLight(const vec4& position, const vec4& color) : m_Position(position)
 	{
 		SetColor(color);
@@ -32,6 +25,25 @@ namespace Dindi
 
 		DND_LOG_WARNING("There's a pitch black or negative light, is this your intent? Skipping this one.");
 		return false;
+	}
+
+	std::pair<Dindi::vec3, Dindi::vec3> PointLight::GetPickablePosition() const
+	{
+		return { std::make_pair(vec3(m_Position.x, m_Position.y, m_Position.z), vec3(0.0f)) };
+	}
+
+	Dindi::AABB PointLight::GetPickableAABB() const
+	{
+		vec3 lightMin(-1.0f, -1.0f, -1.0f);
+		vec3 lightMax(1.0f, 1.0f, 1.0f);
+
+		vec3 position = { m_Position.x, m_Position.y, m_Position.z };
+		mat4 transform = mat4::Translate(position);
+
+		lightMin = transform * lightMin;
+		lightMax = transform * lightMax;
+
+		return { lightMin, lightMax };
 	}
 
 	//bool PointLight::SetStrength(const float strength)

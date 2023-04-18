@@ -4,9 +4,11 @@
 #include <string_view>
 #include <Physics/AABB.h>
 
+#include <Interactable/Pickable.h>
+
 namespace Dindi
 {
-	class Model
+	class Model : public Pickable
 	{
 	public:
 		Model() : m_Scale(0.0f), m_Dirty(false) {};
@@ -14,6 +16,7 @@ namespace Dindi
 		~Model();
 
 		void SetPosition(const vec3& newPos) { m_Position = newPos; }
+		void SetPickablePosition(const vec3& pos) override { SetPosition(pos); }
 		inline vec3 GetPosition() const { return m_Position; }
 
 		void SetRotation(const vec3& newRot) { m_Rotation = newRot; }
@@ -40,6 +43,10 @@ namespace Dindi
 		inline bool GetDirty() const { return m_Dirty; }
 
 		void BuildAABB(bool setLocalSpace = false);
+
+
+		virtual std::pair<vec3, vec3> GetPickablePosition() const;
+		AABB GetPickableAABB() const;
 	private:
 		//#OBS We kinda iterate a lot over models and meshes. It would be nice to memory-align and make this struct cache friendly.
 		mat4 m_Transform;

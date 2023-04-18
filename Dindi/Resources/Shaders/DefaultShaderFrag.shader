@@ -67,6 +67,7 @@ void main()
 		vec3 specular = vec3(0.3f) * specularRate;
 
 		float distance = length(lightPos - v_FragPos);
+		//float attenuation = 1.0f / (lightConstantAttenuation + lightLinearAttenuation * distance + lightQuadraticAttenuation * (distance * distance));
 		float attenuation = 1.0f / (lightConstantAttenuation + lightLinearAttenuation * distance + lightQuadraticAttenuation * (distance * distance));
 		
 		vec3 ambientWithAttenuation  = ambient  * attenuation;

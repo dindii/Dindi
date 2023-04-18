@@ -1,7 +1,6 @@
 #include "Dindipch.h"
 #include "vec3.h"
 #include <sstream>
-
 #include "Utils/Logger.h"
 
 namespace Dindi
@@ -19,12 +18,7 @@ namespace Dindi
 	}
 
 
-	vec3::vec3(const vec4& other)
-	{
-		x = other.x;
-		y = other.y;
-		z = other.z;
-	}
+
 
 	std::string vec3::ToString() const
 	{

@@ -1,8 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-class Model;
-class Mesh;
+class Pickable;
 
 namespace Dindi
 {
@@ -12,15 +11,10 @@ namespace Dindi
 		ModelOnly
 
 	};
+
 	struct EntityPickerContext
 	{
-		Model* selectedModel = nullptr;
-		Mesh*  selectedMesh = nullptr;
-
-		bool ignoreMesh = true;
-
-	private:
-		uint8_t _pad[7];
+		Pickable* pickedEntity = nullptr;
 	};
 }
 

@@ -82,6 +82,7 @@
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -93,11 +94,12 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Dindipch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DINDI_PLATFORM_WINDOWS;DINDI_DEBUG;%(PreprocessorDefinitions);DINDI_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DINDI_PLATFORM_WINDOWS;DINDI_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\imguizmo;vendor\Glad\include;vendor\imgui;vendor\stbi;vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -118,6 +120,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -138,6 +141,7 @@
     <ClInclude Include="src\GUI\GUI.h" />
     <ClInclude Include="src\GUI\UILayer.h" />
     <ClInclude Include="src\Input\Input.h" />
+    <ClInclude Include="src\Interactable\Pickable.h" />
     <ClInclude Include="src\Math\Maths.h" />
     <ClInclude Include="src\Math\mat4.h" />
     <ClInclude Include="src\Math\vec2.h" />
@@ -161,9 +165,9 @@
     <ClInclude Include="src\Utils\DNDAssert.h" />
     <ClInclude Include="src\Utils\DeltaTime.h" />
     <ClInclude Include="src\Utils\EntityPicker.h" />
+    <ClInclude Include="src\Utils\EntityPickerContext.h" />
     <ClInclude Include="src\Utils\FileDialog.h" />
     <ClInclude Include="src\Utils\Logger.h" />
-    <ClInclude Include="src\Utils\EntityPickerContext.h" />
     <ClInclude Include="src\Utils\ModelLoader.h" />
     <ClInclude Include="src\Visual\Light\Light.h" />
     <ClInclude Include="src\Visual\Material\Material.h" />

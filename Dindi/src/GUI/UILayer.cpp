@@ -195,7 +195,7 @@ namespace Dindi
 			strcat(lightRemoveLabel, number);
 
 			if (ImGui::DragFloat3(lightLabel, pos, m_PositionSliderSpeed))
-				light.SetPosition({ pos[0], pos[1], pos[2], 0.0f });
+				light.SetPosition({ pos[0], pos[1], pos[2] });
 
 			if (ImGui::ColorEdit3(lightColorLabel, color))
 				light.SetColor({ color[0], color[1], color[2], 0.0f });
@@ -329,39 +329,32 @@ namespace Dindi
 		const mat4& cameraProjection = m_Scene->GetActiveCamera()->GetProjection();
 		const mat4& cameraView = m_Scene->GetActiveCamera()->GetViewMatrix();
 
-		
 
-		EntityPickerContext model = EntityPicker::GetLatestPickedEntity();
+		EntityPickerContext pickContext = EntityPicker::GetLatestPickedEntity();
 
-		if (model.selectedModel || model.selectedMesh)
+		if (pickContext.pickedEntity)
 		{
-			vec3 halfAABB = (model.selectedMesh->GetAABB().GetMin() + model.selectedMesh->GetAABB().GetMax()) / 2;
-			vec3 position = model.ignoreMesh ? model.selectedModel->GetPosition() : halfAABB;
+			vec3 halfAABB;
+
+			std::pair<vec3, vec3> entityGizmoContext = pickContext.pickedEntity->GetPickablePosition();
+
+			vec3 position = entityGizmoContext.first;
+			vec3 gizmoOffset = entityGizmoContext.second;
+
 			mat4 modelTransform = mat4::Translate(position);
 
 			ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, modelTransform.elements);
-			
+
 			vec3 translation, rotation, scale;
 
 			ImGuizmo::DecomposeMatrixToComponents(modelTransform.elements, translation.elements, rotation.elements, scale.elements);
-			
 
 			if (vec3::CloseOrEqual(position, translation))
-			{
 				return;
-			}
 
-			if (!model.ignoreMesh)
-				translation -= halfAABB;
+			translation -= gizmoOffset;
 
-			vec3 deltaRotation = rotation - model.selectedModel->GetRotation();
-
-			vec3 meshPos = model.selectedMesh->GetPosition();
-			model.ignoreMesh ? model.selectedModel->SetPosition(translation) : model.selectedMesh->SetPosition(meshPos + translation);
-
-			model.selectedModel->SetDirty(true);
+			pickContext.pickedEntity->SetPickablePosition(translation);
 		}
-		
-
 	}
 }

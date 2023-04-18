@@ -48,8 +48,67 @@ namespace Dindi
 			vec3 direction = Trace::CastRay(viewportMouseCoords.x, viewportMouseCoords.y, viewportDims.x, viewportDims.y, proj, view);
 			vec3 finalTrace = cameraPos + direction * distancePerStep;
 
-			std::vector<Model*>& entities = scene->GetEntities();
 
+
+			//Check for lights
+			std::vector<PointLight>& lights = scene->GetLights();
+
+			for (uint32_t l = 0; l < lights.size(); l++)
+			{
+				AABB lightAABB = lights[l].GetPickableAABB();
+
+				if (lightAABB.CheckCollision(finalTrace))
+				{
+					selectedEntity.pickedEntity = &lights[l];
+					m_CachedEntity = selectedEntity;
+
+					return selectedEntity;
+				}
+			}
+
+			//Check for models as a whole
+			std::vector<Model*>& entities = scene->GetEntities();
+			if(mode == EntityPickerMode::ModelOnly)
+			{
+				for (uint32_t i = 0; i < entities.size(); i++)
+				{
+					AABB toCheckCollisionAABB = entities[i]->GetPickableAABB();
+
+					if (toCheckCollisionAABB.CheckCollision(cameraPos))
+						continue;
+
+					if (toCheckCollisionAABB.CheckCollision(finalTrace))
+					{
+						selectedEntity.pickedEntity = entities[i];
+						m_CachedEntity = selectedEntity;
+
+						return selectedEntity;
+					}
+				}
+			}
+			else
+			{
+				//otherwise check for each mesh on each model
+				for (uint32_t i = 0; i < entities.size(); i++)
+					for (uint32_t m = 0; m < entities[i]->GetMeshes().size(); m++)
+					{
+						AABB toCheckCollisionAABB = entities[i]->GetMeshes()[m]->GetPickableAABB();
+
+						if (toCheckCollisionAABB.CheckCollision(cameraPos))
+							continue;
+
+						if (toCheckCollisionAABB.CheckCollision(finalTrace))
+						{
+							selectedEntity.pickedEntity = entities[i]->GetMeshes()[m];
+							m_CachedEntity = selectedEntity;
+
+							return selectedEntity;
+						}
+					}
+			}
+
+#if 0
+			
 			for (uint32_t i = 0; i < entities.size(); i++)
 				for (uint32_t m = 0; m < entities[i]->GetMeshes().size(); m++)
 				{
@@ -80,6 +139,7 @@ namespace Dindi
 						break;
 				}
 
+#endif
 
 			distancePerStep += m_AdditionalDistancePerStep;
 			steps++;

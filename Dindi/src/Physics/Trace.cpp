@@ -46,7 +46,8 @@ namespace Dindi
 		ray_ViewSpace = vec4(ray_ViewSpace.x, ray_ViewSpace.y, -1.0f, 0.0f);
 	
 		//Convert to World Space -x:x, -y:y, -z:z
-		vec3 ray_WorldSpace = (mat4::Inverse(view) * ray_ViewSpace);
+		vec4 ray_WorldSpace4 = (mat4::Inverse(view) * ray_ViewSpace);
+		vec3 ray_WorldSpace = { ray_WorldSpace4.x, ray_WorldSpace4.y, ray_WorldSpace4.z };
 	
 		ray_WorldSpace = vec3::Normalize(ray_WorldSpace);
 

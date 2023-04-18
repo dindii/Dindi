@@ -1,1 +1,22 @@
-﻿  Glad.vcxproj -> D:\Dindi\Dev\Projects\Dindi\Dindi\vendor\glad\bin\Debug-windows-x86_64\Glad\Glad.lib
+﻿Compilação de 18/04/2023 01:12:18 iniciada.
+     1>Projeto "D:\dev\Dindi\Dindi\vendor\glad\Glad.vcxproj" no nó 4 (Build destino(s)).
+     1>InitializeBuildStatus:
+         Criando "bin-int\Debug-windows-x86_64\Glad\Glad.tlog\unsuccessfulbuild" porque "AlwaysCreate" foi especificado.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x64\CL.exe /c /Iinclude /ZI /JMC /nologo /W3 /WX- /diagnostics:classic /MP /Od /D DINDI_DEBUG /D _MBCS /Gm- /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"bin-int\Debug-windows-x86_64\Glad\\" /Fd"bin-int\Debug-windows-x86_64\Glad\Glad.pdb" /Gd /TC /FC /errorReport:prompt src\glad.c
+         glad.c
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x64\Lib.exe /OUT:"bin\Debug-windows-x86_64\Glad\Glad.lib" /NOLOGO /MACHINE:X64 "bin-int\Debug-windows-x86_64\Glad\glad.obj"
+         Glad.vcxproj -> D:\dev\Dindi\Dindi\vendor\glad\bin\Debug-windows-x86_64\Glad\Glad.lib
+       CopyFilesToOutputDirectory:
+         Copiando o arquivo de "bin-int\Debug-windows-x86_64\Glad\Glad.pdb" para "bin\Debug-windows-x86_64\Glad\Glad.pdb".
+       FinalizeBuildStatus:
+         Excluindo o arquivo "bin-int\Debug-windows-x86_64\Glad\Glad.tlog\unsuccessfulbuild".
+         Tocando "bin-int\Debug-windows-x86_64\Glad\Glad.tlog\Glad.lastbuildstate".
+     1>Projeto de compilação pronto "D:\dev\Dindi\Dindi\vendor\glad\Glad.vcxproj" (Build destino(s)).
+
+Compilação com êxito.
+    0 Aviso(s)
+    0 Erro(s)
+
+Tempo Decorrido 00:00:00.45

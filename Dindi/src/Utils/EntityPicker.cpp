@@ -49,9 +49,8 @@ namespace Dindi
 			vec3 finalTrace = cameraPos + direction * distancePerStep;
 
 
-
 			//Check for lights
-			std::vector<PointLight>& lights = scene->GetLights();
+			std::vector<PointLight>& lights = scene->GetLightManager()->GetLights();
 
 			for (uint32_t l = 0; l < lights.size(); l++)
 			{
@@ -106,40 +105,6 @@ namespace Dindi
 						}
 					}
 			}
-
-#if 0
-			
-			for (uint32_t i = 0; i < entities.size(); i++)
-				for (uint32_t m = 0; m < entities[i]->GetMeshes().size(); m++)
-				{
-					AABB toCheckCollisionAABB;
-		
-					if (mode == EntityPickerMode::MeshOnly)
-						toCheckCollisionAABB = entities[i]->GetMeshes()[m]->GetAABB();
-					else
-						toCheckCollisionAABB = entities[i]->GetAABB();
-
-					//If we are inside the object, we wont be able to get it. Otherwise it would stop us from getting any other object
-					if (toCheckCollisionAABB.CheckCollision(cameraPos))
-						continue;
-
-					if (toCheckCollisionAABB.CheckCollision(finalTrace))
-					{
-						selectedEntity.selectedModel = entities[i];
-						selectedEntity.selectedMesh = entities[i]->GetMeshes()[m];
-						selectedEntity.ignoreMesh = (mode == EntityPickerMode::ModelOnly);
-
-						m_CachedEntity = selectedEntity;
-
-						return selectedEntity;
-					}
-
-					//If we are checking for the model, we can leave out in the first collision check as the global model AABB will not change over the meshes.
-					if (mode == EntityPickerMode::ModelOnly)
-						break;
-				}
-
-#endif
 
 			distancePerStep += m_AdditionalDistancePerStep;
 			steps++;

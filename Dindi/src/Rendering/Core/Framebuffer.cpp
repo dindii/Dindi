@@ -59,7 +59,7 @@ namespace Dindi
 		// --------------------
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			DND_LOG_ERROR("Failed to create OpenGL Framebuffer!");
+			DND_LOG_FATAL("Failed to create OpenGL Framebuffer!");
 
 		UnBind();
 	}

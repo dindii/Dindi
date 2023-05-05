@@ -20,7 +20,7 @@ project "Glad"
 	}
     
     filter "system:windows"
-        systemversion "latest"
+        systemversion "10.0.22621.0"
  
 
      filter "configurations:Debug"

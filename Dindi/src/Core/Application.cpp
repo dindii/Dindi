@@ -72,6 +72,9 @@ namespace Dindi
 		{
 			uint32_t newWidth = Event.GetWidth();
 			uint32_t newHeight = Event.GetHeight();
+			
+			if (newWidth <= 0 || newHeight <= 0)
+				return false;
 
 			Renderer::OnContextResize(0, 0, newWidth, newHeight);
 			m_ActiveScene->GetActiveCamera()->RemakeProjection((float)newWidth, (float)newHeight);

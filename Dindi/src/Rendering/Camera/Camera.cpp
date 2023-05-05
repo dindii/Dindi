@@ -5,7 +5,7 @@
 #include "Math/mat4.h"
 #include "Utils/Logger.h"
 #include "Rendering/Core/Renderer.h"
-
+#include <Core/Application.h>
 //#TODO: Refactor this, it is a little confusing.
 
 
@@ -116,7 +116,13 @@ namespace Dindi
 
 	void Camera::RemakeProjection(float newWidth, float newHeight)
 	{//#TODO: More params
-		float NewAspectRatio = newWidth / newHeight;
-		SetProjection(NewAspectRatio, m_FOV);
+		if (newWidth <= 0 || newHeight <= 0)
+			return;
+
+		Application& app = Application::GetInstance();
+		float viewportAR = app.GetUILayer()->GetViewportAspectRatio();
+
+		DND_LOG_TRACE(viewportAR);
+		SetProjection(viewportAR, m_FOV);
 	}
 }

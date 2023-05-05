@@ -32,7 +32,7 @@ void RasterizerExample::OnAttach()
 	m_DefaultEditorCamera->SetCameraYaw(0.0f);
 	m_DefaultEditorCamera->SetCameraPitch(0.0f);
 	model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\cube.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 1.0f);
-	SceneOne->AddPointLight({Dindi::vec4(0.0f), Dindi::vec4(1.0f)});
+	SceneOne->GetLightManager()->AddPointLight(Dindi::vec3(0.0f), Dindi::vec3(1.0f));
 //	SceneOne->AddEntity(model);
 
 	app.SetActiveScene(SceneOne);

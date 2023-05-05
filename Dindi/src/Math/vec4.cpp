@@ -1,6 +1,7 @@
 #pragma once
 #include "Dindipch.h"
 #include "vec4.h"
+#include "vec3.h"
 #include <sstream>
 
 namespace Dindi
@@ -15,6 +16,11 @@ namespace Dindi
 
 	vec4::vec4(float scalar) : x(scalar), y(scalar), z(scalar), w(scalar)
 	{
+	}
+
+	vec4::vec4(const vec3& other) : x(other.x), y(other.y), z(other.z), w(1.0f)
+	{
+
 	}
 
 	std::string vec4::ToString() const

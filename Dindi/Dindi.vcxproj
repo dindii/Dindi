@@ -82,7 +82,6 @@
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -99,7 +98,6 @@
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,7 +118,6 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -170,6 +167,7 @@
     <ClInclude Include="src\Utils\Logger.h" />
     <ClInclude Include="src\Utils\ModelLoader.h" />
     <ClInclude Include="src\Visual\Light\Light.h" />
+    <ClInclude Include="src\Visual\Light\LightManager.h" />
     <ClInclude Include="src\Visual\Material\Material.h" />
     <ClInclude Include="src\Visual\Mesh\Mesh.h" />
     <ClInclude Include="src\Visual\Model\Model.h" />
@@ -210,6 +208,7 @@
     <ClCompile Include="src\Utils\Logger.cpp" />
     <ClCompile Include="src\Utils\ModelLoader.cpp" />
     <ClCompile Include="src\Visual\Light\Light.cpp" />
+    <ClCompile Include="src\Visual\Light\LightManager.cpp" />
     <ClCompile Include="src\Visual\Material\Material.cpp" />
     <ClCompile Include="src\Visual\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Visual\Model\Model.cpp" />

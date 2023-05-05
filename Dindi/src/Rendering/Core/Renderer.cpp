@@ -23,6 +23,9 @@ namespace Dindi
 
 	void Renderer::OnContextResize(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
+		if (width <= 0 || height <= 0)
+			return;
+
 		DND_INTERNAL::LowLevelRenderer::SetViewport(x, y, width, height);
 		DND_INTERNAL::LowLevelRenderer::RemakeFramebuffers(width, height);
 	}

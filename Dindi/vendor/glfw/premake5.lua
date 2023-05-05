@@ -27,7 +27,7 @@ project "GLFW"
 	}
     
     filter "system:windows"
-        systemversion "latest"
+        systemversion "10.0.22621.0"
  
 		files
 		{
@@ -49,7 +49,6 @@ project "GLFW"
 		"_CRT_SECURE_NO_WARNINGS",
 	 	"DINDI_PLATFORM_WINDOWS"
 	  }
-
 
      filter "configurations:Debug"
 	 	defines "DINDI_DEBUG"

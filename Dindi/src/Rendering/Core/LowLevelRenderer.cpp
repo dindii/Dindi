@@ -91,10 +91,11 @@ namespace Dindi
 			vec3 cameraPos = camera->GetCameraPos();
 			PersistentData.data.c_CameraPos = vec4(cameraPos.x, cameraPos.y, cameraPos.z, 0.0f);
 
-			std::vector<PointLight>& lights = scene->GetLights();
-			uint32_t nLights = lights.size();
+			LightManager* lightManager = scene->GetLightManager();
+			std::vector<GPUPointLightData>& lightsData = lightManager->GetLightsData();
+			uint32_t nLights = lightsData.size();
 
-			memcpy(&PersistentData.data.c_Lights, lights.data(), sizeof(PointLight) * nLights);
+			memcpy(&PersistentData.data.c_Lights, lightsData.data(), sizeof(GPUPointLightData) * nLights);
 
 			PersistentData.data.numLights = nLights;
 			
@@ -104,6 +105,7 @@ namespace Dindi
 #if 1
 			m_ScreenOutput->Bind();
 			Clear();
+
 
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
@@ -161,6 +163,8 @@ namespace Dindi
 
             //DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
 			//Draw cubes in light positions to debug.
+			std::vector<PointLight>& lights = lightManager->GetLights();
+			
 			if(app.GetApplicationState() == EApplicationState::EDITOR)
 				for (uint32_t x = 0; x < lights.size(); x++)
 				{

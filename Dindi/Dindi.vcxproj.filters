@@ -16,6 +16,9 @@
     <Filter Include="src\Input">
       <UniqueIdentifier>{EC4823B3-58B3-D729-A1F1-88CF0D9BB57E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Interactable">
+      <UniqueIdentifier>{EAC75BC8-D6C0-7A1A-FFF2-5F9FEB4A5A26}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Math">
       <UniqueIdentifier>{261422CF-12E1-7CDA-3BFA-6A822726B268}</UniqueIdentifier>
     </Filter>
@@ -117,6 +120,9 @@
     <ClInclude Include="src\Input\Input.h">
       <Filter>src\Input</Filter>
     </ClInclude>
+    <ClInclude Include="src\Interactable\Pickable.h">
+      <Filter>src\Interactable</Filter>
+    </ClInclude>
     <ClInclude Include="src\Math\Maths.h">
       <Filter>src\Math</Filter>
     </ClInclude>
@@ -199,6 +205,9 @@
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Visual\Light\Light.h">
+      <Filter>src\Visual\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Visual\Light\LightManager.h">
       <Filter>src\Visual\Light</Filter>
     </ClInclude>
     <ClInclude Include="src\Visual\Material\Material.h">
@@ -309,6 +318,9 @@
       <Filter>src\Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\Visual\Light\Light.cpp">
+      <Filter>src\Visual\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Visual\Light\LightManager.cpp">
       <Filter>src\Visual\Light</Filter>
     </ClCompile>
     <ClCompile Include="src\Visual\Material\Material.cpp">

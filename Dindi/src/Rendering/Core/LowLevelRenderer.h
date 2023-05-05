@@ -2,7 +2,7 @@
 
 #include "Math/vec4.h"
 #include "Rendering/Scene/Scene.h"
-#include "Visual/Light/Light.h"
+#include "Visual/Light/LightManager.h"
 
 #include <Rendering/Core/Framebuffer.h>
 
@@ -24,7 +24,7 @@ namespace Dindi
 				uint32_t numLights = 0;
 				mat4 c_ViewProjection;
 				vec4 c_CameraPos;
-				PointLight c_Lights[DND_MAX_LIGHTS];
+				GPUPointLightData c_Lights[DND_MAX_LIGHTS];
 			};
 
 			Data data;

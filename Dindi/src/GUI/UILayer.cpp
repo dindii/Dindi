@@ -41,8 +41,14 @@ namespace Dindi
 			
 		dispatcher.Dispatch<WindowResizeEvent>([&](WindowResizeEvent Event) -> bool
 		{
-			SetFrameDimensions(Event.GetWidth(), Event.GetHeight());
+			uint32_t width = Event.GetWidth();
+			uint32_t height = Event.GetHeight();
 			
+			if (width <= 0 || height <= 0)
+				return false;
+
+			SetFrameDimensions(Event.GetWidth(), Event.GetHeight());
+		
 			return false;
 		});
 
@@ -140,7 +146,8 @@ namespace Dindi
 			{
 				if (ImGui::MenuItem("Light"))
 				{
-					m_Scene->AddPointLight({ { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f } });
+					LightManager* lights = m_Scene->GetLightManager();
+					lights->AddPointLight(vec3(0.0f, 0.0f, 0.0f) , vec3(1.0f, 1.0f, 1.0f));
 				}
 
 				if (ImGui::MenuItem("Model..."))
@@ -173,7 +180,8 @@ namespace Dindi
 
 		ImGui::Begin("Scene Lights");
 
-		std::vector<PointLight>& sceneLights = m_Scene->GetLights();
+		LightManager* lights = m_Scene->GetLightManager();
+		std::vector<PointLight>& sceneLights = lights->GetLights();
 
 		for (int x = 0; x < sceneLights.size(); x++)
 		{
@@ -201,7 +209,9 @@ namespace Dindi
 				light.SetColor({ color[0], color[1], color[2], 0.0f });
 
 			if (ImGui::Button(lightRemoveLabel))
-				sceneLights.erase(sceneLights.begin() + x);
+			{
+				lights->RemoveLight(x);
+			}
 
 			ImGui::NewLine();
 		}
@@ -316,9 +326,16 @@ namespace Dindi
 		ImGuizmo::SetDrawlist();
 
 		ImVec2 imageSize = ImGui::GetItemRectSize();
+
+		//#NOTE: I'm not sure if this should be here, but since we are already using the camera for another purposes (such as edit projection and view), I guess it will not be a problem to
+		//let this here. But we should keep in mind to change the architecture over this next time.
+		if(imageSize.x != m_ViewportSizeX || imageSize.y != m_ViewportSizeY)
+			m_Scene->GetActiveCamera()->RemakeProjection(imageSize.x, imageSize.y);
+		
 		CacheViewportSize(imageSize.x, imageSize.y);
 
 		ImVec2 imagePos = ImGui::GetItemRectMin();
+		
 		CacheViewportMinPos(imagePos.x, imagePos.y);
 		
 		ImGuizmo::SetRect(imagePos.x, imagePos.y, imageSize.x, imageSize.y);
@@ -334,8 +351,6 @@ namespace Dindi
 
 		if (pickContext.pickedEntity)
 		{
-			vec3 halfAABB;
-
 			std::pair<vec3, vec3> entityGizmoContext = pickContext.pickedEntity->GetPickablePosition();
 
 			vec3 position = entityGizmoContext.first;

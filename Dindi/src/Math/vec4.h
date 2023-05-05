@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+#include "vec3.h"
 
 namespace Dindi
 {
@@ -12,7 +13,7 @@ namespace Dindi
 		vec4();
 		vec4(float scalar);
 		vec4(const float xx, const float yy, const float zz, const float ww);
-
+		vec4(const vec3& other);
 		std::string ToString() const;
 
 		float Dot(const vec4& other);

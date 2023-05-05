@@ -74,7 +74,7 @@ project "Dindi"
 	}
 
 	filter "system:windows"
-	systemversion "latest"
+	systemversion "10.0.22621.0"
 
 	defines
 	{
@@ -131,7 +131,7 @@ project "Dindi"
       }
 	
 	filter "system:windows"
-	systemversion "latest"
+	systemversion "10.0.22621.0"
 
 	defines
 	{

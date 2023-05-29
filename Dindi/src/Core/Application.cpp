@@ -1,4 +1,5 @@
 #include "Dindipch.h"
+#include "Platform/Window.h"
 #include "Application.h"
 #include "Rendering/Core/Renderer.h"
 #include "Rendering/Shader/ShaderHotReloader.h"

@@ -2,6 +2,7 @@
 #include "Dindipch.h"
 #include "DebugRenderer.h"
 #include "Rendering/Core/LowLevelRenderer.h"
+#include <Core/Application.h>
 
 #include <glad/glad.h>
 #include <chrono>
@@ -118,14 +119,17 @@ namespace Dindi
 
 		void DebugRenderer::DrawShape(const DebugShapeContext& debugShapeContext)
 		{
-			if (debugShapeContext.shapeLifetime > 0)
+			Application& app = Application::GetInstance();
+
+			if (!app.GetApplicationState() == EApplicationState::SIMULATION)
 			{
-				m_OnFlyDrawCalls.emplace_back(std::move(debugShapeContext));
-				return;
+				if (debugShapeContext.shapeLifetime > 0)
+				{
+					m_OnFlyDrawCalls.emplace_back(std::move(debugShapeContext));
+					return;
+				}
+				ImmediateDebugDrawShape(debugShapeContext);
 			}
-
-			ImmediateDebugDrawShape(debugShapeContext);
-
 		}
 
 

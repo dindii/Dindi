@@ -31,11 +31,16 @@ namespace Dindi
 		RegisterMeshData(m_VertexPositions, m_Normal, m_TextureCoord);
 	}
 
-	Dindi::AABB Mesh::GetOffsetAABB(const vec3& offset, const vec3& scale)
+	Dindi::AABB Mesh::GetOffsetAABB(const vec3& offset, const vec3& scale, const vec3& rotation)
 	{
 		//#TODO: Add a "Dirt" flag
+		
+		mat4 rotationTransform = mat4::Rotate(rotation.z, { 0.0f, 0.0f, 1.0f });
+		rotationTransform     *= mat4::Rotate(rotation.y, { 0.0f, 1.0f, 0.0f });
+		rotationTransform     *= mat4::Rotate(rotation.x, { 1.0f, 0.0f, 0.0f });
+
 		mat4 transform;
-		transform = mat4::Translate(offset) * mat4::Scale(scale);
+		transform = mat4::Translate(offset) *  rotationTransform * mat4::Scale(scale);
 
 		vec3 min = m_AABB.GetLocalMin();
 		vec3 max = m_AABB.GetLocalMax();
@@ -49,6 +54,11 @@ namespace Dindi
 	void Mesh::SetPickablePosition(const vec3& pos)
 	{
 		SetPosition(m_Position + pos);
+	}
+
+	void Mesh::SetPickableRotation(const vec3& rot)
+	{
+		SetRotation(rot);
 	}
 
 	std::pair<Dindi::vec3, Dindi::vec3> Mesh::GetPickablePosition() const
@@ -93,6 +103,13 @@ namespace Dindi
 		}
 		
 		m_AABB = AABB(minBoundaries, maxBoundaries);
+
+		//vec3 halfAABB = (minBoundaries + maxBoundaries) / 2;
+		float xx = (minBoundaries.x + maxBoundaries.x) / 2;
+		float yy = (minBoundaries.y + maxBoundaries.y) / 2;
+		float zz = (minBoundaries.z + maxBoundaries.z) / 2;
+		
+		m_HalfWay = m_MeshOrigin = { xx, yy, zz };
 	}
 
 }

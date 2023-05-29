@@ -2,19 +2,19 @@
 #include "LowLevelRenderer.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "Utils/Logger.h"
-#include "Core/Application.h"
-#include "Rendering/Debug/DebugRenderer.h"
+#include <Utils/Logger.h>
+#include <Core/Application.h>
+#include <Platform/Window.h>
+#include <Rendering/Debug/DebugRenderer.h>
 
 namespace Dindi
 {
-
 	namespace DND_INTERNAL
 	{
 		Framebuffer* LowLevelRenderer::m_ScreenOutput = nullptr;
 
 		//We are going to use only one UBO, so this doesn't need to be dynamic.
-		//This is static because we user don't need to mess with UBOs, he will not need and doesn't care either. This is internal for us.
+		//This is static because the user don't need to mess with UBOs, he will not need and doesn't care either. This is internal for us.
 		static constexpr uint32_t ConstantBufferSlot = 1;
 
 		ConstantBuffer PersistentData;
@@ -45,7 +45,7 @@ namespace Dindi
 			uint32_t height = app.GetWindow()->GetHeight();
 
 			SetViewport(0, 0, width, height);
-			//debug
+			
 			SetClearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
 
 			glEnable(GL_BLEND);
@@ -81,7 +81,8 @@ namespace Dindi
 			Application& app = Application::GetInstance();
 
 
-			//Persistent data (projection, camera, lights etc...)
+			///////////////////////////////////////////// Persistent data (projection, camera, lights etc...)
+
 			Camera* camera = scene->GetActiveCamera();
 			mat4 viewProjectionMatrix = camera->GetProjection() * camera->GetViewMatrix();
 
@@ -102,25 +103,30 @@ namespace Dindi
 			glBindBuffer(GL_UNIFORM_BUFFER, PersistentData.handle);
 			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PersistentData.data), &PersistentData.data);
 
-#if 1
 			m_ScreenOutput->Bind();
 			Clear();
 
+			///////////////////////////////////////////// Persistent data (projection, camera, lights etc...)
 
+
+			///////////////////////////////////////////// Transform and Draw
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
 				Model* model = scene->GetEntities()[x];
+				
+				bool rebuildMeshAABB = false;
 
-				//if (model->GetDirty())
+				Pickable* baseModel = static_cast<Pickable*>(model);
+
+				if (baseModel->GetPickableDirty())
 				{
 					model->BuildAABB();
-					//model->SetDirty(false);
+					model->SetPickableDirty(false);
+					rebuildMeshAABB = true;
 				}
 
 				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
 				{
-					//#TODO: It would have another For loop here to iterate the meshes of a model
-
 					Mesh* mesh = model->GetMeshes()[y];
 
 					glBindVertexArray(mesh->GetVertexArrayObjectID());
@@ -129,36 +135,46 @@ namespace Dindi
 					Material* material = mesh->GetMaterial();
 					material->Bind();
 					
+					/* #NOTE #TODO This needs to be rebuilt. We will rebuilt this using proper transformation hierarchy */
+					// {
+
+					//#NOTE: For now, MESH individual rotation will be disabled. In the future, a proper transformation hierarchy will be implemented and this
+					//will be addressed.
 					vec3 modelRotation = model->GetRotation();
 
 					mat4 rotationTransform  = mat4::Rotate(modelRotation.z, { 0.0f, 0.0f, 1.0f });
 					rotationTransform	   *= mat4::Rotate(modelRotation.y, { 0.0f, 1.0f, 0.0f });
 					rotationTransform      *= mat4::Rotate(modelRotation.x, { 1.0f, 0.0f, 0.0f });
 					
-
 					mat4 translationTransform = mat4::Translate(mesh->GetPosition() + model->GetPosition());
 
 					mat4 modelTransform;
-					modelTransform = translationTransform * rotationTransform * mat4::Scale({ model->GetScale() });
-					
+				    modelTransform = translationTransform * rotationTransform * mat4::Scale({ model->GetScale() });
+					// }
+
 					//Cache transform
+					//#NOTE: This cache is wrong. It is caching the mesh pos and rot into the model. So the cache and the mesh doesn't match.
+					//#TODO: Cache it right.
 					model->SetTransform(modelTransform);
 
-					//#TODO: Instead of using GetoffsetAABB, try to use the cached transform of the model...
-					AABB meshWorldAABB = mesh->GetOffsetAABB(mesh->GetPosition() + model->GetPosition(), model->GetScale());
-					mesh->SetWorldAABB(meshWorldAABB);
+					//We will only rebuild the AABB if it was changed.
+					Pickable* baseMesh = static_cast<Pickable*>(mesh);
+					if (baseMesh->GetPickableDirty() || rebuildMeshAABB)
+					{
+						baseMesh->SetPickableDirty(false);
+						AABB meshWorldAABB = mesh->GetOffsetAABB(mesh->GetPosition() + model->GetPosition(), model->GetScale(), model->GetRotation());
+						mesh->SetWorldAABB(meshWorldAABB);
+					}
 
 					material->GetShader()->UploadUniformMat4("u_Transform", modelTransform);
 
-					//#TODO: Please, let's use elements to draw.
-
-					//#TODO FRAMEBUFFER: render the imgui window using this texture
+					//#TODO: elements to draw.
 					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 				}
 			}
+			///////////////////////////////////////////// Transform and Draw
 
-#endif
-			//Draw all shapes in the queue
+			//Draw all debug shapes in the queue
 			Debug::DebugRenderer::SubmitDraw();
 
             //DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------

@@ -136,8 +136,8 @@ namespace Dindi
 			meshToFill[shapeIndex]->SetVertexPositionData(std::move(temporaryVertexPositions));
 			meshToFill[shapeIndex]->SetNormalData(std::move(temporaryNormals));
 			meshToFill[shapeIndex]->SetTextureCoordData(std::move(temporaryTextureCoords));
+				//><
 			meshToFill[shapeIndex]->SetPosition(modelToFill.GetPosition());
-
 			Ref<Texture2D> temporaryDiffuse, temporarySpecular, temporaryNormal;
 
 			std::string dirPrefix = directory + "\\";

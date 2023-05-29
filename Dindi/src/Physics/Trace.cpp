@@ -1,7 +1,7 @@
 #pragma once
 #include "Dindipch.h"
 #include "Trace.h"
-
+#include "Platform/Window.h"
 #include <Core/Application.h>
 
 namespace Dindi

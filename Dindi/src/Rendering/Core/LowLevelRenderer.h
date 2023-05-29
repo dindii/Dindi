@@ -11,7 +11,6 @@ namespace Dindi
 
 	namespace DND_INTERNAL
 	{
-
 		//We will use the active scene to fill the constant data like lights, shadows and projections.
 		//I have no intent to have more than one ConstantBuffer, so even in another scenes, we will still have place to
 		//support multiple lights, shadows and stuff like that. Because of this, I will use only a single handler id throughout the program.

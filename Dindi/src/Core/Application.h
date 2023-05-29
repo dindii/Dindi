@@ -1,5 +1,4 @@
 #pragma once
-#include "Platform/Window.h"
 #include "Utils/Logger.h"
 #include "Utils/DeltaTime.h"
 #include "Rendering/Scene/Scene.h"
@@ -28,12 +27,12 @@ namespace Dindi
 		float GetTime() const;
 		void PushLayer(Layer* layer);
 
+
+
 		UILayer* GetUILayer() { return m_UILayer; }
 
 		inline EApplicationState GetApplicationState() const { return m_AppState; }
 		inline void TerminateProgram() { m_Running = false; }
-	private:
-		void PickObject(bool meshOnly);
 	private:
 		static inline Application* s_Instance = nullptr;
 

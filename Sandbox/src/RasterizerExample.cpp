@@ -1,5 +1,6 @@
 #include "RasterizerExample.h"
 #include <Utils/Logger.h>
+#include "Platform/Window.h"
 #include <core/Application.h>
 #include <input/Input.h>
 #include <Math/Maths.h>
@@ -31,9 +32,9 @@ void RasterizerExample::OnAttach()
 	//DEBUG
 	m_DefaultEditorCamera->SetCameraYaw(0.0f);
 	m_DefaultEditorCamera->SetCameraPitch(0.0f);
-	model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\cube.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\untitled.obj", Dindi::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 	SceneOne->GetLightManager()->AddPointLight(Dindi::vec3(0.0f), Dindi::vec3(1.0f));
-//	SceneOne->AddEntity(model);
+	SceneOne->AddEntity(model);
 
 	app.SetActiveScene(SceneOne);
 }

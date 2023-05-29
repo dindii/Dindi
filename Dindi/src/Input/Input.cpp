@@ -2,6 +2,7 @@
 #include "Dindipch.h"
 #include "Input/Input.h"
 #include "Core/Application.h"
+#include "Platform/Window.h"
 
 //#OBS For now, this is made to a single window app, if you decide to add more windows, make a way to specify the window you want
 //     to apply these properties (easy stuff, glfw do this for us.)

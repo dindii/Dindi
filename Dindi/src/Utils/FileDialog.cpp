@@ -6,6 +6,7 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #endif
 
+#include "Platform/Window.h"
 #include "Core/Application.h"
 #include <GLFW/glfw3native.h>
 

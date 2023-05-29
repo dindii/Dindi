@@ -9,14 +9,14 @@ namespace Dindi
 	//I will not take meshPath by reference because we can just use the root asset path macro with the actual asset file easier this way.
 	//No difference between RESOURCES_PATH + std::string(path) and  RESOURCES_PATH path, the later we can have more simplicity.
 	Model::Model(std::string meshPath, const vec3& modelPosition, const float modelScale) :
-		m_Position(modelPosition), m_Scale(modelScale), m_Dirty(false)
+		m_Position(modelPosition), m_Scale(modelScale)
 	{								   
 		//#NOTE: Not sure if I want to allocate memory here but RAII would mess me up.
 		//m_Mesh = new Mesh();
 		//m_Material = new Material(vertexPath, fragmentPath);
 		ModelLoader::Load(meshPath, *this);
 		
-		BuildAABB(true);
+		BuildAABB();
 		
 		//#TODO - NOW - We have to create a material for each mesh so the loader can register a texture in this material. 
 		//Probably we will create in the runtime and assign its maps. This all will be by default.
@@ -58,7 +58,7 @@ namespace Dindi
 		m_Transform = transform;
 	}
 
-	void Model::BuildAABB(bool setLocalSpace)
+	void Model::BuildAABB()
 	{
 		vec3 minBoundaries, maxBoundaries;
 
@@ -89,12 +89,6 @@ namespace Dindi
 
 			if (meshMaxAABB.z >= maxBoundaries.z)
 				maxBoundaries.z = meshMaxAABB.z;
-		}
-
-		if (setLocalSpace)
-		{
-			m_AABB = { minBoundaries, maxBoundaries };
-			return;
 		}
 
 		m_AABB = { minBoundaries, maxBoundaries };

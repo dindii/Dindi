@@ -20,13 +20,19 @@ namespace Dindi
 
 		void SetPosition(const vec3& pos) { m_Data->pLightPosition = { pos.x, pos.y, pos.z, 1.0f}; }
 		void SetPickablePosition(const vec3& pos) override { SetPosition(pos); }
+		void SetPickableRotation(const vec3& pos) override {};
+		inline virtual void SetPickableScale(const float scale) override {};
+
 		bool SetColor(const vec4& color);
 
 		//#TODO overload vec4 -> vec3 constructor so this code can be cleaner
 		inline vec3 GetPosition() const { return vec3(m_Data->pLightPosition.x, m_Data->pLightPosition.y, m_Data->pLightPosition.z); }
 		inline vec3 GetColor()    const { return vec3(m_Data->pLightColor.x, m_Data->pLightColor.y, m_Data->pLightColor.z); }
 
-		std::pair<vec3, vec3> GetPickablePosition() const override;
+		virtual std::pair<vec3, vec3> GetPickablePosition() const override;
+		virtual vec3 GetPickableRotation() const override { return {}; }
+		inline virtual float GetPickableScale() const override { return 1.0f; }
+
 		AABB GetPickableAABB() const;
 
 		void AssignGPULightData(GPUPointLightData* dataPtr) { m_Data = dataPtr; }

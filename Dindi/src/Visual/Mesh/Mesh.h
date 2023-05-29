@@ -36,17 +36,32 @@ namespace Dindi
 		void SetWorldAABB(const AABB& aabb) { m_AABB.SetMin(aabb.GetMin()); m_AABB.SetMax(aabb.GetMax()); }
 		AABB GetAABB() const { return m_AABB; }
 
-		AABB GetOffsetAABB(const vec3& translation, const vec3& scale);
+		AABB GetOffsetAABB(const vec3& translation, const vec3& scale, const vec3& rotation);
 
 
 		inline void SetPosition(const vec3& pos) { m_Position = pos; }
-		void SetPickablePosition(const vec3& pos) override;
-		vec3 GetPosition() const { return m_Position; }
+		inline void SetRotation(const vec3& rot) { m_Rotation = rot; }
+		inline void SetScale(const float scale)  { m_Scale = scale; }
 
-		std::pair<vec3, vec3> GetPickablePosition() const;
+		inline virtual void SetPickablePosition(const vec3& pos) override;
+		inline virtual void SetPickableRotation(const vec3& rot) override;
+		inline virtual void SetPickableScale(const float scale) override { m_Scale = scale; }
+
+		inline vec3 GetPosition() const { return m_Position; }
+		inline vec3 GetRotation() const { return m_Rotation; }
+		inline float GetScale() const { return m_Scale; }
+
+		virtual std::pair<vec3, vec3> GetPickablePosition() const override;
+		inline virtual vec3 GetPickableRotation() const override { return GetRotation(); }
+		inline virtual float GetPickableScale() const override { return GetScale(); }
+
+		inline vec3 GetOrigin() const { return m_MeshOrigin; }
+
 		AABB GetPickableAABB() const;
 
 		//#NOTE: Like, this is not meant to be a game engine, but It would nice to setup some sort of residency rule to deallocate stuff from gpu memory when it needs
+		vec3 m_MeshOrigin;
+		vec3 m_HalfWay;
 	private:
 		void BuildAABB();
 
@@ -55,7 +70,8 @@ namespace Dindi
 		std::vector<vec3>     m_Normal;
 		std::vector<vec2>     m_TextureCoord;
 		
-		vec3 m_Position;
+		vec3 m_Position, m_Rotation;
+		float m_Scale = 1.0f; 
 
 		AABB m_AABB;
 

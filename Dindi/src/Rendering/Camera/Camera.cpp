@@ -122,7 +122,6 @@ namespace Dindi
 		Application& app = Application::GetInstance();
 		float viewportAR = app.GetUILayer()->GetViewportAspectRatio();
 
-		DND_LOG_TRACE(viewportAR);
 		SetProjection(viewportAR, m_FOV);
 	}
 }

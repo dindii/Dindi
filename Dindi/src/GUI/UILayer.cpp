@@ -356,7 +356,18 @@ namespace Dindi
 			vec3 position = entityGizmoContext.first;
 			vec3 gizmoOffset = entityGizmoContext.second;
 
-			mat4 modelTransform = mat4::Translate(position);
+			vec3 entityRotation = pickContext.pickedEntity->GetPickableRotation();
+			
+			float entityScale = pickContext.pickedEntity->GetPickableScale();
+
+			DND_LOG_TRACE("EntityRotation: ", entityRotation);
+
+			//#TODO #PERF: Transform is also calculated from scratch on the Draw function (LowLevelRenderer.cpp), we could cache that transform there and then retrieve it here.
+			mat4 rotationTransform = mat4::Rotate(entityRotation.z, { 0.0f, 0.0f, 1.0f });
+			rotationTransform     *= mat4::Rotate(entityRotation.y, { 0.0f, 1.0f, 0.0f });
+			rotationTransform     *= mat4::Rotate(entityRotation.x, { 1.0f, 0.0f, 0.0f });
+
+			mat4 modelTransform = mat4::Translate(position) * rotationTransform * mat4::Scale(entityScale);
 
 			ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, modelTransform.elements);
 
@@ -364,12 +375,19 @@ namespace Dindi
 
 			ImGuizmo::DecomposeMatrixToComponents(modelTransform.elements, translation.elements, rotation.elements, scale.elements);
 
-			if (vec3::CloseOrEqual(position, translation))
-				return;
 
-			translation -= gizmoOffset;
+			if (!(vec3::CloseOrEqual(position, translation) && vec3::CloseOrEqual(entityRotation, rotation) && vec3::CloseOrEqual({ entityScale }, { scale })))
+			{
+				pickContext.pickedEntity->SetPickableDirty(true);
 
-			pickContext.pickedEntity->SetPickablePosition(translation);
+				translation -= gizmoOffset;
+
+				DND_LOG_TRACE("Gizmo Rotation: ", rotation);
+
+				pickContext.pickedEntity->SetPickablePosition(translation);
+				pickContext.pickedEntity->SetPickableRotation(rotation);
+				pickContext.pickedEntity->SetPickableScale(scale.x);
+			}
 		}
 	}
 }

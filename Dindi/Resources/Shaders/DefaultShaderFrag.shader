@@ -50,6 +50,11 @@ void main()
 		
 		//diffuse calc
 		vec3 lightPos = c_Lights[x].m_Position.xyz;
+
+		//Just a little hack for test
+		if (x == 0)
+			lightPos = vec3(c_CameraPos.x, c_CameraPos.y, c_CameraPos.z);
+
 		vec3 lightDir = normalize(lightPos - v_FragPos);
 		vec3 normal = normalize(v_Normal);
 

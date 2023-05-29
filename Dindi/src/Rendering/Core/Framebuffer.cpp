@@ -2,6 +2,7 @@
 #include "Framebuffer.h"
 #include <glad/glad.h>
 #include <Utils/Logger.h>
+#include "Platform/Window.h"
 #include <Core/Application.h>
 
 namespace Dindi

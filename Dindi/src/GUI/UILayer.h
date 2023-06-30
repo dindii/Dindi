@@ -57,7 +57,6 @@ namespace Dindi
 		Model* m_SelectedModel = nullptr;
 
 	private:
-
 		EditMode m_EditMode = EditMode::Translate;
 		//Windows raw dimensions and ratios to be calculated with the window size.
 		//#TODO: Check if I will have to turn those >1.0f dimensions into ratio (screen percentage) dimensions

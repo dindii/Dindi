@@ -30,6 +30,8 @@ layout(std140, binding = 1) uniform ConstantData
 	PointLight c_Lights[DND_MAX_LIGHTS];
 };
 
+float gamma = 2.2;
+
 void main()
 {
 	float lightConstantAttenuation  = 1.0f;
@@ -51,10 +53,6 @@ void main()
 		//diffuse calc
 		vec3 lightPos = c_Lights[x].m_Position.xyz;
 
-		//Just a little hack for test
-		if (x == 0)
-			lightPos = vec3(c_CameraPos.x, c_CameraPos.y, c_CameraPos.z);
-
 		vec3 lightDir = normalize(lightPos - v_FragPos);
 		vec3 normal = normalize(v_Normal);
 
@@ -72,20 +70,16 @@ void main()
 		vec3 specular = vec3(0.3f) * specularRate;
 
 		float distance = length(lightPos - v_FragPos);
-		//float attenuation = 1.0f / (lightConstantAttenuation + lightLinearAttenuation * distance + lightQuadraticAttenuation * (distance * distance));
-		float attenuation = 1.0f / (lightConstantAttenuation + lightLinearAttenuation * distance + lightQuadraticAttenuation * (distance * distance));
+		float attenuation = 1.0f / (distance * distance);
 		
 		vec3 ambientWithAttenuation  = ambient  * attenuation;
 		vec3 diffuseWithAttenuation  = diffuse  * attenuation;
 		vec3 specularWithAttenuation = specular * attenuation;
 
-		//vec3 ambientWithAttenuation  = ambient  * 1;
-		//vec3 diffuseWithAttenuation  = diffuse  * 1;
-		//vec3 specularWithAttenuation = specular * 1;
-
-
 		temporaryResult += vec3(ambientWithAttenuation + diffuseWithAttenuation) + vec3(specularColor * specularWithAttenuation);
 	}
 
 	outColor = vec4(temporaryResult.xyz, 1.0f);
+
+	outColor.rgb = pow(outColor.rgb, vec3(1.0 / gamma));
 }

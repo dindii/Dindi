@@ -24,9 +24,9 @@ namespace Dindi
 		inline static Application& GetInstance() { return *s_Instance; }
 		void SetActiveScene(Scene* scene);
 		Scene* GetActiveScene() { return m_ActiveScene; }
-		float GetTime() const;
 		void PushLayer(Layer* layer);
 
+		float GetTime() const;
 
 
 		UILayer* GetUILayer() { return m_UILayer; }

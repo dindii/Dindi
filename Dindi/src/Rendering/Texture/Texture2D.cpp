@@ -50,13 +50,13 @@ namespace Dindi
 		}
 		case 3:
 		{
-			internalFormat = GL_RGB8;
+			internalFormat = GL_SRGB8;
 			dataFormat = GL_RGB;
 			break;
 		}
 		case 4:
 		{
-			internalFormat = GL_RGBA8;
+			internalFormat = GL_SRGB8_ALPHA8;
 			dataFormat = GL_RGBA;
 			break;
 		}

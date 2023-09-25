@@ -2,7 +2,7 @@
 
 #include "Light.h"
 #include <vector>
-#include "Math/vec3.h"
+#include "glm/vec3.hpp"
 
 namespace Dindi
 {
@@ -11,7 +11,7 @@ namespace Dindi
 	public:
 		LightManager();
 
-		void AddPointLight(const vec3& position, const vec3& color);
+		void AddPointLight(const glm::vec3& position, const glm::vec3& color);
 		void RemoveLight(uint32_t idx);
 
 		std::vector<PointLight>& GetLights() { return m_Lights; }

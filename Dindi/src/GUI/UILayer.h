@@ -2,6 +2,9 @@
 #include <Rendering/Scene/Scene.h>
 #include <Core/Layer.h>
 
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
 namespace Dindi
 {
 	enum EditMode
@@ -31,9 +34,9 @@ namespace Dindi
 
 		bool IsHovering() const;
 
-		inline vec2 GetViewportMin() const { return { (float)m_ViewportMinX, (float)m_ViewportMinY }; }
-		vec2 GetViewportMousePosition() const;
-		vec2 GetViewportSize() const;
+		inline glm::vec2 GetViewportMin() const { return { (float)m_ViewportMinX, (float)m_ViewportMinY }; }
+		glm::vec2 GetViewportMousePosition() const;
+		glm::vec2 GetViewportSize() const;
 		float GetViewportAspectRatio() const { return (float)m_ViewportSizeX / (float)m_ViewportSizeY; }
 	private:
 		void CacheViewportMinPos(uint32_t width, uint32_t height);
@@ -47,6 +50,7 @@ namespace Dindi
 		void ProcessTransformGizmo();
 		void ProcessViewport();
 		void ProcessPerformanceStats(const DeltaTime& dt);
+		void ProcessGraphicsDefinitions();
 
 	private:
 		uint32_t m_FrameWidth = 0, m_FrameHeight = 0;

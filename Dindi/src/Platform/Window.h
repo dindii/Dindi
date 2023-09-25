@@ -2,7 +2,7 @@
 #include "Event/Event.h"
 #include "Core/Application.h"
 #include <GLFW/glfw3.h>
-#include <Math/vec2.h>
+
 namespace Dindi
 {
 	class Window
@@ -26,7 +26,7 @@ namespace Dindi
 	
 		inline uint32_t GetMouseX() const { return m_MouseX; }
 		inline uint32_t GetMouseY() const { return m_MouseY; }
-		inline vec2 GetDimensions() const { return { (float)m_Width, (float)m_Height }; }
+		inline glm::vec2 GetDimensions() const { return { (float)m_Width, (float)m_Height }; }
 	private:
 		inline void SetCacheMousePos(uint32_t x, uint32_t y) { m_MouseX = x; m_MouseY = y; }
 

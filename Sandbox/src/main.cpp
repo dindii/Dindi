@@ -4,7 +4,7 @@
 
 int main()
 {
-	Dindi::Application app(1366, 768, "Janela uau");
+	Dindi::Application app(2560, 1440, "Janela uau");
 
 	RasterizerExample* rasterizerProgram = new RasterizerExample();
 	app.PushLayer(rasterizerProgram);

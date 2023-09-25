@@ -180,10 +180,10 @@ namespace Dindi
 		glUseProgram(0);
 	}
 
-	void Shader::UploadUniformMat4(const std::string& name, const mat4& mat)
+	void Shader::UploadUniformMat4(const std::string& name, const glm::mat4& mat)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
-		glUniformMatrix4fv(location, 1, GL_FALSE, &mat.elements[0]);
+		glUniformMatrix4fv(location, 1, GL_FALSE, &mat[0][0]);
 		
 	}
 
@@ -193,13 +193,13 @@ namespace Dindi
 		glUniform1f(location, value);
 	}
 
-	void Shader::UploadUniformFloat4(const std::string& name, const vec4& mat)
+	void Shader::UploadUniformFloat4(const std::string& name, const glm::vec4& mat)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
 		glUniform4f(location, mat.x, mat.y, mat.z, mat.w);
 	}
 
-	void Shader::UploadUniformFloat3(const std::string& name, const vec3& mat)
+	void Shader::UploadUniformFloat3(const std::string& name, const glm::vec3& mat)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
 		glUniform3f(location, mat.x, mat.y, mat.z);

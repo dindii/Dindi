@@ -23,9 +23,10 @@
 enum ERenderingMapSlot
 {
 	None = 0,
-	Diffuse = 1,
-	Specular = 2,
-	Normal = 3
+	Diffuse,
+	Specular,
+	Normal, 
+	Shadow,
 };
 
 enum EApplicationState

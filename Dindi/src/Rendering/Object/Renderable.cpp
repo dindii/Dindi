@@ -19,29 +19,29 @@ namespace Dindi
 	//This is a way to abstract away opengl buffers from the actual mesh data, this may get more complex if we need
 	//more data inside vertex attributes
 	//#TODO: Move this to a register function inside LowLevelRenderer with arbitrary num of arguments of arbitrary types.
-	void Renderable::RegisterMeshData(std::vector<vec3>& vertexPositions, std::vector<vec3>& vertexNormals, std::vector<vec2>& textCoords)
+	void Renderable::RegisterMeshData(std::vector<glm::vec3>& vertexPositions, std::vector<glm::vec3>& vertexNormals, std::vector<glm::vec2>& textCoords)
 	{
 		glBindVertexArray(m_VertexArrayObjectID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferObjectID);
 
-		size_t bufferSize = sizeof(vec3) * vertexPositions.size() + sizeof(vec3) * vertexNormals.size() + sizeof(vec2) * textCoords.size();
+		size_t bufferSize = sizeof(glm::vec3) * vertexPositions.size() + sizeof(glm::vec3) * vertexNormals.size() + sizeof(glm::vec2) * textCoords.size();
 
 		if(m_Flags & RenderFlags::Static)
 			glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
 		else if(m_Flags & RenderFlags::Stream)
 			glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STREAM_DRAW);
 
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vec3) * vertexPositions.size(), vertexPositions.data());
-		glBufferSubData(GL_ARRAY_BUFFER, sizeof(vec3) * vertexPositions.size(), (sizeof(vec3) * vertexNormals.size()), vertexNormals.data());
-		glBufferSubData(GL_ARRAY_BUFFER, (sizeof(vec3) * vertexPositions.size()) + (sizeof(vec3) * vertexNormals.size()), (sizeof(vec2) * textCoords.size()), textCoords.data());
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * vertexPositions.size(), vertexPositions.data());
+		glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vertexPositions.size(), (sizeof(glm::vec3) * vertexNormals.size()), vertexNormals.data());
+		glBufferSubData(GL_ARRAY_BUFFER, (sizeof(glm::vec3) * vertexPositions.size()) + (sizeof(glm::vec3) * vertexNormals.size()), (sizeof(glm::vec2) * textCoords.size()), textCoords.data());
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(vec3) * vertexPositions.size()));
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)((sizeof(vec3) * vertexPositions.size()) + (sizeof(vec3) * vertexNormals.size())));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(glm::vec3) * vertexPositions.size()));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)((sizeof(glm::vec3) * vertexPositions.size()) + (sizeof(glm::vec3) * vertexNormals.size())));
 
 	}
 

@@ -19,11 +19,13 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
   IncludeDir["ImGui"] = "Dindi/vendor/imgui"
   IncludeDir["stbi"] = "Dindi/vendor/stbi"
   IncludeDir["glfw"] = "Dindi/vendor/glfw/include"
+  IncludeDir["glm"] = "Dindi/vendor/glm"	
 
   group "Dependencies"
   include "Dindi/vendor/Glad"
   include "Dindi/vendor/imgui"
   include "Dindi/vendor/glfw"
+  include "Dindi/vendor/glm"
   group ""
 
 project "Dindi"
@@ -63,7 +65,8 @@ project "Dindi"
 		"%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
 		"%{IncludeDir.stbi}",
-		"%{IncludeDir.glfw}"
+		"%{IncludeDir.glfw}",
+		"%{IncludeDir.glm}",
 	}
 	
 	links
@@ -122,7 +125,8 @@ project "Dindi"
 		"../",
 		"Dindi/src",
         "Dindi/vendor",
-        "Dindi/vendor/glfw/include"
+        "Dindi/vendor/glfw/include",
+		"Dindi/vendor/glm"
 	}
 
 	links                      -- Linkamos a Engine no Sandbox também

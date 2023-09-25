@@ -8,8 +8,8 @@ namespace Dindi
 {
 	//I will not take meshPath by reference because we can just use the root asset path macro with the actual asset file easier this way.
 	//No difference between RESOURCES_PATH + std::string(path) and  RESOURCES_PATH path, the later we can have more simplicity.
-	Model::Model(std::string meshPath, const vec3& modelPosition, const float modelScale) :
-		m_Position(modelPosition), m_Scale(modelScale)
+	Model::Model(std::string meshPath, const glm::vec3& modelPosition, const float modelScale) :
+		m_Position(modelPosition), m_Scale(modelScale), m_Transform(1.0f), m_Rotation(0.0f)
 	{								   
 		//#NOTE: Not sure if I want to allocate memory here but RAII would mess me up.
 		//m_Mesh = new Mesh();
@@ -53,20 +53,18 @@ namespace Dindi
 			std::sort(m_Mesh.begin(), m_Mesh.end(), [](Mesh* a, Mesh* b) { return a->GetAABB().GetAABBSize() < b->GetAABB().GetAABBSize(); });
 	}
 
-	void Model::SetTransform(const mat4& transform)
-	{
-		m_Transform = transform;
-	}
 
 	void Model::BuildAABB()
 	{
-		vec3 minBoundaries, maxBoundaries;
+		AABB meshAABB = m_Mesh[0]->GetAABB();
+
+		glm::vec3 minBoundaries = meshAABB.GetMin(), maxBoundaries = meshAABB.GetMax();
 
 		for (uint32_t i = 0; i < m_Mesh.size(); i++)
 		{
 			AABB meshAABB = m_Mesh[i]->GetAABB();
 
-			vec3 meshMinAABB = meshAABB.GetMin();
+			glm::vec3 meshMinAABB = meshAABB.GetMin();
 			
 
 			if (meshMinAABB.x <= minBoundaries.x)
@@ -79,7 +77,7 @@ namespace Dindi
 				minBoundaries.z = meshMinAABB.z;
 			
 
-			vec3 meshMaxAABB = meshAABB.GetMax();
+			glm::vec3 meshMaxAABB = meshAABB.GetMax();
 
 			if (meshMaxAABB.x >= maxBoundaries.x)
 				maxBoundaries.x = meshMaxAABB.x;
@@ -94,9 +92,9 @@ namespace Dindi
 		m_AABB = { minBoundaries, maxBoundaries };
 	}
 
-	std::pair<Dindi::vec3, Dindi::vec3> Model::GetPickablePosition() const
+	std::pair<glm::vec3, glm::vec3> Model::GetPickablePosition() const
 	{
-		return { std::make_pair(m_Position, vec3(0.0f)) };
+		return { std::make_pair(m_Position, glm::vec3(0.0f)) };
 	}
 
 	Dindi::AABB Model::GetPickableAABB() const

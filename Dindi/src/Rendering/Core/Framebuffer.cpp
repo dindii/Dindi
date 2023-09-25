@@ -7,7 +7,8 @@
 
 namespace Dindi
 {
-	Framebuffer::Framebuffer() : m_RendererID(0), m_ColorAttachment(0), m_DepthAttachment(0)
+	Framebuffer::Framebuffer(uint16_t width, uint16_t height, RenderTargetDescriptor colorDescriptor, RenderTargetDescriptor depthDescriptor) : m_RendererID(0), m_ColorAttachment(0), m_DepthAttachment(0),
+		m_Width(width), m_Height(height), m_ColorDescriptor(colorDescriptor), m_DepthDescriptor(depthDescriptor)
 	{
 		Remake();
 	}
@@ -36,28 +37,55 @@ namespace Dindi
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
 		// -------------------- Color attachment
-		glGenTextures(1, &m_ColorAttachment);
-		glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
+		if (m_ColorDescriptor.internalFormat != RenderTargetInternalFormat::DND_NONE)
+		{
+			glGenTextures(1, &m_ColorAttachment);
+			glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
 
-		Application& app = Application::GetInstance();
-		vec2 windowSize = app.GetWindow()->GetDimensions();
+			Application& app = Application::GetInstance();
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, windowSize.x, windowSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+			RenderTargetFormat format = GetFormatFromInternalDataType(m_ColorDescriptor.internalFormat);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, m_ColorDescriptor.type, NULL);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
+		}
 		// --------------------
+
+
+
 
 		// -------------------- Depth attachment
-		glGenTextures(1, &m_DepthAttachment);
-		glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
+		if (m_DepthDescriptor.internalFormat != RenderTargetInternalFormat::DND_NONE)
+		{
+			glGenTextures(1 , &m_DepthAttachment);
+			glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, windowSize.x, windowSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+			RenderTargetFormat depthFormat = GetFormatFromInternalDataType(m_DepthDescriptor.internalFormat);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
-		// --------------------
+			glTexImage2D(GL_TEXTURE_2D, 0, m_DepthDescriptor.internalFormat, m_Width, m_Height, 0, depthFormat, m_DepthDescriptor.type, NULL);
+		
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
+
+			//If we only have this depth attachment, we have to explicitly tell OGL that we doesn't want a color buffer
+			if (m_ColorDescriptor.internalFormat == RenderTargetInternalFormat::DND_NONE)
+			{
+				glDrawBuffer(GL_NONE);
+				glReadBuffer(GL_NONE);
+			}
+			// --------------------
+		}
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			DND_LOG_FATAL("Failed to create OpenGL Framebuffer!");
@@ -67,6 +95,7 @@ namespace Dindi
 
 	void Framebuffer::Bind()
 	{
+		glViewport(0, 0, m_Width, m_Height);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 	}
 	void Framebuffer::UnBind()

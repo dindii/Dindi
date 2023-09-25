@@ -1,5 +1,5 @@
 #pragma once
-#include "Math/vec3.h"
+#include "glm/vec3.hpp"
 #include "Visual/Model/Model.h"
 
 //#IMPORTANT: - Use it only for debugging purposes!
@@ -12,6 +12,14 @@ namespace Dindi
 {
 	namespace Debug
 	{
+		enum EDebugVisualizationMode
+		{
+			MESH_AABB = BIT(0),
+			MODEL_AABB = BIT(1),
+			MOUSE_RAYCAST = BIT(2),
+			LIGHT_BOX = BIT(3),
+		};
+
 		enum EDebugShape
 		{
 			NONE = -1,
@@ -33,9 +41,9 @@ namespace Dindi
 		{
 		public:
 			EDebugShape shapeType = EDebugShape::NONE;
-			vec3 firstPosition;
-			vec3 secondPosition;
-			vec3 shapeColor;
+			glm::vec3 firstPosition;
+			glm::vec3 secondPosition;
+			glm::vec3 shapeColor;
 			float shapeSize = 1.0f;
 			uint32_t shapeLifetime = 0;
 			uint32_t shapeRenderFlags = EDebugRenderFlags::DEFAULT;
@@ -55,6 +63,11 @@ namespace Dindi
 			static void SubmitDraw();
 			static void DrawShape(const DebugShapeContext& debugShapeContext);
 			static void ClearQueue();
+
+
+			static void AppendDebugModeFlag(EDebugVisualizationMode flag) { m_DebugModeFlag |= flag; }
+			static void RemoveDebugModeFlag(EDebugVisualizationMode flag) { if(m_DebugModeFlag & flag) m_DebugModeFlag = (m_DebugModeFlag ^ flag); }
+			static bool CheckDebugModeFlag(EDebugVisualizationMode flag) { return m_DebugModeFlag & flag; }
 
 
 		private:
@@ -81,6 +94,7 @@ namespace Dindi
 			static Model* m_DebugShapes[Debug::EDebugShape::MAX];
 			static std::vector<DebugShapeContext> m_OnFlyDrawCalls;
 #endif
+			static inline uint32_t m_DebugModeFlag;
 		};
 	}
 }

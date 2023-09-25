@@ -84,9 +84,9 @@ namespace Dindi
 		{
 			meshToFill.emplace_back(new Mesh());
 
-			std::vector<vec3> temporaryVertexPositions;
-			std::vector<vec3> temporaryNormals;
-			std::vector<vec2> temporaryTextureCoords;
+			std::vector<glm::vec3> temporaryVertexPositions;
+			std::vector<glm::vec3> temporaryNormals;
+			std::vector<glm::vec2> temporaryTextureCoords;
 
 			size_t index_offset = 0;
 

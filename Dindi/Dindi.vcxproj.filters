@@ -126,18 +126,6 @@
     <ClInclude Include="src\Math\Maths.h">
       <Filter>src\Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Math\mat4.h">
-      <Filter>src\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Math\vec2.h">
-      <Filter>src\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Math\vec3.h">
-      <Filter>src\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Math\vec4.h">
-      <Filter>src\Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\Physics\AABB.h">
       <Filter>src\Physics</Filter>
     </ClInclude>
@@ -152,6 +140,9 @@
     </ClInclude>
     <ClInclude Include="src\Rendering\Camera\Camera.h">
       <Filter>src\Rendering\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Core\Common.h">
+      <Filter>src\Rendering\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\Core\Framebuffer.h">
       <Filter>src\Rendering\Core</Filter>
@@ -247,18 +238,6 @@
     </ClCompile>
     <ClCompile Include="src\Input\Input.cpp">
       <Filter>src\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Math\mat4.cpp">
-      <Filter>src\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Math\vec2.cpp">
-      <Filter>src\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Math\vec3.cpp">
-      <Filter>src\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Math\vec4.cpp">
-      <Filter>src\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Physics\AABB.cpp">
       <Filter>src\Physics</Filter>

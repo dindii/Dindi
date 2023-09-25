@@ -1,6 +1,6 @@
 #pragma once
 #include <GLFW/glfw3.h>
-#include "Math/vec2.h"
+#include <glm/vec2.hpp>
 
 namespace Dindi
 {
@@ -276,7 +276,7 @@ namespace Dindi
 		static bool IsKeyPressed(EKeyCode kc);
 		static bool IsMouseButtonPressed(MouseButtonsCode mb);
 		static void HideAndLockCursor(bool cond);
-		static vec2 GetMousePosition();
+		static glm::vec2 GetMousePosition();
 		static void SetCursorPosition(int x, int y);
 	};
 	

@@ -1,10 +1,25 @@
 #pragma once
 #include <stdint.h>
+#include <glm/glm.hpp>
 
 #define MC_PI 3.14159265359
 
 namespace Dindi
 {
+	inline float Distance(const glm::vec3& first, const glm::vec3& second)
+	{
+		return sqrt(pow(first.x - second.x, 2) + pow(first.y - second.y, 2) + pow(first.z - second.z, 2) * 1.0);
+	}
+
+	inline bool CloseOrEqual(const glm::vec3& first, const glm::vec3& second)
+	{
+		constexpr float epsilon = std::numeric_limits<float>::epsilon();
+
+		return (std::abs(first.x - second.x) <= epsilon &&
+			std::abs(first.y - second.y) <= epsilon &&
+			std::abs(first.z - second.z) <= epsilon);
+	}
+
 	template<typename T>
 	inline T clamp(const T min, const T max,  const T val)
 	{
@@ -24,7 +39,7 @@ namespace Dindi
 		return val;
 	}
 
-	inline vec3 clamp(const vec3& min, const vec3& max, const vec3& val)
+	inline glm::vec3 clamp(const glm::vec3& min, const glm::vec3& max, const glm::vec3& val)
 	{
 		float x = clamp<float>(min.x, max.x, val.x);
 		float y = clamp<float>(min.y, max.y, val.y);

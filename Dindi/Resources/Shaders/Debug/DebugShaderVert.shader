@@ -19,7 +19,9 @@ layout(std140, binding = 1) uniform ConstantData
 	float _p2;
 	unsigned int numLights;
 	mat4 c_ViewProjection;
+	mat4 c_ShadowTransform;
 	vec4 c_CameraPos;
+	vec4 c_DirLightPos;
 	PointLight c_Lights[DND_MAX_LIGHTS];
 };
 

@@ -48,3 +48,7 @@
 .vs/
 /.vs
 Dindi/.vs
+Dindi/Resources/Models
+.vs/Dindi/v15
+bin-int
+Dindi/vendor/glm/doc

@@ -35,6 +35,16 @@ namespace Dindi
 		return DND_INTERNAL::LowLevelRenderer::GetScreenOutputHandle();
 	}
 
+	Texture2D& Renderer::GetShadowMap()
+	{
+		return DND_INTERNAL::LowLevelRenderer::GetShadowMap();
+	}
+
+	Dindi::GraphicsDefinitions& Renderer::GetGraphicsDefinitions()
+	{
+		return DND_INTERNAL::LowLevelRenderer::GetGraphicsDefinitions();
+	}
+
 	void Renderer::Clear()
 	{
 		DND_INTERNAL::LowLevelRenderer::Clear();

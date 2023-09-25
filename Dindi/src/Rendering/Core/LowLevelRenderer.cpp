@@ -6,6 +6,10 @@
 #include <Core/Application.h>
 #include <Platform/Window.h>
 #include <Rendering/Debug/DebugRenderer.h>
+#include <Utils/AssetManager.h>
+#include <Rendering/Shader/Shader.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Dindi
 {
@@ -73,24 +77,62 @@ namespace Dindi
 			Debug::DebugRenderer::Init();
 #endif
 
-			m_ScreenOutput = new Framebuffer();
+			uint32_t nwidth = app.GetWindow()->GetWidth();
+			uint32_t nheight = app.GetWindow()->GetHeight();
+
+			//------ Default screen output
+			RenderTargetDescriptor colorDescriptor;
+			colorDescriptor.internalFormat = RenderTargetInternalFormat::DND_RGB8;
+			colorDescriptor.type = RenderTargetDataType::DND_UNSIGNED_BYTE;
+			
+			RenderTargetDescriptor depthDescriptor;
+			depthDescriptor.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
+			depthDescriptor.type = DND_FLOAT;
+			
+			m_ScreenOutput = new Framebuffer(nwidth, nheight, colorDescriptor, depthDescriptor);
+			//------ Default screen output
+
+			//------ shadow map 
+			RenderTargetDescriptor shadowMapDepthDescriptor;
+			shadowMapDepthDescriptor.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
+			shadowMapDepthDescriptor.type = DND_FLOAT;
+
+
+
+			m_ShadowMap = new Framebuffer(width, height, {}, depthDescriptor);
+			m_ShadowMapTexture.SetID(m_ShadowMap->GetOutputDepthImage());
+
+			const GraphicsDefinitions& gd = m_GraphicsDefinitions;
+			m_DirectionalLightProjection = glm::ortho(-gd.shadowFrustrumDims, gd.shadowFrustrumDims, -gd.shadowFrustrumDims, gd.shadowFrustrumDims, gd.shadowMapNearPlane, gd.shadowMapFarPlane);
+			m_DirectionalLightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+ 			m_ShadowShader = Shader::Load(RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowVert.shader", RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowFrag.shader"); 
+			//------ shadow map 
 		}
 
-		void LowLevelRenderer::Draw(Scene* scene)
+		void LowLevelRenderer::SetConstantData(Scene* scene)
 		{
+			///////////////////////////////////////////// Persistent data (projection, camera, lights etc...)
 			Application& app = Application::GetInstance();
 
-
-			///////////////////////////////////////////// Persistent data (projection, camera, lights etc...)
-
 			Camera* camera = scene->GetActiveCamera();
-			mat4 viewProjectionMatrix = camera->GetProjection() * camera->GetViewMatrix();
-
+			glm::vec3 cameraPos = camera->GetCameraPos();
+			
+			glm::mat4 viewProjectionMatrix = camera->GetProjection() * camera->GetViewMatrix();
 			PersistentData.data.c_ViewProjection = viewProjectionMatrix;
+
+			//m_DirectionalLightView = mat4::LookAt({ m_DirectionalLightDir.x, m_DirectionalLightDir.y, m_DirectionalLightDir.z }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
+			const GraphicsDefinitions& gd = m_GraphicsDefinitions;
+			m_DirectionalLightProjection = glm::ortho(-gd.shadowFrustrumDims, gd.shadowFrustrumDims, -gd.shadowFrustrumDims, gd.shadowFrustrumDims, gd.shadowMapNearPlane, gd.shadowMapFarPlane);
+			m_DirectionalLightView = glm::lookAt(glm::vec3(gd.directionalLightDir.x, gd.directionalLightDir.y, gd.directionalLightDir.z), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+			PersistentData.data.c_LightMVP = m_DirectionalLightProjection * m_DirectionalLightView;
+			PersistentData.data.c_DirLightPos = gd.directionalLightDir;
+			
 			PersistentData.data.c_Time = app.GetTime();
 
-			vec3 cameraPos = camera->GetCameraPos();
-			PersistentData.data.c_CameraPos = vec4(cameraPos.x, cameraPos.y, cameraPos.z, 0.0f);
+			PersistentData.data.c_CameraPos = glm::vec4(cameraPos.x, cameraPos.y, cameraPos.z, 0.0f);
 
 			LightManager* lightManager = scene->GetLightManager();
 			std::vector<GPUPointLightData>& lightsData = lightManager->GetLightsData();
@@ -99,21 +141,87 @@ namespace Dindi
 			memcpy(&PersistentData.data.c_Lights, lightsData.data(), sizeof(GPUPointLightData) * nLights);
 
 			PersistentData.data.numLights = nLights;
-			
+
 			glBindBuffer(GL_UNIFORM_BUFFER, PersistentData.handle);
 			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PersistentData.data), &PersistentData.data);
+			///////////////////////////////////////////// Persistent data (projection, camera, lights etc...)
+		}
+
+		void LowLevelRenderer::Draw(Scene* scene)
+		{
+			SetConstantData(scene);
+			ApplySceneTransformation(scene);
+
+			m_ShadowMap->Bind();
+			Clear(false, true);
+		//	glCullFace(GL_FRONT);
+			ShadowPass(scene);
+		//	glCullFace(GL_BACK);
+			m_ShadowMap->UnBind();
 
 			m_ScreenOutput->Bind();
-			Clear();
+			Clear(true, true);
+			OutputPass(scene);
+			DebugDraw(scene);
+			m_ScreenOutput->UnBind();
+		}
 
-			///////////////////////////////////////////// Persistent data (projection, camera, lights etc...)
-
-
-			///////////////////////////////////////////// Transform and Draw
+		void LowLevelRenderer::OutputPass(Scene* scene)
+		{
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
 				Model* model = scene->GetEntities()[x];
-				
+
+				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
+				{
+					Mesh* mesh = model->GetMeshes()[y];
+
+					glBindVertexArray(mesh->GetVertexArrayObjectID());
+					glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferObjectID());
+					
+					Material* material = mesh->GetMaterial();
+					material->Bind();
+
+					glm::mat4 meshTransform = mesh->GetTransform();
+
+					material->GetShader()->UploadUniformMat4("u_Transform", meshTransform);
+
+					//#TODO: elements to draw.
+					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
+				}
+			}
+		}
+
+		void LowLevelRenderer::ShadowPass(Scene* scene)
+		{
+			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
+			{
+				Model* model = scene->GetEntities()[x];
+
+				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
+				{
+					Mesh* mesh = model->GetMeshes()[y];
+
+					glBindVertexArray(mesh->GetVertexArrayObjectID());
+					glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferObjectID());
+
+					m_ShadowShader->Bind();
+
+					glm::mat4 meshTransform = mesh->GetTransform();
+					m_ShadowShader->UploadUniformMat4("u_Transform", meshTransform);
+
+					//#TODO: elements to draw.
+					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
+				}
+			}
+		}
+
+		void LowLevelRenderer::ApplySceneTransformation(Scene* scene)
+		{
+			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
+			{
+				Model* model = scene->GetEntities()[x];
+
 				bool rebuildMeshAABB = false;
 
 				Pickable* baseModel = static_cast<Pickable*>(model);
@@ -129,59 +237,55 @@ namespace Dindi
 				{
 					Mesh* mesh = model->GetMeshes()[y];
 
-					glBindVertexArray(mesh->GetVertexArrayObjectID());
-					glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferObjectID());
-
-					Material* material = mesh->GetMaterial();
-					material->Bind();
-					
 					/* #NOTE #TODO This needs to be rebuilt. We will rebuilt this using proper transformation hierarchy */
 					// {
 
 					//#NOTE: For now, MESH individual rotation will be disabled. In the future, a proper transformation hierarchy will be implemented and this
 					//will be addressed.
-					vec3 modelRotation = model->GetRotation();
+					glm::vec3 modelRotation = model->GetRotation();
 
-					mat4 rotationTransform  = mat4::Rotate(modelRotation.z, { 0.0f, 0.0f, 1.0f });
-					rotationTransform	   *= mat4::Rotate(modelRotation.y, { 0.0f, 1.0f, 0.0f });
-					rotationTransform      *= mat4::Rotate(modelRotation.x, { 1.0f, 0.0f, 0.0f });
-					
-					mat4 translationTransform = mat4::Translate(mesh->GetPosition() + model->GetPosition());
+					glm::mat4 rotationTransform(1.0f);
+				    rotationTransform = glm::rotate(rotationTransform, modelRotation.z, { 0.0f, 0.0f, 1.0f });
+					rotationTransform = glm::rotate(rotationTransform, modelRotation.y, { 0.0f, 1.0f, 0.0f });
+					rotationTransform = glm::rotate(rotationTransform, modelRotation.x, { 1.0f, 0.0f, 0.0f });
 
-					mat4 modelTransform;
-				    modelTransform = translationTransform * rotationTransform * mat4::Scale({ model->GetScale() });
+					glm::mat4 translationTransform(1.0f);
+					//translationTransform = glm::translate(translationTransform, /*mesh->GetPosition()*/ model->GetPosition());
+					translationTransform = glm::translate(translationTransform, model->GetPosition() + mesh->GetPosition());
+
+					glm::mat4 modelTransform(1.0f);
+					modelTransform = translationTransform * rotationTransform * glm::scale(modelTransform, glm::vec3(model->GetScale()));
 					// }
 
-					//Cache transform
-					//#NOTE: This cache is wrong. It is caching the mesh pos and rot into the model. So the cache and the mesh doesn't match.
-					//#TODO: Cache it right.
-					model->SetTransform(modelTransform);
+					mesh->SetTransform(modelTransform);
 
 					//We will only rebuild the AABB if it was changed.
 					Pickable* baseMesh = static_cast<Pickable*>(mesh);
 					if (baseMesh->GetPickableDirty() || rebuildMeshAABB)
 					{
+						model->BuildAABB();
 						baseMesh->SetPickableDirty(false);
-						AABB meshWorldAABB = mesh->GetOffsetAABB(mesh->GetPosition() + model->GetPosition(), model->GetScale(), model->GetRotation());
+						AABB meshWorldAABB = mesh->GetOffsetAABB(mesh->GetPosition() + model->GetPosition(), glm::vec3(model->GetScale()), model->GetRotation());
 						mesh->SetWorldAABB(meshWorldAABB);
 					}
-
-					material->GetShader()->UploadUniformMat4("u_Transform", modelTransform);
-
-					//#TODO: elements to draw.
-					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 				}
 			}
 			///////////////////////////////////////////// Transform and Draw
+		}
 
+		void LowLevelRenderer::DebugDraw(Scene* scene)
+		{
 			//Draw all debug shapes in the queue
 			Debug::DebugRenderer::SubmitDraw();
 
-            //DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
-			//Draw cubes in light positions to debug.
+			Application& app = Application::GetInstance();
+
+			//DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
+			//Draw cubes in light positions to debug.]
+			LightManager* lightManager = scene->GetLightManager();
 			std::vector<PointLight>& lights = lightManager->GetLights();
-			
-			if(app.GetApplicationState() == EApplicationState::EDITOR)
+
+			if (app.GetApplicationState() == EApplicationState::EDITOR && Debug::DebugRenderer::CheckDebugModeFlag(Debug::LIGHT_BOX))
 				for (uint32_t x = 0; x < lights.size(); x++)
 				{
 					Debug::DebugShapeContext shapeContext;
@@ -195,7 +299,58 @@ namespace Dindi
 					Debug::DebugRenderer::DrawShape(shapeContext);
 				}
 
-			m_ScreenOutput->UnBind();
+
+
+			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
+			{
+				Model* model = scene->GetEntities()[x];
+
+				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
+				{
+					Mesh* mesh = scene->GetEntities()[x]->GetMeshes()[y];
+					
+
+
+					if (Debug::DebugRenderer::CheckDebugModeFlag(Debug::MESH_AABB))
+					{
+						Debug::DebugShapeContext shapeContext;
+						shapeContext.firstPosition = mesh[x].GetAABB().GetMin();
+						shapeContext.shapeColor = glm::vec3(0.0f, 0.0f, 1.0f);
+						shapeContext.shapeSize = 0.1f;
+						shapeContext.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
+						shapeContext.shapeType = Debug::EDebugShape::CUBE;
+
+						Debug::DebugShapeContext shapeContext1;
+						shapeContext1.firstPosition = mesh[x].GetAABB().GetMax();
+						shapeContext1.shapeColor = glm::vec3(1.0f, 0.0f, 0.0f);
+						shapeContext1.shapeSize = 0.1f;
+						shapeContext1.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
+						shapeContext1.shapeType = Debug::EDebugShape::CUBE;
+
+						Debug::DebugRenderer::DrawShape(shapeContext1);
+						Debug::DebugRenderer::DrawShape(shapeContext);
+					}
+
+
+					if (Debug::DebugRenderer::CheckDebugModeFlag(Debug::MODEL_AABB))
+					{
+						Debug::DebugShapeContext model1;
+						model1.firstPosition = model[x].GetAABB().GetMin();
+						model1.shapeColor = glm::vec3(0.0f, 1.0f, 0.0f);
+						model1.shapeSize = 0.1f;
+						model1.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
+						model1.shapeType = Debug::EDebugShape::CUBE;
+						Debug::DebugShapeContext model2;
+						model2.firstPosition = model[x].GetAABB().GetMax();
+						model2.shapeColor = glm::vec3(0.0f, 1.0f, 1.0f);
+						model2.shapeSize = 0.1f;
+						model2.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
+						model2.shapeType = Debug::EDebugShape::CUBE;
+						Debug::DebugRenderer::DrawShape(model1);
+						Debug::DebugRenderer::DrawShape(model2);
+					}
+				}
+			}
 		}
 
 		void LowLevelRenderer::Clear(const bool ColorBuffer /*= true*/, const bool DepthBuffer /*= true*/)
@@ -207,7 +362,7 @@ namespace Dindi
 				glClear(GL_DEPTH_BUFFER_BIT);
 		}
 
-		void LowLevelRenderer::SetClearColor(const vec4& color)
+		void LowLevelRenderer::SetClearColor(const glm::vec4& color)
 		{
 			glClearColor(color.r, color.g, color.b, color.a);
 		}

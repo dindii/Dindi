@@ -1,13 +1,14 @@
 #include "Dindipch.h"
 
+#include <Rendering/Core/Renderer.h>
+#include <Rendering/Core/LowLevelRenderer.h>
+
 #include "UILayer.h"
 
 #include <GUI/GUI.h>
 
 #include <Utils/FileDialog.h>
 #include <Core/Application.h>
-
-#include <Rendering/Core/Renderer.h>
 
 #include <Event/ApplicationEvent.h>
 #include <Event/KeyEvent.h>
@@ -16,6 +17,7 @@
 
 #include <Math/Maths.h>
 #include <Utils/EntityPicker.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Dindi
 {
@@ -31,6 +33,7 @@ namespace Dindi
 		ProcessLightInspector();
 		ProcessModelInspector();
 		ProcessPerformanceStats(dt);
+		ProcessGraphicsDefinitions();
 
 		GUI::End();
 	}
@@ -96,7 +99,7 @@ namespace Dindi
 		return ImGuizmo::IsOver() || ImGui::IsAnyItemHovered();
 	}
 
-	Dindi::vec2 UILayer::GetViewportMousePosition() const
+	glm::vec2 UILayer::GetViewportMousePosition() const
 	{
 		Application& app = Application::GetInstance();
 		Window* appWindow = app.GetWindow();
@@ -107,14 +110,14 @@ namespace Dindi
 		return { mx, my };
 	}
 
-	Dindi::vec2 UILayer::GetViewportSize() const
+	glm::vec2 UILayer::GetViewportSize() const
 	{
 		return { (float)m_ViewportSizeX, (float)m_ViewportSizeY };
 	}
 
 	void UILayer::ProcessPerformanceStats(const DeltaTime& dt)
 	{
-		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
+		glm::vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
 	
 		ImGui::SetNextWindowPos({ windowSize.x * m_StatsWindowPosX, m_MenuBarHeight });
 		ImGui::SetNextWindowSize({ windowSize.x * m_StatsWindowWidth, m_StatsWindowHeight });
@@ -126,6 +129,20 @@ namespace Dindi
 	}
 
 	
+	void UILayer::ProcessGraphicsDefinitions()
+	{
+		ImGui::Begin("ShadowMap");
+		ImGui::Image((ImTextureID)Renderer::GetShadowMap().GetID(), { 500, 500 }, { 0, 1 }, { 1,0 });
+		
+		GraphicsDefinitions& gd = Renderer::GetGraphicsDefinitions();
+
+		ImGui::SliderFloat("ShadowMap Projection Box Dims", &gd.shadowFrustrumDims, 0.0f, 100.0f);
+		ImGui::SliderFloat("ShadowMap Projection Far Plane", &gd.shadowMapFarPlane, 0.0f, 100.0f);
+		ImGui::SliderFloat("ShadowMap Projection Near Plane", &gd.shadowMapNearPlane, 0.0f, 100.0f);
+		ImGui::SliderFloat4("Directional Light Position'", &gd.directionalLightDir.x, 0.0f, 100.0f);
+		ImGui::End();
+	}
+
 	void UILayer::CacheViewportMinPos(uint32_t width, uint32_t height)
 	{
 		m_ViewportMinX = width;
@@ -147,13 +164,13 @@ namespace Dindi
 				if (ImGui::MenuItem("Light"))
 				{
 					LightManager* lights = m_Scene->GetLightManager();
-					lights->AddPointLight(vec3(0.0f, 0.0f, 0.0f) , vec3(1.0f, 1.0f, 1.0f));
+					lights->AddPointLight(glm::vec3(0.0f, 0.0f, 0.0f) , glm::vec3(1.0f, 1.0f, 1.0f));
 				}
 
 				if (ImGui::MenuItem("Model..."))
 				{
 					std::string path = FileDialog::OpenFile(".obj\0\0");
-					Model* newModel = new Model(path, vec3(0.0f, 0.0f, 0.0f), 1.0f);
+					Model* newModel = new Model(path, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 					if (newModel)
 						m_Scene->AddEntity(newModel);
@@ -172,7 +189,7 @@ namespace Dindi
 	{
 		static constexpr int maxLightLabelSize = 128;
 
-		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
+		glm::vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
 
 
 		ImGui::SetNextWindowPos({ windowSize.x * m_LightInspectorPosX, m_MenuBarHeight });
@@ -222,7 +239,7 @@ namespace Dindi
 	{
 		static constexpr int maxModelLabelSize = 128;
 
-		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
+		glm::vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
 
 		ImGui::SetNextWindowPos({ m_ModelInspectorWindowPosX, m_MenuBarHeight });
 		ImGui::SetNextWindowSize({ windowSize.x * m_ModelInspectorWindowWidth, windowSize.y });
@@ -235,7 +252,7 @@ namespace Dindi
 		{
 			Model* model = sceneEntities[x];
 
-			vec3 pos = model->GetPosition();
+			glm::vec3 pos = model->GetPosition();
 			float scale = model->GetScale();
 
 			char ModelPosLabel[maxModelLabelSize] = "Position##";
@@ -253,13 +270,22 @@ namespace Dindi
 			ImGui::Text("%s",model->GetName().data());
 
 			if (ImGui::DragFloat3(ModelPosLabel, &pos[0], m_PositionSliderSpeed))
+			{
+				model->SetPickableDirty(true);
 				model->SetPosition({ pos[0], pos[1], pos[2] });
+			}
 
 			if (ImGui::DragFloat(ModelScaleLabel, &scale, m_ScaleSliderSpeed))
+			{
+				model->SetPickableDirty(true);
 				model->SetScale(scale);
+			}
 
 			if (ImGui::Button(ModelDeleteLabel))
+			{
+				model->SetPickableDirty(true);
 				sceneEntities.erase(sceneEntities.begin() + x);
+			}
 
 			ImGui::NewLine();
 		}
@@ -270,13 +296,13 @@ namespace Dindi
 
 	void UILayer::ProcessViewport()
 	{		
-		vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
+		glm::vec2 windowSize = { (float)m_FrameWidth, (float)m_FrameHeight };
 
 		//#TODO - Turn those values into variables.
 		ImGui::SetNextWindowPos({ windowSize.x * m_ModelInspectorWindowWidth, m_MenuBarHeight });
 		ImGui::SetNextWindowSize({ windowSize.x * m_ViewportPosX, windowSize.y });
 
-		vec2 viewportDims(windowSize.x * m_ViewportPosX, windowSize.y);
+		glm::vec2 viewportDims(windowSize.x * m_ViewportPosX, windowSize.y);
 
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBringToFrontOnFocus);
 		ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), { windowSize.x * m_ViewportPosX, windowSize.y }, { 0,1 }, { 1,0 });
@@ -326,13 +352,14 @@ namespace Dindi
 		ImGuizmo::SetDrawlist();
 
 		ImVec2 imageSize = ImGui::GetItemRectSize();
+		
+		CacheViewportSize(imageSize.x, imageSize.y);
 
 		//#NOTE: I'm not sure if this should be here, but since we are already using the camera for another purposes (such as edit projection and view), I guess it will not be a problem to
 		//let this here. But we should keep in mind to change the architecture over this next time.
 		if(imageSize.x != m_ViewportSizeX || imageSize.y != m_ViewportSizeY)
 			m_Scene->GetActiveCamera()->RemakeProjection(imageSize.x, imageSize.y);
 		
-		CacheViewportSize(imageSize.x, imageSize.y);
 
 		ImVec2 imagePos = ImGui::GetItemRectMin();
 		
@@ -343,46 +370,52 @@ namespace Dindi
 		ImGuizmo::OPERATION transformOperation = GetImGuizmoOperation(m_EditMode);
 		ImGuizmo::MODE transformMode = ImGuizmo::MODE::LOCAL;
 
-		const mat4& cameraProjection = m_Scene->GetActiveCamera()->GetProjection();
-		const mat4& cameraView = m_Scene->GetActiveCamera()->GetViewMatrix();
+		const glm::mat4& cameraProjection = m_Scene->GetActiveCamera()->GetProjection();
+		const glm::mat4& cameraView = m_Scene->GetActiveCamera()->GetViewMatrix();
 
 
 		EntityPickerContext pickContext = EntityPicker::GetLatestPickedEntity();
 
 		if (pickContext.pickedEntity)
 		{
-			std::pair<vec3, vec3> entityGizmoContext = pickContext.pickedEntity->GetPickablePosition();
+			std::pair<glm::vec3, glm::vec3> entityGizmoContext = pickContext.pickedEntity->GetPickablePosition();
 
-			vec3 position = entityGizmoContext.first;
-			vec3 gizmoOffset = entityGizmoContext.second;
+			glm::vec3 position = entityGizmoContext.first;
+			glm::vec3 gizmoOffset = entityGizmoContext.second;
 
-			vec3 entityRotation = pickContext.pickedEntity->GetPickableRotation();
+			glm::vec3 entityRotation = pickContext.pickedEntity->GetPickableRotation();
 			
 			float entityScale = pickContext.pickedEntity->GetPickableScale();
 
-			DND_LOG_TRACE("EntityRotation: ", entityRotation);
+			//DND_LOG_TRACE("EntityRotation: ", entityRotation);
 
 			//#TODO #PERF: Transform is also calculated from scratch on the Draw function (LowLevelRenderer.cpp), we could cache that transform there and then retrieve it here.
-			mat4 rotationTransform = mat4::Rotate(entityRotation.z, { 0.0f, 0.0f, 1.0f });
-			rotationTransform     *= mat4::Rotate(entityRotation.y, { 0.0f, 1.0f, 0.0f });
-			rotationTransform     *= mat4::Rotate(entityRotation.x, { 1.0f, 0.0f, 0.0f });
+			glm::mat4 rotationTransform(1.0f);
+			
+			rotationTransform = glm::rotate(rotationTransform, entityRotation.z, { 0.0f, 0.0f, 1.0f });
+			rotationTransform = glm::rotate(rotationTransform, entityRotation.y, { 0.0f, 1.0f, 0.0f });
+			rotationTransform = glm::rotate(rotationTransform, entityRotation.x, { 1.0f, 0.0f, 0.0f });
 
-			mat4 modelTransform = mat4::Translate(position) * rotationTransform * mat4::Scale(entityScale);
+			glm::mat4 modelTransform(1.0f);
+			modelTransform = glm::translate(modelTransform, position) * rotationTransform * glm::scale(modelTransform, glm::vec3(entityScale));
 
-			ImGuizmo::Manipulate(cameraView.elements, cameraProjection.elements, transformOperation, transformMode, modelTransform.elements);
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), transformOperation, transformMode, glm::value_ptr(modelTransform));
 
-			vec3 translation, rotation, scale;
+			glm::vec3 translation, rotation, scale;
 
-			ImGuizmo::DecomposeMatrixToComponents(modelTransform.elements, translation.elements, rotation.elements, scale.elements);
+			ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(modelTransform), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
 
+			constexpr float epsilon = std::numeric_limits<float>::epsilon();
+			bool isScaleDirty = (std::abs(entityScale - scale.x) <= epsilon);
 
-			if (!(vec3::CloseOrEqual(position, translation) && vec3::CloseOrEqual(entityRotation, rotation) && vec3::CloseOrEqual({ entityScale }, { scale })))
+			//if (!(CloseOrEqual(position, translation) && CloseOrEqual(entityRotation, rotation) && CloseOrEqual(glm::vec3(entityScale), { scale })))
+			if (!(CloseOrEqual(position, translation) && CloseOrEqual(entityRotation, rotation) && isScaleDirty))
 			{
 				pickContext.pickedEntity->SetPickableDirty(true);
 
 				translation -= gizmoOffset;
 
-				DND_LOG_TRACE("Gizmo Rotation: ", rotation);
+				//DND_LOG_TRACE("Gizmo Rotation: ", rotation);
 
 				pickContext.pickedEntity->SetPickablePosition(translation);
 				pickContext.pickedEntity->SetPickableRotation(rotation);

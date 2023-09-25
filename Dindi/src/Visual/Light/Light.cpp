@@ -3,9 +3,11 @@
 #include "Core/Core.h"
 #include "Utils/Logger.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Dindi
 {
-	bool PointLight::SetColor(const vec4& color)
+	bool PointLight::SetColor(const glm::vec4& color)
 	{
 		if (!AssertColor(color))
 		{
@@ -17,28 +19,29 @@ namespace Dindi
 		return false;
 	}
 
-	std::pair<Dindi::vec3, Dindi::vec3> PointLight::GetPickablePosition() const
+	std::pair<glm::vec3, glm::vec3> PointLight::GetPickablePosition() const
 	{
-		vec4 pos4 = m_Data->pLightPosition;
+		glm::vec4 pos4 = m_Data->pLightPosition;
 
-		vec3 pos = { pos4.x, pos4.y, pos4.z };
+		glm::vec3 pos = { pos4.x, pos4.y, pos4.z };
 
-		return { std::make_pair(pos, vec3(0.0f)) };
+		return { std::make_pair(pos, glm::vec3(0.0f)) };
 	}
 	
 
 	Dindi::AABB PointLight::GetPickableAABB() const
 	{
-		vec3 lightMin(-1.0f, -1.0f, -1.0f);
-		vec3 lightMax(1.0f, 1.0f, 1.0f);
+		glm::vec3 lightMin(-1.0f, -1.0f, -1.0f);
+		glm::vec3 lightMax(1.0f, 1.0f, 1.0f);
 
-		vec4 position4 = m_Data->pLightPosition;
-		vec3 position = { position4.x, position4.y, position4.z };
+		glm::vec4 position4 = m_Data->pLightPosition;
+		glm::vec3 position = { position4.x, position4.y, position4.z };
 
-		mat4 transform = mat4::Translate(position);
+		glm::mat4 transform(1.0f);
+		transform = glm::translate(transform, position);
 
-		lightMin = transform * lightMin;
-		lightMax = transform * lightMax;
+		lightMin = transform * glm::vec4(lightMin.x, lightMin.y, lightMin.z, 1.0f);
+		lightMax = transform * glm::vec4(lightMax.x, lightMax.y, lightMax.z, 1.0f);
 
 		return { lightMin, lightMax };
 	}
@@ -55,7 +58,7 @@ namespace Dindi
 	//	return false;
 	//}
 
-	bool PointLight::AssertColor(const vec4& color)
+	bool PointLight::AssertColor(const glm::vec4& color)
 	{
 		return (color.r <= 0.0f && color.g <= 0.0f && color.b <= 0.0f);
 	}

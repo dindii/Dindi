@@ -6,6 +6,7 @@
 
 #include <glad/glad.h>
 #include <chrono>
+#include <glm/gtc/matrix_transform.hpp>
 
 #ifdef DINDI_DEBUG
 namespace Dindi
@@ -18,7 +19,7 @@ namespace Dindi
 		void DebugRenderer::Init()
 		{
 			//CUBE --------------------------------------------------------
-			std::vector<vec3> cubeVertices;
+			std::vector<glm::vec3> cubeVertices;
 			const uint32_t cubeNumVertices = 36;
 
 			cubeVertices.reserve(cubeNumVertices);
@@ -63,7 +64,7 @@ namespace Dindi
 				 1.0f,-1.0f, 1.0f
 			};
 
-			memcpy(&cubeVertices[0], cubeVerticesArray, cubeNumVertices * sizeof(vec3));
+			memcpy(&cubeVertices[0], cubeVerticesArray, cubeNumVertices * sizeof(glm::vec3));
 
 			Model* temporaryCubeModel = new Model();
 			Mesh*  cubeDebugMesh = new Mesh(std::move(cubeVertices), RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderVert.shader", RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderFrag.shader");
@@ -74,7 +75,7 @@ namespace Dindi
 			//CUBE --------------------------------------------------------
 
 			//LINES -------------------------------------------------------
-			std::vector<vec3> lineVertices;
+			std::vector<glm::vec3> lineVertices;
 			const uint32_t lineNumVertices = 2;
 
 			lineVertices.reserve(lineNumVertices);
@@ -85,7 +86,7 @@ namespace Dindi
 				0.1f, 0.1f, 0.1f,
 			};
 
-			memcpy(&lineVertices[0], lineVerticesArray, lineNumVertices * sizeof(vec3));
+			memcpy(&lineVertices[0], lineVerticesArray, lineNumVertices * sizeof(glm::vec3));
 
 			Model* temporaryLineModel = new Model();
 			Mesh*  lineDebugMesh = new Mesh(std::move(lineVertices), RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderVert.shader", RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderFrag.shader");
@@ -153,14 +154,14 @@ namespace Dindi
 			mesh->GetMaterial()->Bind();
 			mesh->GetMaterial()->GetShader()->UploadUniformFloat3("u_Color", debugShapeContext.shapeColor);
 
-			mat4 transform;
-			transform *= transform.Translate(debugShapeContext.firstPosition);
+			glm::mat4 transform(1.0f);
+			transform = glm::translate(transform, debugShapeContext.firstPosition);
 
 			if (isLine)
 				glLineWidth((uint32_t)debugShapeContext.shapeSize);
 			else
 			{
-				transform *= transform.Scale(debugShapeContext.shapeSize);
+				transform = glm::scale(transform, glm::vec3(debugShapeContext.shapeSize));
 				glLineWidth(1.0f);
 			}
 			
@@ -177,7 +178,7 @@ namespace Dindi
 			//if line, drawarrays using GL_LINE
 			if(isLine)
 			{
-				static std::vector<vec3> linePoints(2);
+				static std::vector<glm::vec3> linePoints(2);
 				linePoints[0] = debugShapeContext.firstPosition;
 				linePoints[1] = debugShapeContext.secondPosition;
 

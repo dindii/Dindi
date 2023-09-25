@@ -36,8 +36,8 @@ namespace Dindi
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
-
-	Dindi::vec2 Input::GetMousePosition()
+	
+	glm::vec2 Input::GetMousePosition()
 	{
 		GLFWwindow* window = Application::GetInstance().GetWindow()->GetNativeWindow();
 		double xpos = 0, ypos = 0;

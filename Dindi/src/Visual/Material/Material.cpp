@@ -1,6 +1,7 @@
 #include "Dindipch.h"
 #include "Material.h"
 
+#include <Rendering/Core/Renderer.h>
 
 namespace Dindi
 {
@@ -49,6 +50,14 @@ namespace Dindi
 		{
 			m_normalMap->Bind(				ERenderingMapSlot::Normal);
 			m_Shader->UploadInt("u_Normal", ERenderingMapSlot::Normal);
+		}
+
+
+		Texture2D& shadowMap = Renderer::GetShadowMap();
+		if (shadowMap.GetID())
+	    {
+			shadowMap.Bind(                    ERenderingMapSlot::Shadow);
+			m_Shader->UploadInt("u_ShadowMap", ERenderingMapSlot::Shadow);
 		}
 
 		//#TODO: add more.

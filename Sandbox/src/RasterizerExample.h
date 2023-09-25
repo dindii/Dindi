@@ -17,7 +17,8 @@ public:
 private:
 	Dindi::Scene* SceneOne;
 	Dindi::Camera* m_DefaultEditorCamera;
-
+	
+	float m_MouseSensitivity = 0.05f;
 	float m_DefaultEditorCameraSpeed;
 
 	void MoveCamera(const Dindi::DeltaTime& dt);

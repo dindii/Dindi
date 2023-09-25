@@ -2,8 +2,7 @@
 
 #include <vector>
 
-#include "Math/vec3.h"
-#include "Math/vec2.h"
+#include <glm/vec3.hpp>
 #include "Rendering/Shader/Shader.h"
 
 #include <Core/Core.h>
@@ -37,7 +36,7 @@ namespace Dindi
 		inline void SetRenderFlag(const RenderFlags flag) { m_Flags = flag; }
 
 	protected:
-		void RegisterMeshData(std::vector<vec3>& vertexPositions, std::vector<vec3>& vertexNormals, std::vector<vec2>& textCoords);
+		void RegisterMeshData(std::vector<glm::vec3>& vertexPositions, std::vector<glm::vec3>& vertexNormals, std::vector<glm::vec2>& textCoords);
 	private:
 		//this will have a vbo abstraction
 		unsigned int m_VertexBufferObjectID, m_VertexArrayObjectID;

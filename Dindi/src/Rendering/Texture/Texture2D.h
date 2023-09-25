@@ -18,7 +18,9 @@ namespace Dindi
 		virtual uint32_t GetHeight()  const { return m_Height; }
 		virtual uint32_t GetID()      const { return m_RendererID; }
 		virtual std::string GetPath()const { return m_Path; }
+		
 		virtual void SetData(void* data);
+		virtual void SetID(uint32_t id) { m_RendererID = id;}
 
 		virtual void Bind(uint32_t slot = 0) const;
 

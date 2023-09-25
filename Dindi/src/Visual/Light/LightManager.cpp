@@ -15,7 +15,7 @@ namespace Dindi
 		}
 	}
 
-	void LightManager::AddPointLight(const vec3& position, const vec3& color)
+	void LightManager::AddPointLight(const glm::vec3& position, const glm::vec3& color)
 	{
 		m_Lights.push_back({});
 		uint32_t lastLightIdx = m_Lights.size() - 1;

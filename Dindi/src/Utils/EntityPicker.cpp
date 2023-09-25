@@ -26,27 +26,39 @@ namespace Dindi
 
 		//Viewport dimensions
 		UILayer* uiLayer = app.GetUILayer();
-		vec2 viewportDims = uiLayer->GetViewportSize();
+		glm::vec2 viewportDims = uiLayer->GetViewportSize();
 
 		//Window coords translated to viewport coords (windowCoord - viewportMin)
-		vec2 viewportMouseCoords = uiLayer->GetViewportMousePosition();
+		glm::vec2 viewportMouseCoords = uiLayer->GetViewportMousePosition();
 
-		const mat4& proj = camera->GetProjection();
-		const mat4& view = camera->GetViewMatrix();
+		const glm::mat4& proj = camera->GetProjection();
+		const glm::mat4& view = camera->GetViewMatrix();
 
 		//The easiest fix is to simply divide by cos(angle of ray - viewAngle) and use that as the distance
 		float   distancePerStep = 1.0f;
 
 		EntityPickerContext selectedEntity = {};
 
-		vec3 cameraPos = camera->GetCameraPos();
+		glm::vec3 cameraPos = camera->GetCameraPos();
 
 		uint32_t steps = 1;
 		while (steps < m_RayMaxSteps)
 		{
 			//#TODO: adjust to have a little offset always behind the camera.
-			vec3 direction = Trace::CastRay(viewportMouseCoords.x, viewportMouseCoords.y, viewportDims.x, viewportDims.y, proj, view);
-			vec3 finalTrace = cameraPos + direction * distancePerStep;
+			glm::vec3 direction = Trace::CastRay(viewportMouseCoords.x, viewportMouseCoords.y, viewportDims.x, viewportDims.y, proj, view);
+			glm::vec3 finalTrace = cameraPos + direction * distancePerStep;
+			
+			if (Debug::DebugRenderer::CheckDebugModeFlag(Debug::MOUSE_RAYCAST))
+			{
+				Debug::DebugShapeContext shapeContext;
+				shapeContext.firstPosition = finalTrace;
+				shapeContext.shapeColor = glm::vec3(1.0f, 0.0f, 1.0f);
+				shapeContext.shapeSize = 0.1f;
+				shapeContext.shapeRenderFlags = Debug::EDebugRenderFlags::NO_DEPTH_TESTING;
+				shapeContext.shapeType = Debug::EDebugShape::CUBE;
+				shapeContext.shapeLifetime = 5000;
+				Debug::DebugRenderer::DrawShape(shapeContext);
+			}
 
 
 			//Check for lights

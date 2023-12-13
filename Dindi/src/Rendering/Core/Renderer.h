@@ -22,7 +22,7 @@ struct GraphicsDefinitions;
 
 		static GraphicsDefinitions& GetGraphicsDefinitions();
 
-		static void Clear();
+		static void Clear(bool colorAttach = true, bool depthAttach = true);
 	};
 
 }

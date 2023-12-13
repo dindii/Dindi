@@ -13,10 +13,20 @@
 
 namespace Dindi
 {
+
+	GraphicsDefinitions::GraphicsDefinitions()
+	{
+		DND_LOG_WARNING("CSM is still using fixed values for projection planes!");
+		cascadeEnds[0] = 1.0f;
+		cascadeEnds[1] = 25.0f;
+		cascadeEnds[2] = 90.0f;
+		cascadeEnds[3] = 200.0f;
+	}
+
 	namespace DND_INTERNAL
 	{
 		Framebuffer* LowLevelRenderer::m_ScreenOutput = nullptr;
-
+		CSMRenderPass* LowLevelRenderer::m_CSMRenderPass = nullptr;
 		//We are going to use only one UBO, so this doesn't need to be dynamic.
 		//This is static because the user don't need to mess with UBOs, he will not need and doesn't care either. This is internal for us.
 		static constexpr uint32_t ConstantBufferSlot = 1;
@@ -31,6 +41,19 @@ namespace Dindi
 		LowLevelRenderer::~LowLevelRenderer()
 		{
 			delete m_ScreenOutput;
+		}
+
+		void glerrorcallback(GLenum source,
+			GLenum type,
+			GLuint id,
+			GLenum severity,
+			GLsizei length,
+			const GLchar* message,
+			const void* userParam)
+		{
+			std::ostringstream os;
+			os << "GL LOG: type = " << type << ", severity = " << severity << ", message = " << message;
+			DND_LOG_WARNING(os.str());
 		}
 
 		void LowLevelRenderer::Init()
@@ -92,23 +115,15 @@ namespace Dindi
 			m_ScreenOutput = new Framebuffer(nwidth, nheight, colorDescriptor, depthDescriptor);
 			//------ Default screen output
 
+
+
+	
+
 			//------ shadow map 
-			RenderTargetDescriptor shadowMapDepthDescriptor;
-			shadowMapDepthDescriptor.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
-			shadowMapDepthDescriptor.type = DND_FLOAT;
 
+			m_CSMRenderPass = new CSMRenderPass();
 
-
-			m_ShadowMap = new Framebuffer(width, height, {}, depthDescriptor);
-			m_ShadowMapTexture.SetID(m_ShadowMap->GetOutputDepthImage());
-
-			const GraphicsDefinitions& gd = m_GraphicsDefinitions;
-			m_DirectionalLightProjection = glm::ortho(-gd.shadowFrustrumDims, gd.shadowFrustrumDims, -gd.shadowFrustrumDims, gd.shadowFrustrumDims, gd.shadowMapNearPlane, gd.shadowMapFarPlane);
-			m_DirectionalLightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-
- 			m_ShadowShader = Shader::Load(RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowVert.shader", RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowFrag.shader"); 
-			//------ shadow map 
+			glDebugMessageCallback(glerrorcallback, nullptr);
 		}
 
 		void LowLevelRenderer::SetConstantData(Scene* scene)
@@ -122,10 +137,8 @@ namespace Dindi
 			glm::mat4 viewProjectionMatrix = camera->GetProjection() * camera->GetViewMatrix();
 			PersistentData.data.c_ViewProjection = viewProjectionMatrix;
 
-			//m_DirectionalLightView = mat4::LookAt({ m_DirectionalLightDir.x, m_DirectionalLightDir.y, m_DirectionalLightDir.z }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-			const GraphicsDefinitions& gd = m_GraphicsDefinitions;
-			m_DirectionalLightProjection = glm::ortho(-gd.shadowFrustrumDims, gd.shadowFrustrumDims, -gd.shadowFrustrumDims, gd.shadowFrustrumDims, gd.shadowMapNearPlane, gd.shadowMapFarPlane);
-			m_DirectionalLightView = glm::lookAt(glm::vec3(gd.directionalLightDir.x, gd.directionalLightDir.y, gd.directionalLightDir.z), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			const GraphicsDefinitions& gd = m_GraphicsDefinitions;		
+			
 
 			PersistentData.data.c_LightMVP = m_DirectionalLightProjection * m_DirectionalLightView;
 			PersistentData.data.c_DirLightPos = gd.directionalLightDir;
@@ -152,12 +165,8 @@ namespace Dindi
 			SetConstantData(scene);
 			ApplySceneTransformation(scene);
 
-			m_ShadowMap->Bind();
-			Clear(false, true);
-		//	glCullFace(GL_FRONT);
-			ShadowPass(scene);
-		//	glCullFace(GL_BACK);
-			m_ShadowMap->UnBind();
+
+			m_CSMRenderPass->GenerateOutput(scene);
 
 			m_ScreenOutput->Bind();
 			Clear(true, true);
@@ -185,6 +194,7 @@ namespace Dindi
 					glm::mat4 meshTransform = mesh->GetTransform();
 
 					material->GetShader()->UploadUniformMat4("u_Transform", meshTransform);
+					material->GetShader()->UploadUniformMat4("u_SingleLightTransform", m_CSMRenderPass->m_CascadesOrthographicProjections[0]);
 
 					//#TODO: elements to draw.
 					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
@@ -192,30 +202,7 @@ namespace Dindi
 			}
 		}
 
-		void LowLevelRenderer::ShadowPass(Scene* scene)
-		{
-			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
-			{
-				Model* model = scene->GetEntities()[x];
-
-				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
-				{
-					Mesh* mesh = model->GetMeshes()[y];
-
-					glBindVertexArray(mesh->GetVertexArrayObjectID());
-					glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferObjectID());
-
-					m_ShadowShader->Bind();
-
-					glm::mat4 meshTransform = mesh->GetTransform();
-					m_ShadowShader->UploadUniformMat4("u_Transform", meshTransform);
-
-					//#TODO: elements to draw.
-					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
-				}
-			}
-		}
-
+		
 		void LowLevelRenderer::ApplySceneTransformation(Scene* scene)
 		{
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
@@ -361,6 +348,7 @@ namespace Dindi
 			if (DepthBuffer)
 				glClear(GL_DEPTH_BUFFER_BIT);
 		}
+
 
 		void LowLevelRenderer::SetClearColor(const glm::vec4& color)
 		{

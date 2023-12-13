@@ -20,6 +20,8 @@
 #define DEFAULT_FRAGMENT_SHADER RESOURCES_PATH "Resources\\Shaders\\DefaultShaderFrag.shader"
 //Rendering stuff
 
+#define DND_CASCADED_SHADOW_MAP_LEVELS 1
+
 enum ERenderingMapSlot
 {
 	None = 0,

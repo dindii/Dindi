@@ -45,9 +45,9 @@ namespace Dindi
 		return DND_INTERNAL::LowLevelRenderer::GetGraphicsDefinitions();
 	}
 
-	void Renderer::Clear()
+	void Renderer::Clear(bool colorAttach, bool depthAttach)
 	{
-		DND_INTERNAL::LowLevelRenderer::Clear();
+		DND_INTERNAL::LowLevelRenderer::Clear(colorAttach, depthAttach);
 	}
 
 }

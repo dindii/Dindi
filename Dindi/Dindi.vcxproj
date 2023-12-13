@@ -155,6 +155,7 @@
     <ClInclude Include="src\Rendering\Core\Renderer.h" />
     <ClInclude Include="src\Rendering\Debug\DebugRenderer.h" />
     <ClInclude Include="src\Rendering\Object\Renderable.h" />
+    <ClInclude Include="src\Rendering\RenderPasses\Shadow\CascadedShadowMapRenderPass.h" />
     <ClInclude Include="src\Rendering\Scene\Scene.h" />
     <ClInclude Include="src\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Rendering\Shader\ShaderHotReloader.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="src\Rendering\Core\Renderer.cpp" />
     <ClCompile Include="src\Rendering\Debug\DebugRenderer.cpp" />
     <ClCompile Include="src\Rendering\Object\Renderable.cpp" />
+    <ClCompile Include="src\Rendering\RenderPasses\Shadow\CascadedShadowMapRenderPass.cpp" />
     <ClCompile Include="src\Rendering\Scene\Scene.cpp" />
     <ClCompile Include="src\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Rendering\Shader\ShaderHotReloader.cpp" />

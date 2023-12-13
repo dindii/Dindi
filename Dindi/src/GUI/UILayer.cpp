@@ -132,14 +132,13 @@ namespace Dindi
 	void UILayer::ProcessGraphicsDefinitions()
 	{
 		ImGui::Begin("ShadowMap");
-		ImGui::Image((ImTextureID)Renderer::GetShadowMap().GetID(), { 500, 500 }, { 0, 1 }, { 1,0 });
+		//ImGui::Image((ImTextureID)Renderer::GetShadowMap().GetID(), { 500, 500 }, { 0, 1 }, { 1,0 });
+		ImGui::Image((ImTextureID)4, { 500, 500 }, { 0, 1 }, { 1,0 });
 		
 		GraphicsDefinitions& gd = Renderer::GetGraphicsDefinitions();
 
-		ImGui::SliderFloat("ShadowMap Projection Box Dims", &gd.shadowFrustrumDims, 0.0f, 100.0f);
-		ImGui::SliderFloat("ShadowMap Projection Far Plane", &gd.shadowMapFarPlane, 0.0f, 100.0f);
-		ImGui::SliderFloat("ShadowMap Projection Near Plane", &gd.shadowMapNearPlane, 0.0f, 100.0f);
-		ImGui::SliderFloat4("Directional Light Position'", &gd.directionalLightDir.x, 0.0f, 100.0f);
+		ImGui::SliderFloat4("Directional Light Position'", &gd.directionalLightDir.x, 0.0f, 1000.0f);
+
 		ImGui::End();
 	}
 

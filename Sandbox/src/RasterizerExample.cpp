@@ -34,7 +34,7 @@ void RasterizerExample::OnAttach()
 	//DEBUG
 	m_DefaultEditorCamera->SetCameraYaw(0.0f);
 	m_DefaultEditorCamera->SetCameraPitch(0.0f);
-	model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\untitled.obj", glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza.obj", glm::vec3(0.0f, 0.0f, 0.0f), 0.025f);
 	SceneOne->GetLightManager()->AddPointLight(glm::vec3(0.0f), glm::vec3(1.0f));
 	SceneOne->AddEntity(model);
 

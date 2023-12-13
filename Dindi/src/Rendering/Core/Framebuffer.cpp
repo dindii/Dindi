@@ -77,7 +77,7 @@ namespace Dindi
 			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
-
+			
 			//If we only have this depth attachment, we have to explicitly tell OGL that we doesn't want a color buffer
 			if (m_ColorDescriptor.internalFormat == RenderTargetInternalFormat::DND_NONE)
 			{
@@ -88,7 +88,7 @@ namespace Dindi
 		}
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			DND_LOG_FATAL("Failed to create OpenGL Framebuffer!");
+			DND_LOG_ERROR("Framebuffer is not complete! Make sure to attach something to it for later use.");
 
 		UnBind();
 	}

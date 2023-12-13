@@ -222,6 +222,7 @@
     <ClInclude Include="vendor\imguizmo\ImGuizmo.h">
       <Filter>vendor\imguizmo</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering\RenderPasses\Shadow\CascadedShadowMapRenderPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -323,5 +324,6 @@
     <ClCompile Include="vendor\imguizmo\ImGuizmo.cpp">
       <Filter>vendor\imguizmo</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering\RenderPasses\Shadow\CascadedShadowMapRenderPass.cpp" />
   </ItemGroup>
 </Project>

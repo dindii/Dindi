@@ -2,6 +2,7 @@
 #include "Material.h"
 
 #include <Rendering/Core/Renderer.h>
+#include <glad/glad.h>
 
 namespace Dindi
 {
@@ -53,10 +54,19 @@ namespace Dindi
 		}
 
 
-		Texture2D& shadowMap = Renderer::GetShadowMap();
-		if (shadowMap.GetID())
-	    {
-			shadowMap.Bind(                    ERenderingMapSlot::Shadow);
+		//Texture2D& shadowMap = Renderer::GetShadowMap();
+		//if (shadowMap.GetID())
+		//{
+		//	shadowMap.Bind(                    ERenderingMapSlot::Shadow);
+		//	m_Shader->UploadInt("u_ShadowMap", ERenderingMapSlot::Shadow);
+		//}
+
+
+	//	Texture2D& shadowMap = Renderer::GetShadowMap();
+	//	if (shadowMap.GetID())
+		{
+			//shadowMap.Bind(ERenderingMapSlot::Shadow);
+			glBindTextureUnit(ERenderingMapSlot::Shadow, 4);
 			m_Shader->UploadInt("u_ShadowMap", ERenderingMapSlot::Shadow);
 		}
 

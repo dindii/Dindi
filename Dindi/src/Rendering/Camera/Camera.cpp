@@ -18,7 +18,7 @@ namespace Dindi
 	Camera::Camera(const float AR, const glm::vec3& position) : m_Yaw(0.0f), m_Pitch(0.0f), m_AspectRatio(AR), m_FOV(70.0f),
 		m_CameraLag(false), m_ViewMatrix(1.0f), m_Projection(1.0f)
 	{
-		m_Projection = glm::perspective(m_FOV /*zoom*/, m_AspectRatio, 1.0f, 100.0f);
+		m_Projection = glm::perspective(m_FOV /*zoom*/, m_AspectRatio, 1.0f, 200.0f);
 		m_CameraPos = position;
 
 		//This is needed so we don't lerp to another place when (like 0,0,-1) the camera is constructed
@@ -114,7 +114,7 @@ namespace Dindi
 	void Camera::SetProjection(float AR, float FOV)
 	{
 		//#TODO: More params
-		m_Projection = glm::perspective(FOV /*zoom*/, AR, 1.0f, 100.0f);
+		m_Projection = glm::perspective(FOV /*zoom*/, AR, 1.0f, 200.0f);
 	}
 
 	void Camera::RemakeProjection(float newWidth, float newHeight)

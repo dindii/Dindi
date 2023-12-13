@@ -40,33 +40,15 @@ float gamma = 2.2;
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	
 	projCoords = projCoords * 0.5f + 0.5f;
 
 	float currentDepth = projCoords.z;
+	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
 
-	vec3 globalDirLightPos = vec3(c_DirLightPos.x, c_DirLightPos.y, c_DirLightPos.z);
-	float bias = max(0.05 * (1.0 - dot(v_Normal, globalDirLightPos)), 0.001f);
-
-	vec2 texelSize = 1.0f / (textureSize(u_ShadowMap, 0) * 3);
+	float bias = max(0.05 * (1.0 - dot(v_Normal, vec3(fragPosLightSpace.xyz))), 0.005);
+	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
 	
-	float shadow = 0.0f;
-
-	for (int x = -3; x <= 3; ++x)
-	{
-		for (int y = -3; y <= 3; ++y)
-		{
-			float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
-		}
-	}
-
-	shadow /= 49.0f;
-	
-	if (projCoords.z > 1.0)
-		shadow = 0.0;
-
-
-
 	return shadow;
 }
 
@@ -134,9 +116,10 @@ void main()
 	PackLight dirLight = CalculateLight(vec3(1.0f, 1.0f, 1.0f), c_DirLightPos.xyz, true);
 	float shadow = ShadowCalculation(v_FragPosLightSpace);
 	//vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
-	temporaryResult += vec3(dirLight.ambient + (1.0 - shadow) * (dirLight.diffuse + dirLight.specular));
-	//temporaryResult += dirLight.ambient + dirLight.diffuse + dirLight.specular;
+	
 
+	temporaryResult += vec3(dirLight.ambient + (1.0 - shadow) * (dirLight.diffuse + dirLight.specular));
 	outColor = vec4(temporaryResult.xyz, 1.0f);
+	
 	outColor.rgb = pow(outColor.rgb, vec3(1.0f / gamma));
 }

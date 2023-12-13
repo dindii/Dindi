@@ -3,21 +3,24 @@
 #include "Rendering/Scene/Scene.h"
 #include "Visual/Light/LightManager.h"
 #include <Rendering/Core/Framebuffer.h>
+#include <Rendering/RenderPasses/Shadow/CascadedShadowMapRenderPass.h>
+
+class CSMRenderPass;
 
 namespace Dindi
 {
 	struct GraphicsDefinitions
 	{
-		GraphicsDefinitions() : shadowMapNearPlane(34.615f), shadowMapFarPlane(76.525f), shadowFrustrumDims(50.531f), directionalLightDir(0.0f, 73.457f, 11.728f, 28.313f) {};
+		//GraphicsDefinitions() : shadowMapNearPlane(34.615f), shadowMapFarPlane(76.525f), shadowFrustrumDims(50.531f), directionalLightDir(0.0f, 73.457f, 11.728f, 28.313f) {};
+		GraphicsDefinitions();
 	
 		// ----------------------------- Shadow
-		float shadowMapNearPlane, shadowMapFarPlane;
-		float shadowFrustrumDims;
+		float cascadeEnds[4];
 		// ----------------------------- Shadow
 	
 		// ----------------------------- Light
-		glm::vec4 directionalLightDir;
-		// ----------------------------- Shadow
+		glm::vec4 directionalLightDir = { 1.0f, 10.0f, 1.0f, 1.0f};
+		// ----------------------------- Light
 	};
 
 
@@ -65,7 +68,7 @@ namespace Dindi
 			static inline uint32_t GetScreenOutputHandle() { return m_ScreenOutput->GetOutputColorImage(); }
 
 			static inline uint32_t GetShadowMapTextureID() { return m_ShadowMapTexture.GetID(); }
-			static inline Texture2D& GetShadowMap() { return m_ShadowMapTexture; }
+			static inline Texture2D& GetShadowMap() { return m_ShadowMapTexture;/*return m_CSMRenderPass->GetOutput();*/ }
 			static GraphicsDefinitions& GetGraphicsDefinitions() { return m_GraphicsDefinitions; }
 
 		private:
@@ -87,6 +90,7 @@ namespace Dindi
 			static inline Ref<Shader> m_ShadowShader = nullptr;
 			static inline GraphicsDefinitions m_GraphicsDefinitions;
 			static inline Texture2D m_ShadowMapTexture;
+			static CSMRenderPass* m_CSMRenderPass;
 		};
 	}
 }

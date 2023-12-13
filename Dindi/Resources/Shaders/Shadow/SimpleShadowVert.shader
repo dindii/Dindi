@@ -25,8 +25,9 @@ layout(std140, binding = 1) uniform ConstantData
 	PointLight c_Lights[DND_MAX_LIGHTS];
 };
 
+uniform mat4 u_CascadedVP;
 
 void main()
 {
-	gl_Position = c_ShadowTransform * u_Transform * vec4(a_Coord, 1.0f);
+	gl_Position = u_CascadedVP * u_Transform * vec4(a_Coord, 1.0f);
 }

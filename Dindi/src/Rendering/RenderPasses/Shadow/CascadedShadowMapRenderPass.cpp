@@ -23,39 +23,32 @@ namespace Dindi
 {
 	CSMRenderPass::CSMRenderPass()
 	{
-		m_CacheDepthDescriptor = new RenderTargetDescriptor();
-		m_CacheDepthDescriptor->internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
-		m_CacheDepthDescriptor->type = DND_FLOAT;
-
-
 		Application& app = Application::GetInstance();
 		glm::vec2 windowDims = app.GetWindow()->GetDimensions();
 
-		//m_CSMFramebuffer = new Framebuffer((uint16_t)windowDims.x, (uint16_t)windowDims.y, {}, *m_CacheDepthDescriptor);
-		m_CSMFramebuffer = new Framebuffer((uint16_t)windowDims.x, (uint16_t)windowDims.y, {}, {});
+		m_CSMFramebuffer = new Framebuffer();
 
 		m_CSMShader = Shader::Load(RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowVert.shader", RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowFrag.shader");
 	
 	
+		m_CSMTextures.reserve(DND_CASCADED_SHADOW_MAP_LEVELS);
+
 		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
 		{
-			glGenTextures(1, &m_CSMTextures[i]);
-			glBindTexture(GL_TEXTURE_2D, m_CSMTextures[i]);
+			RenderTargetDescriptor desc;
+			desc.borderColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+			desc.width =  (uint16_t)windowDims.x;
+			desc.height = (uint16_t)windowDims.y;
+			desc.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
+			desc.magFilter = RenderTargetMagMinFilter::NEAREST;
+			desc.minFilter = RenderTargetMagMinFilter::NEAREST;
+			desc.type = RenderTargetDataType::DND_UNSIGNED_BYTE;
+			desc.wrapU = RenderTargetWrapMode::CLAMP_BORDER;
+			desc.wrapV = RenderTargetWrapMode::CLAMP_BORDER;
 
-			RenderTargetFormat depthFormat = GetFormatFromInternalDataType(RenderTargetInternalFormat::DND_DETPH_UNSIZED);
-
-		//	glTexImage2D(GL_TEXTURE_2D, 0, RenderTargetInternalFormat::DND_DETPH_UNSIZED, (uint16_t)windowDims.x, (uint16_t)windowDims.y, 0, depthFormat, DND_FLOAT, NULL);
-			glTexImage2D(GL_TEXTURE_2D, 0, RenderTargetInternalFormat::DND_DETPH_UNSIZED, (uint16_t)windowDims.x, (uint16_t)windowDims.y, 0, depthFormat, DND_UNSIGNED_BYTE, NULL);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-			float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+			Texture2D* shadowMap = new Texture2D(desc);
+			m_CSMTextures.push_back(shadowMap);
 		}
-
 	}
 	
 	
@@ -68,6 +61,12 @@ namespace Dindi
 	{
 		m_CSMFramebuffer->Bind();
 		m_CSMShader->Bind();
+		
+		//Set the viewport to whatever your current render target is
+		Application& app = Application::GetInstance();
+		glm::vec2 dims = app.GetWindow()->GetDimensions();
+		Renderer::SetViewport(0, 0, dims.x, dims.y);
+
 
 		Renderer::Clear(false, true);
 		UpdateFrustumCorners();
@@ -129,7 +128,8 @@ namespace Dindi
 	{	
 		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_CSMTextures[i], 0);
+			m_CSMFramebuffer->AttachRenderTarget(*m_CSMTextures[i], FramebufferRenderTargetSlot::DEPTH);
+			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_CSMTextures[i], 0);
 
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{

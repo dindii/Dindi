@@ -67,8 +67,9 @@ namespace Dindi
 
 			static inline uint32_t GetScreenOutputHandle() { return m_ScreenOutput->GetOutputColorImage(); }
 
-			static inline uint32_t GetShadowMapTextureID() { return m_ShadowMapTexture.GetID(); }
-			static inline Texture2D& GetShadowMap() { return m_ShadowMapTexture;/*return m_CSMRenderPass->GetOutput();*/ }
+			static inline uint32_t GetShadowMapTextureID() { return m_CSMRenderPass->GetOutput(); }
+			static inline std::vector<Texture2D*>& GetShadowMap() { return m_CSMRenderPass->GetRenderTarget(); }
+		
 			static GraphicsDefinitions& GetGraphicsDefinitions() { return m_GraphicsDefinitions; }
 
 		private:

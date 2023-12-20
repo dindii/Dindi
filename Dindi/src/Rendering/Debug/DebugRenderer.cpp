@@ -3,8 +3,6 @@
 #include "DebugRenderer.h"
 #include "Rendering/Core/LowLevelRenderer.h"
 #include <Core/Application.h>
-
-#include <glad/glad.h>
 #include <chrono>
 #include <glm/gtc/matrix_transform.hpp>
 

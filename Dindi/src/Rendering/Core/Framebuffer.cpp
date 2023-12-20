@@ -1,6 +1,6 @@
 #include "Dindipch.h"
+#include <Rendering/Core/Common.hpp>
 #include "Framebuffer.h"
-#include <glad/glad.h>
 #include <Utils/Logger.h>
 #include "Platform/Window.h"
 #include <Core/Application.h>
@@ -11,6 +11,15 @@ namespace Dindi
 		m_Width(width), m_Height(height), m_ColorDescriptor(colorDescriptor), m_DepthDescriptor(depthDescriptor)
 	{
 		Remake();
+	}
+
+	Framebuffer::Framebuffer() : m_RendererID(0), m_ColorAttachment(0), m_DepthAttachment(0), m_Width(0), m_Height(0)
+	{
+		glCreateFramebuffers(1, &m_RendererID);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+
+
+		UnBind();
 	}
 
 	Framebuffer::~Framebuffer()
@@ -95,11 +104,18 @@ namespace Dindi
 
 	void Framebuffer::Bind()
 	{
-		glViewport(0, 0, m_Width, m_Height);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 	}
 	void Framebuffer::UnBind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+
+	void Framebuffer::AttachRenderTarget(const Texture2D& rt, FramebufferRenderTargetSlot slot)
+	{
+		int32_t attachmentType = slot == FramebufferRenderTargetSlot::COLOR ? GL_COLOR_ATTACHMENT0 : GL_DEPTH_ATTACHMENT;
+		
+		glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, rt.GetID(), 0);
+	}
+
 }

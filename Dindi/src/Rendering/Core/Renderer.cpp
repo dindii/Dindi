@@ -35,7 +35,7 @@ namespace Dindi
 		return DND_INTERNAL::LowLevelRenderer::GetScreenOutputHandle();
 	}
 
-	Texture2D& Renderer::GetShadowMap()
+	std::vector<Texture2D*>& Renderer::GetShadowMap()
 	{
 		return DND_INTERNAL::LowLevelRenderer::GetShadowMap();
 	}

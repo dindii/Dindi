@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include "Rendering/Object/Renderable.h"
 #include <Rendering/Camera/Camera.h>
 #include <Visual/Model/Model.h>
 #include <Visual/Light/LightManager.h>

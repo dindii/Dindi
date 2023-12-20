@@ -2,7 +2,6 @@
 #include <Utils/Logger.h>
 #include "Platform/Window.h"
 #include <core/Application.h>
-#include <input/Input.h>
 #include <Math/Maths.h>
 
 #include <Event/ApplicationEvent.h>
@@ -12,7 +11,8 @@
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
-Dindi::Model* model = nullptr;
+Dindi::Model* sponzaModel = nullptr;
+Dindi::Model* backpackModel = nullptr;
 
 void RasterizerExample::OnAttach()
 {
@@ -34,9 +34,12 @@ void RasterizerExample::OnAttach()
 	//DEBUG
 	m_DefaultEditorCamera->SetCameraYaw(0.0f);
 	m_DefaultEditorCamera->SetCameraPitch(0.0f);
-	model = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza.obj", glm::vec3(0.0f, 0.0f, 0.0f), 0.025f);
+	backpackModel = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\Backpack\\backpack.obj", glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	sponzaModel = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza.obj", glm::vec3(0.0f, 0.0f, 0.0f), 0.025f);
 	SceneOne->GetLightManager()->AddPointLight(glm::vec3(0.0f), glm::vec3(1.0f));
-	SceneOne->AddEntity(model);
+	
+	SceneOne->AddEntity(sponzaModel);
+	SceneOne->AddEntity(backpackModel);
 
 	app.SetActiveScene(SceneOne);
 }

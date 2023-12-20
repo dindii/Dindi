@@ -1,6 +1,6 @@
 #include "Dindipch.h"
+#include <Rendering/Core/Common.hpp>
 #include "LowLevelRenderer.h"
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <Utils/Logger.h>
 #include <Core/Application.h>
@@ -27,6 +27,7 @@ namespace Dindi
 	{
 		Framebuffer* LowLevelRenderer::m_ScreenOutput = nullptr;
 		CSMRenderPass* LowLevelRenderer::m_CSMRenderPass = nullptr;
+
 		//We are going to use only one UBO, so this doesn't need to be dynamic.
 		//This is static because the user don't need to mess with UBOs, he will not need and doesn't care either. This is internal for us.
 		static constexpr uint32_t ConstantBufferSlot = 1;
@@ -112,6 +113,7 @@ namespace Dindi
 			depthDescriptor.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
 			depthDescriptor.type = DND_FLOAT;
 			
+
 			m_ScreenOutput = new Framebuffer(nwidth, nheight, colorDescriptor, depthDescriptor);
 			//------ Default screen output
 

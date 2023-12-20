@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Core.h"
+#include <Rendering/Core/Common.hpp>
 #include <string>
 
 namespace Dindi
@@ -10,6 +11,8 @@ namespace Dindi
 	public:
 		static Ref<Texture2D> Load(const std::string& path);
 		Texture2D(const uint8_t* data, const uint32_t width, const uint32_t height, const uint32_t channels = 4);
+		Texture2D(const RenderTargetDescriptor& rtDescriptor);
+
 		Texture2D();
 
 		virtual ~Texture2D();

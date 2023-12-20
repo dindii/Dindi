@@ -1,8 +1,8 @@
 #include "Dindipch.h"
+#include <Rendering/Core/Common.hpp>
 #include "Texture2D.h"
 #include "Core/Core.h"
 #include <stbi/stb_image.h>
-#include <glad/glad.h>
 #include "Utils/Logger.h"
 #include "Utils/AssetManager.h"
 
@@ -28,6 +28,64 @@ namespace Dindi
 
 	Texture2D::Texture2D() : m_Width(0), m_Height(0), m_InternalFormat(0), m_DataFormat(0), m_RendererID(0)
 	{
+
+	}
+
+	Texture2D::Texture2D(const RenderTargetDescriptor& rtDescriptor)
+	{
+		m_Width = rtDescriptor.width;
+		m_Height = rtDescriptor.height;
+		m_InternalFormat = rtDescriptor.internalFormat;
+
+		RenderTargetFormat format = GetFormatFromInternalDataType(rtDescriptor.internalFormat);
+		
+		m_DataFormat = format;
+
+		glGenTextures(1, &m_RendererID);
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+
+
+
+		glTexImage2D(GL_TEXTURE_2D, 0, rtDescriptor.internalFormat, rtDescriptor.width, rtDescriptor.height, 0, format, rtDescriptor.type, NULL);
+
+
+		if(rtDescriptor.minFilter == RenderTargetMagMinFilter::LINEAR)
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		else if(rtDescriptor.minFilter == RenderTargetMagMinFilter::NEAREST)
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		if (rtDescriptor.magFilter == RenderTargetMagMinFilter::LINEAR)
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		else if (rtDescriptor.magFilter == RenderTargetMagMinFilter::NEAREST)
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			
+		//#TODO: SET THIS INDIVIDUALLY FOR U AND V 
+		switch (rtDescriptor.wrapU)
+		{
+			case RenderTargetWrapMode::STRETCH:
+			{
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			} break;
+			case RenderTargetWrapMode::CLAMP_BORDER:
+			{
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			} break;
+			case RenderTargetWrapMode::REPEAT:
+			{
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			} break;
+
+			default:
+			{
+				DND_LOG_WARNING("No wrapping method defined for texture!");
+				
+			} break;
+		}
+		
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, &rtDescriptor.borderColor[0]);
 	}
 
 	//#TODO: We have to split this function. We may want to upload data to the GPU later and not necessarily when it is created.

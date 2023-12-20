@@ -1,4 +1,5 @@
 #pragma once
+#include <Rendering/Core/Common.hpp>
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 

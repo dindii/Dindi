@@ -1,10 +1,9 @@
 #include "Dindipch.h"
+#include <Rendering/Core/Common.hpp>
 #include "Renderable.h"
 
 #include "Rendering/Core/LowLevelRenderer.h"
 
-//TEMPORARY
-#include <glad/glad.h>
 #include "Utils/Logger.h"
 namespace Dindi
 {																								

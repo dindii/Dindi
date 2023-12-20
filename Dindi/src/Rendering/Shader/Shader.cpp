@@ -1,6 +1,6 @@
 #include "Dindipch.h"
+#include <Rendering/Core/Common.hpp>
 #include "Shader.h"
-#include <glad/glad.h>
 #include <Utils/Logger.h>
 #include <Utils/AssetManager.h>
 

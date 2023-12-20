@@ -1,8 +1,9 @@
 #include "Dindipch.h"
+#include <Rendering/Core/Common.hpp>
 #include "Material.h"
 
 #include <Rendering/Core/Renderer.h>
-#include <glad/glad.h>
+
 
 namespace Dindi
 {
@@ -62,11 +63,11 @@ namespace Dindi
 		//}
 
 
-	//	Texture2D& shadowMap = Renderer::GetShadowMap();
-	//	if (shadowMap.GetID())
+		std::vector<Texture2D*>& shadowMaps = Renderer::GetShadowMap();
+		if (shadowMaps[0] && shadowMaps[0]->GetID())
 		{
 			//shadowMap.Bind(ERenderingMapSlot::Shadow);
-			glBindTextureUnit(ERenderingMapSlot::Shadow, 4);
+			glBindTextureUnit(ERenderingMapSlot::Shadow, shadowMaps[0]->GetID());
 			m_Shader->UploadInt("u_ShadowMap", ERenderingMapSlot::Shadow);
 		}
 

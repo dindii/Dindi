@@ -139,7 +139,7 @@ namespace Dindi
 			//	m_CSMLightOrthographicViewTransform[i] = glm::ortho(minX, maxX, minY, maxY, minZ - (2 * (DND_CASCADED_SHADOW_MAP_LEVELS - i)), maxZ) * lightView;
 	
 			//#TODO - Promote this to a graphics settings
-			static int multiplier = 8;
+			static float multiplier = 9.0f;
 
 			m_CSMLightOrthographicViewTransform[i] = glm::ortho(minX, maxX, minY, maxY, minZ - (multiplier * (DND_CASCADED_SHADOW_MAP_LEVELS - i)), maxZ + (multiplier * (DND_CASCADED_SHADOW_MAP_LEVELS - i))) * lightView;
 		}

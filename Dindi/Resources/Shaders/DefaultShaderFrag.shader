@@ -123,8 +123,8 @@ void main()
 	
 	int layer = 2;
 	
-	float closer = 25.0f;
-	float mid = 80.0f;
+	float closer = 28.0f;
+	float mid = 70.0f;
 	//
 	if (abs(v_FragPosViewSpace.z) < closer)
 	{

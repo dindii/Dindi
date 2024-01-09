@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <Rendering/Core/LowLevelRenderer.h>
 
+#include <Utils/DNDAssert.h>
 
 static std::vector<glm::vec4> frustumCorners;
 
@@ -29,15 +30,28 @@ namespace Dindi
 		m_CSMFramebuffer = new Framebuffer();
 
 		m_CSMShader = Shader::Load(RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowVert.shader", RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowFrag.shader");
-	
-	
+
+		Camera* camera = Application::GetInstance().GetActiveScene()->GetActiveCamera();
+
+		float FOV = camera->GetFieldOfView();
+		float AR = camera->GetAspectRatio();
+
+
+		frustumCorners.resize(2 * 2 * 2 * DND_CASCADED_SHADOW_MAP_LEVELS);
+
+		m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, 30.0f));
+		m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, 80.0f));
+		m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, 200.0f));
+
+		DND_ASSERT(m_CSMPerspectiveProjections.size() == DND_CASCADED_SHADOW_MAP_LEVELS, "Mismatch shadow matrices number!");
+
 		m_CSMTextures.reserve(DND_CASCADED_SHADOW_MAP_LEVELS);
 
 		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
 		{
 			RenderTargetDescriptor desc;
 			desc.borderColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-			desc.width =  (uint16_t)windowDims.x;
+			desc.width = (uint16_t)windowDims.x;
 			desc.height = (uint16_t)windowDims.y;
 			desc.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
 			desc.magFilter = RenderTargetMagMinFilter::NEAREST;
@@ -50,29 +64,32 @@ namespace Dindi
 			m_CSMTextures.push_back(shadowMap);
 		}
 	}
-	
-	
+
+
 	CSMRenderPass::~CSMRenderPass()
 	{
-	
+
 	}
 
 	void CSMRenderPass::GenerateOutput(Scene* scene)
 	{
 		m_CSMFramebuffer->Bind();
 		m_CSMShader->Bind();
-		
+
 		//Set the viewport to whatever your current render target is
 		Application& app = Application::GetInstance();
 		glm::vec2 dims = app.GetWindow()->GetDimensions();
 		Renderer::SetViewport(0, 0, dims.x, dims.y);
 
 
-		Renderer::Clear(false, true);
+	//	Renderer::Clear(false, true);
 		UpdateFrustumCorners();
 		RecalculateProjectionMatrix();
-		TransformAndDraw(scene);
 		
+		glCullFace(GL_FRONT);
+		TransformAndDraw(scene);
+		glCullFace(GL_BACK);
+
 		m_CSMFramebuffer->UnBind();
 	}
 
@@ -82,35 +99,34 @@ namespace Dindi
 		Scene* scene = app.GetActiveScene();
 		Camera* camera = scene->GetActiveCamera();
 
-		
 
-		
 		GraphicsDefinitions& gd = Renderer::GetGraphicsDefinitions();
 		glm::vec3 lightDir = { gd.directionalLightDir.x, gd.directionalLightDir.y, gd.directionalLightDir.z };
 
-		
-		glm::vec3 frustumCenter(0.0f, 0.0f, 0.0f);
 
-		for (uint8_t i = 0; i < 8; i++)
-			frustumCenter += glm::vec3(frustumCorners[i]);
-
-		frustumCenter /= 8.0f;
-
-		glm::mat4 lightView = glm::lookAt(frustumCenter + lightDir, frustumCenter, { 0.0f, 1.0f, 0.0f });
 
 		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
 		{
+			glm::vec3 frustumCenter(0.0f, 0.0f, 0.0f);
+			
+			for (uint8_t v = 0; v < 8; v++)
+				frustumCenter += glm::vec3(frustumCorners[v + (i * 8)]);
+
+			frustumCenter /= 8.0f;
+
+			glm::mat4 lightView = glm::lookAt(frustumCenter + lightDir, frustumCenter, { 0.0f, 1.0f, 0.0f });
+
 			float minX = std::numeric_limits<float>::max();
 			float maxX = std::numeric_limits<float>::min();
 			float minY = std::numeric_limits<float>::max();
 			float maxY = std::numeric_limits<float>::min();
 			float minZ = std::numeric_limits<float>::max();
 			float maxZ = std::numeric_limits<float>::min();
-	
+
 			for (uint32_t j = 0; j < 8; j++)
 			{
-				glm::vec4 temp = lightView * frustumCorners[j];
-	
+				glm::vec4 temp = lightView * frustumCorners[j + (i * 8)];
+
 				minX = std::min(minX, temp.x);
 				maxX = std::max(maxX, temp.x);
 				minY = std::min(minY, temp.y);
@@ -118,18 +134,24 @@ namespace Dindi
 				minZ = std::min(minZ, temp.z);
 				maxZ = std::max(maxZ, temp.z);
 			}
+
+			//m_CSMLightOrthographicViewTransform[i] = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ) * lightView;
+			//	m_CSMLightOrthographicViewTransform[i] = glm::ortho(minX, maxX, minY, maxY, minZ - (2 * (DND_CASCADED_SHADOW_MAP_LEVELS - i)), maxZ) * lightView;
 	
-			m_CascadesOrthographicProjections[i] = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ) * lightView;
+			//#TODO - Promote this to a graphics settings
+			static int multiplier = 8;
+
+			m_CSMLightOrthographicViewTransform[i] = glm::ortho(minX, maxX, minY, maxY, minZ - (multiplier * (DND_CASCADED_SHADOW_MAP_LEVELS - i)), maxZ + (multiplier * (DND_CASCADED_SHADOW_MAP_LEVELS - i))) * lightView;
 		}
 
 	}
 
 	void CSMRenderPass::TransformAndDraw(Scene* scene)
-	{	
+	{
 		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
 		{
 			m_CSMFramebuffer->AttachRenderTarget(*m_CSMTextures[i], FramebufferRenderTargetSlot::DEPTH);
-			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_CSMTextures[i], 0);
+			Renderer::Clear(false, true);
 
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
@@ -142,11 +164,11 @@ namespace Dindi
 					glBindVertexArray(mesh->GetVertexArrayObjectID());
 					glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferObjectID());
 
-					
+
 					glm::mat4 meshTransform = mesh->GetTransform();
 					m_CSMShader->UploadUniformMat4("u_Transform", meshTransform);
 
-					m_CSMShader->UploadUniformMat4("u_CascadedVP", m_CascadesOrthographicProjections[i]);
+					m_CSMShader->UploadUniformMat4("u_CascadedVP", m_CSMLightOrthographicViewTransform[i]);
 
 					//#TODO: elements to draw.
 					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
@@ -163,24 +185,29 @@ namespace Dindi
 		Application& app = Application::GetInstance();
 		Camera* camera = app.GetActiveScene()->GetActiveCamera();
 		glm::mat4 view = camera->GetViewMatrix();
-		glm::mat4 projection = camera->GetProjection();
 	
-		glm::mat4 NDCToWorld = glm::inverse(projection * view);
+		
 
-		for (unsigned int x = 0; x < 2; ++x)
+		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
 		{
-			for (unsigned int y = 0; y < 2; ++y)
-			{
-				for (unsigned int z = 0; z < 2; ++z)
-				{
-					const glm::vec4 worldCoords =
-						NDCToWorld * glm::vec4(
-							2.0f * x - 1.0f,
-							2.0f * y - 1.0f,
-							2.0f * z - 1.0f,
-							1.0f);
+			glm::mat4 projection = m_CSMPerspectiveProjections[i];
+			glm::mat4 NDCToWorld = glm::inverse(projection * view);
 
-					frustumCorners.emplace_back(worldCoords.x / worldCoords.w, worldCoords.y / worldCoords.w, worldCoords.z / worldCoords.w, 1.0f);
+			for (unsigned int x = 0; x < 2; ++x)
+			{
+				for (unsigned int y = 0; y < 2; ++y)
+				{
+					for (unsigned int z = 0; z < 2; ++z)
+					{
+						const glm::vec4 worldCoords =
+							NDCToWorld * glm::vec4(
+								2.0f * x - 1.0f,
+								2.0f * y - 1.0f,
+								2.0f * z - 1.0f,
+								1.0f);
+
+						frustumCorners.emplace_back(worldCoords.x / worldCoords.w, worldCoords.y / worldCoords.w, worldCoords.z / worldCoords.w, 1.0f);
+					}
 				}
 			}
 		}
@@ -188,4 +215,3 @@ namespace Dindi
 
 
 }
-

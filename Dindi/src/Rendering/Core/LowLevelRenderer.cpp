@@ -123,9 +123,13 @@ namespace Dindi
 
 			//------ shadow map 
 
-			m_CSMRenderPass = new CSMRenderPass();
 
 			glDebugMessageCallback(glerrorcallback, nullptr);
+		}
+
+		void LowLevelRenderer::OnAppInitialized()
+		{
+			m_CSMRenderPass = new CSMRenderPass();
 		}
 
 		void LowLevelRenderer::SetConstantData(Scene* scene)
@@ -142,7 +146,7 @@ namespace Dindi
 			const GraphicsDefinitions& gd = m_GraphicsDefinitions;		
 			
 
-			PersistentData.data.c_LightMVP = m_DirectionalLightProjection * m_DirectionalLightView;
+			PersistentData.data.c_View = camera->GetViewMatrix();
 			PersistentData.data.c_DirLightPos = gd.directionalLightDir;
 			
 			PersistentData.data.c_Time = app.GetTime();
@@ -196,7 +200,14 @@ namespace Dindi
 					glm::mat4 meshTransform = mesh->GetTransform();
 
 					material->GetShader()->UploadUniformMat4("u_Transform", meshTransform);
-					material->GetShader()->UploadUniformMat4("u_SingleLightTransform", m_CSMRenderPass->m_CascadesOrthographicProjections[0]);
+
+					for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
+					{
+						char lightTransformIndex[128];
+						sprintf(lightTransformIndex, "u_SingleLightTransform[%i]", i);
+						material->GetShader()->UploadUniformMat4(lightTransformIndex, m_CSMRenderPass->m_CSMLightOrthographicViewTransform[i]);
+					}
+				
 
 					//#TODO: elements to draw.
 					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());

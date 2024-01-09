@@ -5,13 +5,14 @@ in vec3 v_FragPos;
 in vec3 v_Normal;
 
 out vec4 outColor;
-in vec4 v_FragPosLightSpace;
+in vec4 v_FragPosLightSpace[3];
+in vec4 v_FragPosViewSpace;
 
 //#TEMPORARY Until we have PBR (=
 uniform sampler2D u_Diffuse;
 uniform sampler2D u_Specular;
 uniform sampler2D u_Normal; //#TODO: Expand to properly accept normal textures other than only attribute normals (usually we will only get those as textures).
-uniform sampler2D u_ShadowMap;
+uniform sampler2D u_ShadowMap[3];
 
 #define DND_MAX_LIGHTS 1000
 
@@ -28,7 +29,7 @@ layout(std140, binding = 1) uniform ConstantData
 	float _p2;
 	unsigned int numLights;
 	mat4 c_ViewProjection;
-	mat4 c_ShadowTransform;
+	mat4 c_View;
 	vec4 c_CameraPos;
 	vec4 c_DirLightPos;
 	PointLight c_Lights[DND_MAX_LIGHTS];
@@ -37,17 +38,21 @@ layout(std140, binding = 1) uniform ConstantData
 
 float gamma = 2.2;
 
-float ShadowCalculation(vec4 fragPosLightSpace)
+float ShadowCalculation(vec4 fragPosLightSpace, int layer)
 {
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 	
 	projCoords = projCoords * 0.5f + 0.5f;
 
+	if (projCoords.z > 1.0)
+		return 0.0;
+
 	float currentDepth = projCoords.z;
-	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
+	float closestDepth = texture(u_ShadowMap[layer], projCoords.xy).r;
 
 	//float bias = max(0.0f * (1.0 - dot(v_Normal, vec3(fragPosLightSpace.xyz))), 0.005);
 	float bias = 0.005f;
+
 	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
 	
 	return shadow;
@@ -115,7 +120,25 @@ void main()
 
 	//#TODO: colocar a cor do dir light no cbuffer
 	PackLight dirLight = CalculateLight(vec3(1.0f, 1.0f, 1.0f), c_DirLightPos.xyz, true);
-	float shadow = ShadowCalculation(v_FragPosLightSpace);
+	
+	int layer = 2;
+	
+	float closer = 25.0f;
+	float mid = 80.0f;
+	//
+	if (abs(v_FragPosViewSpace.z) < closer)
+	{
+		outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
+		layer = 0;
+	}
+	else if (abs(v_FragPosViewSpace.z) < mid)
+	{
+		outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
+		layer = 1;
+	}
+	
+	float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
+	//
 	//vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
 	
 
@@ -123,4 +146,17 @@ void main()
 	outColor = vec4(temporaryResult.xyz, 1.0f);
 	
 	outColor.rgb = pow(outColor.rgb, vec3(1.0f / gamma));
+
+
+	//
+	if (abs(v_FragPosViewSpace.z) < closer)
+	{
+		outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
+		layer = 0;
+	}
+	else if (abs(v_FragPosViewSpace.z) < mid)
+	{
+		outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
+		layer = 1;
+	}
 }

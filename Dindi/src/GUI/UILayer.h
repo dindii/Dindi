@@ -54,7 +54,7 @@ namespace Dindi
 
 	private:
 		uint32_t m_FrameWidth = 0, m_FrameHeight = 0;
-		uint32_t m_ViewportSizeX = 0, m_ViewportSizeY = 0;
+		uint32_t m_ViewportSizeX = 1, m_ViewportSizeY = 1;
 		uint32_t m_ViewportMinX = 0, m_ViewportMinY = 0;
 
 		Scene* m_Scene = nullptr;

@@ -37,7 +37,7 @@ namespace Dindi
 				float _p1 = 0, _p2 = 0;
 				uint32_t numLights = 0;
 				glm::mat4 c_ViewProjection;
-				glm::mat4 c_LightMVP;
+				glm::mat4 c_View;
 				glm::vec4 c_CameraPos;
 				glm::vec4 c_DirLightPos;
 				GPUPointLightData c_Lights[DND_MAX_LIGHTS];
@@ -54,6 +54,7 @@ namespace Dindi
 			~LowLevelRenderer();
 
 			static void Init();
+			static void OnAppInitialized();
 			static void Draw(Scene* scene);
 
 			static void Clear(const bool ColorBuffer = true, const bool DepthBuffer = true);
@@ -67,7 +68,6 @@ namespace Dindi
 
 			static inline uint32_t GetScreenOutputHandle() { return m_ScreenOutput->GetOutputColorImage(); }
 
-			static inline uint32_t GetShadowMapTextureID() { return m_CSMRenderPass->GetOutput(); }
 			static inline std::vector<Texture2D*>& GetShadowMap() { return m_CSMRenderPass->GetRenderTarget(); }
 		
 			static GraphicsDefinitions& GetGraphicsDefinitions() { return m_GraphicsDefinitions; }

@@ -10,6 +10,11 @@ namespace Dindi
 		DND_INTERNAL::LowLevelRenderer::Init();
 	}
 
+	void Renderer::OnAppInitialized()
+	{
+		DND_INTERNAL::LowLevelRenderer::OnAppInitialized();
+	}
+
 	void Renderer::Draw(Scene* scene)
 	{
 		//#TODO: Do some work before

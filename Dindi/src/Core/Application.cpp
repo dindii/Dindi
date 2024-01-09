@@ -69,6 +69,13 @@ namespace Dindi
 			return false;
 		});
 
+		dispatcher.Dispatch<InitializeEvent>([&](InitializeEvent Event) -> bool
+		{
+				Renderer::OnAppInitialized();
+				return true;
+		});
+
+			
 		dispatcher.Dispatch<WindowResizeEvent>([&](WindowResizeEvent Event) -> bool
 		{
 			uint32_t newWidth = Event.GetWidth();
@@ -155,8 +162,6 @@ namespace Dindi
 	{
 		while (m_Running)
 		{
-			OnUpdate(m_DeltaTime);
-
 			if (!m_AppInitialized)
 			{
 				m_AppInitialized = true;
@@ -164,6 +169,8 @@ namespace Dindi
 				InitializeEvent initEvent;
 				OnEvent(initEvent);
 			}
+			
+			OnUpdate(m_DeltaTime);
 		}
 	}
 

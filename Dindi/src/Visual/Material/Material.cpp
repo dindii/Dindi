@@ -64,12 +64,18 @@ namespace Dindi
 
 
 		std::vector<Texture2D*>& shadowMaps = Renderer::GetShadowMap();
-		if (shadowMaps[0] && shadowMaps[0]->GetID())
+		
+		if (shadowMaps.size() > 0)
 		{
-			//shadowMap.Bind(ERenderingMapSlot::Shadow);
-			glBindTextureUnit(ERenderingMapSlot::Shadow, shadowMaps[0]->GetID());
-			m_Shader->UploadInt("u_ShadowMap", ERenderingMapSlot::Shadow);
+			for (uint32_t i = 0; i < shadowMaps.size(); i++)
+			{
+				glBindTextureUnit(ERenderingMapSlot::Shadow + i, shadowMaps[i]->GetID());
+				char shadowmapIndex[128];
+				sprintf(shadowmapIndex, "u_ShadowMap[%i]", i);
+				m_Shader->UploadInt(shadowmapIndex, ERenderingMapSlot::Shadow + i);
+			}
 		}
+
 
 		//#TODO: add more.
 		//#NOTE: Besides the obrigatory stuff like Time and ViewProjection that we

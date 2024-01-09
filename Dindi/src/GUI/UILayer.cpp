@@ -132,7 +132,12 @@ namespace Dindi
 	void UILayer::ProcessGraphicsDefinitions()
 	{
 		ImGui::Begin("ShadowMap");
-		ImGui::Image((ImTextureID)DND_INTERNAL::LowLevelRenderer::GetShadowMapTextureID(), { 500, 500 }, { 0, 1 }, { 1,0 });
+		std::vector<Texture2D*>& shadowMaps = Renderer::GetShadowMap();
+		
+		for (uint32_t i = 0; i < shadowMaps.size(); i++)
+		{
+			ImGui::Image((ImTextureID)shadowMaps[i]->GetID(), { 500, 500 }, { 0, 1 }, { 1,0 });
+		}
 		
 		GraphicsDefinitions& gd = Renderer::GetGraphicsDefinitions();
 

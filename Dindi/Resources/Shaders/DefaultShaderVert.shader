@@ -1,5 +1,8 @@
 #version 420 core
 
+#define DND_MAX_LIGHTS 1000
+#define DND_CSM_LEVELS 3
+
 layout(location = 0) in vec3 a_Coord;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
@@ -8,9 +11,8 @@ uniform mat4 u_Transform;
 
 //#TEMPORARY #TODO: Turn this into an array of matrices since we will be using this 
 //as a component of the cascaded shadow map
-uniform mat4 u_SingleLightTransform[3];
+uniform mat4 u_SingleLightTransform[DND_CSM_LEVELS];
 
-#define DND_MAX_LIGHTS 1000
 
 struct PointLight
 {
@@ -37,7 +39,7 @@ out vec2 v_TexCoord;
 //#TODO: Multiply this by the model matrix, please.
 out vec3 v_FragPos;
 out vec3 v_Normal;
-out vec4 v_FragPosLightSpace[3];
+out vec4 v_FragPosLightSpace[DND_CSM_LEVELS];
 out vec4 v_FragPosViewSpace; 
 
 void main()
@@ -47,9 +49,11 @@ void main()
 	v_FragPos = vec3(u_Transform * vec4(a_Coord.x, a_Coord.y, a_Coord.z, 1.0f)).xyz;
 	v_Normal = mat3(u_Transform) * a_Normal;
 
-	v_FragPosViewSpace = c_View * (u_Transform * vec4(a_Coord.x, a_Coord.y, a_Coord.z, 1.0f));
+	v_FragPosViewSpace = c_View * (u_Transform *  vec4(a_Coord.x, a_Coord.y, a_Coord.z, 1.0f));
 
-	v_FragPosLightSpace[0] = (u_SingleLightTransform[0] * vec4(v_FragPos.x, v_FragPos.y, v_FragPos.z, 1.0f));
-	v_FragPosLightSpace[1] = (u_SingleLightTransform[1] * vec4(v_FragPos.x, v_FragPos.y, v_FragPos.z, 1.0f));
-	v_FragPosLightSpace[2] = (u_SingleLightTransform[2] * vec4(v_FragPos.x, v_FragPos.y, v_FragPos.z, 1.0f));
+
+	for (int i = 0; i < DND_CSM_LEVELS; ++i)
+	{
+		v_FragPosLightSpace[i] = (u_SingleLightTransform[i] * vec4(v_FragPos.x, v_FragPos.y, v_FragPos.z, 1.0f));
+	}
 }

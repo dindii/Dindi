@@ -14,7 +14,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <limits>
 #include <algorithm>
-#include <Rendering/Core/LowLevelRenderer.h>
 
 #include <Utils/DNDAssert.h>
 
@@ -36,18 +35,20 @@ namespace Dindi
 		float FOV = camera->GetFieldOfView();
 		float AR = camera->GetAspectRatio();
 
+		GraphicsDefinitions& gd = Renderer::GetGraphicsDefinitions();
 
-		frustumCorners.resize(2 * 2 * 2 * DND_CASCADED_SHADOW_MAP_LEVELS);
+		m_CSMLightOrthographicViewTransform.resize(gd.NumberOfShadowCascades);
 
-		m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, 30.0f));
-		m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, 80.0f));
-		m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, 200.0f));
+		frustumCorners.resize(2 * 2 * 2 * gd.NumberOfShadowCascades);
 
-		DND_ASSERT(m_CSMPerspectiveProjections.size() == DND_CASCADED_SHADOW_MAP_LEVELS, "Mismatch shadow matrices number!");
 
-		m_CSMTextures.reserve(DND_CASCADED_SHADOW_MAP_LEVELS);
+		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
+			m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, gd.CSMFarPlaneThresholds[i]));
 
-		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
+
+		m_CSMTextures.reserve(gd.NumberOfShadowCascades);
+
+		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
 		{
 			RenderTargetDescriptor desc;
 			desc.borderColor = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -81,13 +82,12 @@ namespace Dindi
 		glm::vec2 dims = app.GetWindow()->GetDimensions();
 		Renderer::SetViewport(0, 0, dims.x, dims.y);
 
-
 		UpdateFrustumCorners();
 		RecalculateProjectionMatrix();
 		
-		glCullFace(GL_FRONT);
+		Renderer::SetCullingType(CullingFaceMode::FRONT);
 		TransformAndDraw(scene);
-		glCullFace(GL_BACK);
+		Renderer::SetCullingType(CullingFaceMode::BACK);
 
 		m_CSMFramebuffer->UnBind();
 	}
@@ -98,13 +98,11 @@ namespace Dindi
 		Scene* scene = app.GetActiveScene();
 		Camera* camera = scene->GetActiveCamera();
 
-
 		GraphicsDefinitions& gd = Renderer::GetGraphicsDefinitions();
 		glm::vec3 lightDir = { gd.directionalLightDir.x, gd.directionalLightDir.y, gd.directionalLightDir.z };
 
 
-
-		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
+		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
 		{
 			glm::vec3 frustumCenter(0.0f, 0.0f, 0.0f);
 			
@@ -134,17 +132,18 @@ namespace Dindi
 				maxZ = std::max(maxZ, temp.z);
 			}
 
-			//#TODO - Promote this to a graphics settings
-			static float multiplier = 9.0f;
-
-			m_CSMLightOrthographicViewTransform[i] = glm::ortho(minX, maxX, minY, maxY, minZ - (multiplier * (DND_CASCADED_SHADOW_MAP_LEVELS - i)), maxZ + (multiplier * (DND_CASCADED_SHADOW_MAP_LEVELS - i))) * lightView;
+			float multiplier = gd.CSMFarPlaneMultiplier;
+			
+			m_CSMLightOrthographicViewTransform[i] = glm::ortho(minX, maxX, minY, maxY, minZ - (multiplier * (gd.NumberOfShadowCascades - i)), maxZ + (multiplier * (gd.NumberOfShadowCascades - i))) * lightView;
 		}
 
 	}
 
 	void CSMRenderPass::TransformAndDraw(Scene* scene)
 	{
-		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
+		GraphicsDefinitions& gd = Renderer::GetGraphicsDefinitions();
+
+		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
 		{
 			m_CSMFramebuffer->AttachRenderTarget(*m_CSMTextures[i], FramebufferRenderTargetSlot::DEPTH);
 			Renderer::Clear(false, true);
@@ -182,8 +181,9 @@ namespace Dindi
 		Camera* camera = app.GetActiveScene()->GetActiveCamera();
 		glm::mat4 view = camera->GetViewMatrix();
 	
+		GraphicsDefinitions& gd = Renderer::GetGraphicsDefinitions();
 
-		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
+		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
 		{
 			glm::mat4 projection = m_CSMPerspectiveProjections[i];
 			glm::mat4 NDCToWorld = glm::inverse(projection * view);

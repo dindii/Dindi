@@ -11,15 +11,17 @@ namespace Dindi
 {
 	struct GraphicsDefinitions
 	{
-		//GraphicsDefinitions() : shadowMapNearPlane(34.615f), shadowMapFarPlane(76.525f), shadowFrustrumDims(50.531f), directionalLightDir(0.0f, 73.457f, 11.728f, 28.313f) {};
 		GraphicsDefinitions();
 	
 		// ----------------------------- Shadow
-		float cascadeEnds[4];
+		float CSMFarPlaneMultiplier;
+		std::vector<float> CSMFarPlaneThresholds;
+		uint32_t NumberOfShadowCascades;
+
 		// ----------------------------- Shadow
 	
 		// ----------------------------- Light
-		glm::vec4 directionalLightDir = { 1.0f, 10.0f, 1.0f, 1.0f};
+		glm::vec4 directionalLightDir;
 		// ----------------------------- Light
 	};
 
@@ -65,6 +67,7 @@ namespace Dindi
 			static void SetOverlay(bool cond);
 			static void DelMesh(unsigned int Mesh, unsigned int nMeshes = 1);		
 			static void RemakeFramebuffers(uint32_t width, uint32_t height);
+			static void SetCullingType(CullingFaceMode mode);
 
 			static inline uint32_t GetScreenOutputHandle() { return m_ScreenOutput->GetOutputColorImage(); }
 

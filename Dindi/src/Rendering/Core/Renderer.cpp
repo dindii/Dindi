@@ -1,6 +1,5 @@
 #include "Dindipch.h"
 #include "Renderer.h"
-#include "LowLevelRenderer.h"
 
 namespace Dindi
 {
@@ -43,6 +42,11 @@ namespace Dindi
 	std::vector<Texture2D*>& Renderer::GetShadowMap()
 	{
 		return DND_INTERNAL::LowLevelRenderer::GetShadowMap();
+	}
+
+	void Renderer::SetCullingType(CullingFaceMode mode)
+	{
+		DND_INTERNAL::LowLevelRenderer::SetCullingType(mode);
 	}
 
 	Dindi::GraphicsDefinitions& Renderer::GetGraphicsDefinitions()

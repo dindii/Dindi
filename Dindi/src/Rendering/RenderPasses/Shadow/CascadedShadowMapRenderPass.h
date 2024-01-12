@@ -15,7 +15,7 @@ namespace Dindi
 		void GenerateOutput(Scene* scene);
 		std::vector<Texture2D*>& GetRenderTarget() { return m_CSMTextures; }
 
-		glm::mat4 m_CSMLightOrthographicViewTransform[DND_CASCADED_SHADOW_MAP_LEVELS];
+		std::vector<glm::mat4> m_CSMLightOrthographicViewTransform;
 	private:
 		void RecalculateProjectionMatrix();
 		void TransformAndDraw(Scene* scene);

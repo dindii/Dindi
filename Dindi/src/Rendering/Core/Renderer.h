@@ -1,6 +1,6 @@
 #pragma once
 #include "Rendering/Scene/Scene.h"
-
+#include "LowLevelRenderer.h"
 
 
 namespace Dindi
@@ -20,7 +20,7 @@ struct GraphicsDefinitions;
 		static void OnContextResize(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 		static uint32_t GetScreenOutputHandle();
 		static std::vector<Texture2D*>& GetShadowMap();
-		
+		static void SetCullingType(CullingFaceMode mode);
 
 		static GraphicsDefinitions& GetGraphicsDefinitions();
 

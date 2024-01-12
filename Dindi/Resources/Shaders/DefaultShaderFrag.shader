@@ -1,20 +1,22 @@
 #version 420 core
 
+#define DND_MAX_LIGHTS 1000
+#define DND_CSM_LEVELS 3
+
 in vec2 v_TexCoord;
 in vec3 v_FragPos;
 in vec3 v_Normal;
 
 out vec4 outColor;
-in vec4 v_FragPosLightSpace[3];
+in vec4 v_FragPosLightSpace[DND_CSM_LEVELS];
 in vec4 v_FragPosViewSpace;
 
 //#TEMPORARY Until we have PBR (=
 uniform sampler2D u_Diffuse;
 uniform sampler2D u_Specular;
 uniform sampler2D u_Normal; //#TODO: Expand to properly accept normal textures other than only attribute normals (usually we will only get those as textures).
-uniform sampler2D u_ShadowMap[3];
+uniform sampler2D u_ShadowMap[DND_CSM_LEVELS];
 
-#define DND_MAX_LIGHTS 1000
 
 struct PointLight
 {

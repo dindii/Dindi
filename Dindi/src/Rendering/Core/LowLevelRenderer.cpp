@@ -16,11 +16,22 @@ namespace Dindi
 
 	GraphicsDefinitions::GraphicsDefinitions()
 	{
-		DND_LOG_WARNING("CSM is still using fixed values for projection planes!");
-		cascadeEnds[0] = 1.0f;
-		cascadeEnds[1] = 25.0f;
-		cascadeEnds[2] = 90.0f;
-		cascadeEnds[3] = 200.0f;
+		// ----------------------------- Shadow
+		CSMFarPlaneMultiplier = 9.0f;
+
+		CSMFarPlaneThresholds.push_back(30.0f);
+		CSMFarPlaneThresholds.push_back(80.0f);
+		CSMFarPlaneThresholds.push_back(200.0f);
+
+		NumberOfShadowCascades = CSMFarPlaneThresholds.size();
+		// ----------------------------- Shadow
+
+
+
+
+		// ----------------------------- Light
+			directionalLightDir = { 1.0f, 10.0f, 1.0f, 1.0f };
+		// ----------------------------- Light
 	}
 
 	namespace DND_INTERNAL
@@ -183,6 +194,8 @@ namespace Dindi
 
 		void LowLevelRenderer::OutputPass(Scene* scene)
 		{
+			
+
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
 				Model* model = scene->GetEntities()[x];
@@ -201,7 +214,7 @@ namespace Dindi
 
 					material->GetShader()->UploadUniformMat4("u_Transform", meshTransform);
 
-					for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
+					for (uint32_t i = 0; i < m_GraphicsDefinitions.NumberOfShadowCascades; i++)
 					{
 						char lightTransformIndex[128];
 						sprintf(lightTransformIndex, "u_SingleLightTransform[%i]", i);
@@ -400,6 +413,11 @@ namespace Dindi
 		void LowLevelRenderer::RemakeFramebuffers(uint32_t width, uint32_t height)
 		{
 			m_ScreenOutput->Remake();
+		}
+
+		void LowLevelRenderer::SetCullingType(CullingFaceMode mode)
+		{
+			mode == CullingFaceMode::FRONT ? glCullFace(GL_FRONT) : glCullFace(GL_BACK);
 		}
 
 		void LowLevelRenderer::SetOverlay(bool cond)

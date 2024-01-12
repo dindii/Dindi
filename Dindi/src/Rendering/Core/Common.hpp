@@ -66,6 +66,12 @@ namespace Dindi
 		}
 	}
 
+	enum CullingFaceMode
+	{
+		FRONT,
+		BACK
+	};
+
 	enum FramebufferRenderTargetSlot
 	{
 		DEPTH,

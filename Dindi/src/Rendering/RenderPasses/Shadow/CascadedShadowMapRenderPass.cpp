@@ -82,7 +82,6 @@ namespace Dindi
 		Renderer::SetViewport(0, 0, dims.x, dims.y);
 
 
-	//	Renderer::Clear(false, true);
 		UpdateFrustumCorners();
 		RecalculateProjectionMatrix();
 		
@@ -135,9 +134,6 @@ namespace Dindi
 				maxZ = std::max(maxZ, temp.z);
 			}
 
-			//m_CSMLightOrthographicViewTransform[i] = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ) * lightView;
-			//	m_CSMLightOrthographicViewTransform[i] = glm::ortho(minX, maxX, minY, maxY, minZ - (2 * (DND_CASCADED_SHADOW_MAP_LEVELS - i)), maxZ) * lightView;
-	
 			//#TODO - Promote this to a graphics settings
 			static float multiplier = 9.0f;
 
@@ -186,7 +182,6 @@ namespace Dindi
 		Camera* camera = app.GetActiveScene()->GetActiveCamera();
 		glm::mat4 view = camera->GetViewMatrix();
 	
-		
 
 		for (uint32_t i = 0; i < DND_CASCADED_SHADOW_MAP_LEVELS; i++)
 		{

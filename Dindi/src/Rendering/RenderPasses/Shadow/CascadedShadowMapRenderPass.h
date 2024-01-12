@@ -30,8 +30,5 @@ namespace Dindi
 
 
 		std::vector<Texture2D*> m_CSMTextures;
-
-		glm::mat4 m_CSMLightView;
-
 	};
 }

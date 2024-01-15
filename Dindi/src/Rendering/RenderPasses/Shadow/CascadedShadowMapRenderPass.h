@@ -14,17 +14,15 @@ namespace Dindi
 
 		void GenerateOutput(Scene* scene);
 		std::vector<Texture2D*>& GetRenderTarget() { return m_CSMTextures; }
-
-		std::vector<glm::mat4> m_CSMLightOrthographicViewTransform;
+		std::vector<glm::mat4>& GetTransforms() { return m_CSMLightOrthographicViewTransform; }
 	private:
 		void RecalculateProjectionMatrix();
 		void TransformAndDraw(Scene* scene);
-
 		void UpdateFrustumCorners();
 
-		std::vector<glm::mat4> m_CSMPerspectiveProjections;
-
 	private:
+		std::vector<glm::mat4> m_CSMPerspectiveProjections;
+		std::vector<glm::mat4> m_CSMLightOrthographicViewTransform;
 		Framebuffer* m_CSMFramebuffer = nullptr;
 		Ref<Shader> m_CSMShader;
 

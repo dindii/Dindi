@@ -13,16 +13,27 @@ namespace Dindi
 	{
 		GraphicsDefinitions();
 	
-		// ----------------------------- Shadow
+		/// ----------------------------- Shadow
+		
+		//In some angles for lower CSM levels, we lost information because our near/far plane ratio is too small
+		//this variable extends this ratio for lower level layers.
 		float CSMFarPlaneMultiplier;
+
+		//The distance of our FarPlane from our NearPlane. Higher = more area, less detail
 		std::vector<float> CSMFarPlaneThresholds;
+
+		 //This defines in which distance we will be using which layer. Ex: [0] = 45.0f; as far as the distance of the pixel
+		//is lesser than 45.0f, we will be using the first layer (0).
+		std::vector<float> CSMCascadeDistance; 
+
+		//Number of CSM Levels we have.
 		uint32_t NumberOfShadowCascades;
 
-		// ----------------------------- Shadow
+		/// ----------------------------- Shadow
 	
-		// ----------------------------- Light
+		/// ----------------------------- Light
 		glm::vec4 directionalLightDir;
-		// ----------------------------- Light
+		/// ----------------------------- Light
 	};
 
 

@@ -22,6 +22,10 @@ namespace Dindi
 		CSMFarPlaneThresholds.push_back(30.0f);
 		CSMFarPlaneThresholds.push_back(80.0f);
 		CSMFarPlaneThresholds.push_back(200.0f);
+		
+		CSMCascadeDistance.push_back(28.0f);
+		CSMCascadeDistance.push_back(35.0f);
+		CSMCascadeDistance.push_back(400.0f);
 
 		NumberOfShadowCascades = CSMFarPlaneThresholds.size();
 		// ----------------------------- Shadow
@@ -128,13 +132,6 @@ namespace Dindi
 			m_ScreenOutput = new Framebuffer(nwidth, nheight, colorDescriptor, depthDescriptor);
 			//------ Default screen output
 
-
-
-	
-
-			//------ shadow map 
-
-
 			glDebugMessageCallback(glerrorcallback, nullptr);
 		}
 
@@ -182,7 +179,6 @@ namespace Dindi
 			SetConstantData(scene);
 			ApplySceneTransformation(scene);
 
-
 			m_CSMRenderPass->GenerateOutput(scene);
 
 			m_ScreenOutput->Bind();
@@ -194,7 +190,7 @@ namespace Dindi
 
 		void LowLevelRenderer::OutputPass(Scene* scene)
 		{
-			
+			const GraphicsDefinitions& gd = m_GraphicsDefinitions;
 
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 			{
@@ -214,11 +210,18 @@ namespace Dindi
 
 					material->GetShader()->UploadUniformMat4("u_Transform", meshTransform);
 
+					
+					std::vector<glm::mat4>& transforms = m_CSMRenderPass->GetTransforms();
 					for (uint32_t i = 0; i < m_GraphicsDefinitions.NumberOfShadowCascades; i++)
 					{
 						char lightTransformIndex[128];
+
 						sprintf(lightTransformIndex, "u_SingleLightTransform[%i]", i);
-						material->GetShader()->UploadUniformMat4(lightTransformIndex, m_CSMRenderPass->m_CSMLightOrthographicViewTransform[i]);
+						material->GetShader()->UploadUniformMat4(lightTransformIndex, transforms[i]);
+						
+						memset(lightTransformIndex, 0, 128);
+						sprintf(lightTransformIndex, "u_CSMDistances[%i]", i);
+						material->GetShader()->UploadUniformFloat(lightTransformIndex, gd.CSMCascadeDistance[i]);
 					}
 				
 

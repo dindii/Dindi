@@ -17,6 +17,7 @@ uniform sampler2D u_Specular;
 uniform sampler2D u_Normal; //#TODO: Expand to properly accept normal textures other than only attribute normals (usually we will only get those as textures).
 uniform sampler2D u_ShadowMap[DND_CSM_LEVELS];
 
+uniform float u_CSMDistances[DND_CSM_LEVELS];
 
 struct PointLight
 {
@@ -129,12 +130,12 @@ void main()
 	float mid = 35.0f;
 	
 	//
-	if (abs(v_FragPosViewSpace.z) < closer)
+	if (abs(v_FragPosViewSpace.z) < u_CSMDistances[0])
 	{
 		outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
 		layer = 0;
 	}
-	else if (abs(v_FragPosViewSpace.z) < mid)
+	else if (abs(v_FragPosViewSpace.z) < u_CSMDistances[1])
 	{
 		outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
 		layer = 1;

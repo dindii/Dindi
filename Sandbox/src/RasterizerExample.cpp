@@ -26,7 +26,7 @@ void RasterizerExample::OnAttach()
 	m_DefaultEditorCamera = new Dindi::Camera(windowAR, glm::vec3(0.0f, 0.0f, 5.0f));
 	m_DefaultEditorCameraSpeed = 10.0f;
 	m_DefaultEditorCamera->SetCameraLag(true);
-	m_DefaultEditorCamera->SetCameraLagValue(0.15f);
+	m_DefaultEditorCamera->SetCameraLagValue(0.045f);
 
 	SceneOne = new Dindi::Scene();
 	SceneOne->SetActiveCamera(m_DefaultEditorCamera);

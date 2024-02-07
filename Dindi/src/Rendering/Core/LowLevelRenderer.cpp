@@ -25,7 +25,7 @@ namespace Dindi
 		
 		CSMCascadeDistance.push_back(28.0f);
 		CSMCascadeDistance.push_back(35.0f);
-		CSMCascadeDistance.push_back(120.0f);
+		CSMCascadeDistance.push_back(140.0f);
 
 		NumberOfShadowCascades = CSMFarPlaneThresholds.size();
 		// ----------------------------- Shadow

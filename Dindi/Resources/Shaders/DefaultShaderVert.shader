@@ -9,8 +9,7 @@ layout(location = 2) in vec2 a_TexCoord;
 
 uniform mat4 u_Transform;
 
-//#TEMPORARY #TODO: Turn this into an array of matrices since we will be using this 
-//as a component of the cascaded shadow map
+
 uniform mat4 u_SingleLightTransform[DND_CSM_LEVELS];
 
 

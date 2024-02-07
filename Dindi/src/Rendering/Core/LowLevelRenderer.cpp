@@ -17,15 +17,15 @@ namespace Dindi
 	GraphicsDefinitions::GraphicsDefinitions()
 	{
 		// ----------------------------- Shadow
-		CSMFarPlaneMultiplier = 9.0f;
+		CSMFarPlaneMultiplier = 30.0f;
 
 		CSMFarPlaneThresholds.push_back(30.0f);
 		CSMFarPlaneThresholds.push_back(80.0f);
-		CSMFarPlaneThresholds.push_back(200.0f);
+		CSMFarPlaneThresholds.push_back(120.0f);
 		
 		CSMCascadeDistance.push_back(28.0f);
 		CSMCascadeDistance.push_back(35.0f);
-		CSMCascadeDistance.push_back(400.0f);
+		CSMCascadeDistance.push_back(120.0f);
 
 		NumberOfShadowCascades = CSMFarPlaneThresholds.size();
 		// ----------------------------- Shadow

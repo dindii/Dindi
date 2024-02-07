@@ -33,7 +33,7 @@ namespace Dindi
 		Camera* camera = Application::GetInstance().GetActiveScene()->GetActiveCamera();
 
 		float FOV = camera->GetFieldOfView();
-		float AR = camera->GetAspectRatio();
+		float AR  = camera->GetAspectRatio();
 
 		GraphicsDefinitions& gd = Renderer::GetGraphicsDefinitions();
 
@@ -43,17 +43,21 @@ namespace Dindi
 
 
 		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
-			m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, gd.CSMFarPlaneThresholds[i]));
+			m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, gd.CSMCascadeDistance[i]));
 
 
 		m_CSMTextures.reserve(gd.NumberOfShadowCascades);
+
+		float sizes[3] = { 4096.0f, 1024.0f, 512.0f};
 
 		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
 		{
 			RenderTargetDescriptor desc;
 			desc.borderColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-			desc.width = (uint16_t)windowDims.x;
-			desc.height = (uint16_t)windowDims.y;
+			//desc.width = (uint16_t)windowDims.x;
+			//desc.height = (uint16_t)windowDims.y;
+			desc.width = (uint16_t)sizes[i];
+			desc.height = (uint16_t)sizes[i];
 			desc.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
 			desc.magFilter = RenderTargetMagMinFilter::NEAREST;
 			desc.minFilter = RenderTargetMagMinFilter::NEAREST;
@@ -80,7 +84,6 @@ namespace Dindi
 		//Set the viewport to whatever your current render target is
 		Application& app = Application::GetInstance();
 		glm::vec2 dims = app.GetWindow()->GetDimensions();
-		Renderer::SetViewport(0, 0, dims.x, dims.y);
 
 		UpdateFrustumCorners();
 		RecalculateProjectionMatrix();
@@ -90,17 +93,20 @@ namespace Dindi
 		Renderer::SetCullingType(CullingFaceMode::BACK);
 
 		m_CSMFramebuffer->UnBind();
+		
+		 Renderer::SetViewport(0, 0, dims.x, dims.y);
 	}
 
 	void CSMRenderPass::RecalculateProjectionMatrix()
 	{
 		Application& app = Dindi::Application::GetInstance();
+		glm::vec2 windowDims = app.GetWindow()->GetDimensions();
+
 		Scene* scene = app.GetActiveScene();
 		Camera* camera = scene->GetActiveCamera();
 
 		GraphicsDefinitions& gd = Renderer::GetGraphicsDefinitions();
 		glm::vec3 lightDir = { gd.directionalLightDir.x, gd.directionalLightDir.y, gd.directionalLightDir.z };
-
 
 		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
 		{
@@ -108,35 +114,31 @@ namespace Dindi
 			
 			for (uint8_t v = 0; v < 8; v++)
 				frustumCenter += glm::vec3(frustumCorners[v + (i * 8)]);
-
+			
 			frustumCenter /= 8.0f;
 
-			glm::mat4 lightView = glm::lookAt(frustumCenter + lightDir, frustumCenter, { 0.0f, 1.0f, 0.0f });
-
-			float minX = std::numeric_limits<float>::max();
-			float maxX = std::numeric_limits<float>::min();
-			float minY = std::numeric_limits<float>::max();
-			float maxY = std::numeric_limits<float>::min();
-			float minZ = std::numeric_limits<float>::max();
-			float maxZ = std::numeric_limits<float>::min();
-
-			for (uint32_t j = 0; j < 8; j++)
-			{
-				glm::vec4 temp = lightView * frustumCorners[j + (i * 8)];
-
-				minX = std::min(minX, temp.x);
-				maxX = std::max(maxX, temp.x);
-				minY = std::min(minY, temp.y);
-				maxY = std::max(maxY, temp.y);
-				minZ = std::min(minZ, temp.z);
-				maxZ = std::max(maxZ, temp.z);
-			}
-
+			//{
 			float multiplier = gd.CSMFarPlaneMultiplier;
-			
-			m_CSMLightOrthographicViewTransform[i] = glm::ortho(minX, maxX, minY, maxY, minZ - (multiplier * (gd.NumberOfShadowCascades - i)), maxZ + (multiplier * (gd.NumberOfShadowCascades - i))) * lightView;
-		}
+			float radius = (frustumCorners[0 + (i * 8)] - frustumCorners[6 + (i * 8)]).length() / 2.0f;
+			float texelsPerUnit = (radius * 2.0f) / m_CSMTextures[i]->GetWidth();
+			DND_LOG_TRACE("Texels Per Unit: ", texelsPerUnit);
+			DND_LOG_TRACE("Radius: ", radius);
+			texelsPerUnit *= multiplier;
+			glm::mat4 correction = glm::lookAt(glm::vec3(0.0f), lightDir, { 0.0f, 1.0f, 0.0f }) * glm::scale(glm::mat4(1.0f), glm::vec3(texelsPerUnit));
+			glm::mat4 invCorrection = glm::inverse(correction);
 
+			frustumCenter = correction * glm::vec4(frustumCenter, 1.0f);
+			frustumCenter.x = glm::floor(frustumCenter.x);
+			frustumCenter.y = glm::floor(frustumCenter.y);
+			frustumCenter = invCorrection * glm::vec4(frustumCenter, 1.0f);
+			//}
+
+			glm::vec3 eye = frustumCenter + (lightDir * radius * 2.0f);
+			glm::mat4 lightView = glm::lookAt(eye, frustumCenter, { 0.0f, 1.0f, 0.0f });
+
+
+			m_CSMLightOrthographicViewTransform[i] = glm::ortho(-radius * multiplier, radius * multiplier, -radius * multiplier, radius * multiplier, -radius * multiplier, radius * multiplier) * lightView;
+		}
 	}
 
 	void CSMRenderPass::TransformAndDraw(Scene* scene)
@@ -166,6 +168,7 @@ namespace Dindi
 					m_CSMShader->UploadUniformMat4("u_CascadedVP", m_CSMLightOrthographicViewTransform[i]);
 
 					//#TODO: elements to draw.
+					Renderer::SetViewport(0, 0, m_CSMTextures[i]->GetWidth(), m_CSMTextures[i]->GetHeight());
 					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 				}
 			}

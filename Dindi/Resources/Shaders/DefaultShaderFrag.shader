@@ -126,8 +126,8 @@ void main()
 	
 	int layer = 2;
 	
-	float closer = 28.0f;
-	float mid = 35.0f;
+	float closer = u_CSMDistances[0];
+	float mid = u_CSMDistances[1];
 	
 	//
 	if (abs(v_FragPosViewSpace.z) < u_CSMDistances[0])

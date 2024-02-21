@@ -42,13 +42,15 @@ namespace Dindi
 		frustumCorners.resize(2 * 2 * 2 * gd.NumberOfShadowCascades);
 
 
-		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
-			m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, gd.CSMCascadeDistance[i]));
+		m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, 1.0f, gd.CSMCascadeDistance[0]));
+		
+		for (uint32_t i = 1; i < gd.NumberOfShadowCascades; i++)
+			m_CSMPerspectiveProjections.push_back(glm::perspective(FOV, AR, gd.CSMCascadeDistance[0], gd.CSMCascadeDistance[i]));
 
 
 		m_CSMTextures.reserve(gd.NumberOfShadowCascades);
 
-		float sizes[3] = { 4096.0f, 1024.0f, 512.0f};
+		float sizes[3] = { 4096.0f, 1024.0f, 512.0F};
 
 		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
 		{
@@ -118,11 +120,9 @@ namespace Dindi
 			frustumCenter /= 8.0f;
 
 			//{
-			float multiplier = gd.CSMFarPlaneMultiplier;
+			float multiplier = gd.CSMFarPlaneMultiplier[i];
 			float radius = (frustumCorners[0 + (i * 8)] - frustumCorners[6 + (i * 8)]).length() / 2.0f;
 			float texelsPerUnit = (radius * 2.0f) / m_CSMTextures[i]->GetWidth();
-			DND_LOG_TRACE("Texels Per Unit: ", texelsPerUnit);
-			DND_LOG_TRACE("Radius: ", radius);
 			texelsPerUnit *= multiplier;
 			glm::mat4 correction = glm::lookAt(glm::vec3(0.0f), lightDir, { 0.0f, 1.0f, 0.0f }) * glm::scale(glm::mat4(1.0f), glm::vec3(texelsPerUnit));
 			glm::mat4 invCorrection = glm::inverse(correction);

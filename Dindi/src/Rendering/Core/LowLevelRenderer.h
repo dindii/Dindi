@@ -17,7 +17,7 @@ namespace Dindi
 		
 		//In some angles for lower CSM levels, we lost information because our near/far plane ratio is too small
 		//this variable extends this ratio for lower level layers.
-		float CSMFarPlaneMultiplier;
+		std::vector<float> CSMFarPlaneMultiplier;
 
 		//The distance of our FarPlane from our NearPlane. Higher = more area, less detail
 		std::vector<float> CSMFarPlaneThresholds;

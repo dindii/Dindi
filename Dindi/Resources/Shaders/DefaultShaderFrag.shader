@@ -129,13 +129,14 @@ void main()
 	float closer = u_CSMDistances[0];
 	float mid = u_CSMDistances[1];
 	
+	
 	//
-	if (abs(v_FragPosViewSpace.z) < u_CSMDistances[0])
+	if (abs(v_FragPosViewSpace.z) < closer)
 	{
 		outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
 		layer = 0;
 	}
-	else if (abs(v_FragPosViewSpace.z) < u_CSMDistances[1])
+	else if (abs(v_FragPosViewSpace.z) < mid)
 	{
 		outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
 		layer = 1;

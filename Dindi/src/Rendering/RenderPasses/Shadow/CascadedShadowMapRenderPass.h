@@ -17,7 +17,7 @@ namespace Dindi
 		std::vector<glm::mat4>& GetTransforms() { return m_CSMLightOrthographicViewTransform; }
 	
 		static uint32_t GetRandomAnglesTexture() { return RandomAnglesTexture; }
-		void GenerateRandom3DTexture();
+		void GenerateRandom3DTexture(int windowSize, int filterSize);
 	private:
 		void RecalculateProjectionMatrix();
 		void TransformAndDraw(Scene* scene);

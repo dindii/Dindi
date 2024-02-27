@@ -15,8 +15,7 @@ in vec4 v_FragPosViewSpace;
 uniform sampler2D u_Diffuse;
 uniform sampler2D u_Specular;
 uniform sampler2D u_Normal; //#TODO: Expand to properly accept normal textures other than only attribute normals (usually we will only get those as textures).
-//uniform sampler2D u_ShadowMap[DND_CSM_LEVELS];
-uniform sampler2DShadow u_ShadowMap[DND_CSM_LEVELS];
+uniform sampler2D u_ShadowMap[DND_CSM_LEVELS];
 
 uniform sampler3D u_RandomAngles;
 
@@ -44,99 +43,94 @@ layout(std140, binding = 1) uniform ConstantData
 
 float gamma = 2.2;
 
-vec2 poissonDisk[26] = vec2[](
-	vec2(0.4660514f,  0.4690292f),
-	vec2(0.2732336f,  0.1056789f),
-	vec2(0.656471f,  0.7472555f),
-	vec2(0.7513531f,  0.323501f),
-	vec2(0.02016692f,  0.4794935f),
-	vec2(0.2959565f,  0.860905f),
-	vec2(0.186644f,  0.7447153f),
-	vec2(0.4804817f, 0.4359249f),
-	vec2(0.5823364f, 0.7868144f),
-	vec2(0.8767469f, 0.01694723f),
-	vec2(0.5891053f, 0.1645824f) ,
-	vec2(0.007625963f, 0.07485358f),
-	vec2(0.3456824f, 0.03119616f),
-	vec2(0.3016982f, 0.5634059f) ,
-	vec2(0.6157057f, 0.6024066f) ,
-	vec2(0.135758f, 0.4018539f) ,
-	vec2(0.5412278f,  0.3263172f),
-	vec2(0.2509218f,  0.6949489f),
-	vec2(0.345273f,  0.8905863f)  ,
-	vec2(0.5610418f, 0.8230777f),
-	vec2(0.8611436f, 0.3664008f) ,
-	vec2(0.6850617f, 0.09410904f),
-	vec2(0.8692301f,  0.3879704f),
-	vec2(0.8892156f,  0.3585771f) ,
-	vec2(0.9974015f, 0.03427662f) ,
-	vec2(0.06850791f, 0.9654188f)
-	);
 
 float ShadowCalculation(vec4 fragPosLightSpace, int layer)
 {
-	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-
+	vec3 projCoords = v_FragPosLightSpace[layer].xyz / v_FragPosLightSpace[layer].w;
 	projCoords = projCoords * 0.5f + 0.5f;
+	vec3 ShadowCoords = projCoords;
+	float gShadowMapRandomRadius = 2.0f;
+	
+	vec4 sc = vec4(ShadowCoords, 1.0f);
 
-	if (projCoords.z > 1.0)
-		return 0.0;
+	float gShadowMapOffsetTextureSize = 16;
+	float gShadowMapOffsetFilterSize = 8;
 
-	float shadow = 0;
+	vec3 LightDirection = c_DirLightPos.xyz;
+	vec3 Normal = v_Normal;
 
-	//MAIN IMP
-		int foo = 0;
-		
-		int xf = 3;
-		int yf = 3;
-		
-		vec2 texelSize = 1.0 / textureSize(u_ShadowMap[layer], 0);
-		float currentDepth = projCoords.z;
-		//vec2 rotation = texture(u_RandomAngles, vec3(fragPosLightSpace.xyz)).rg;
-		float divisor = 1.0f;
-		
-		for (int x = -xf; x <= xf; x++)
-		{
-		
-		for (int y = -yf; y <= yf; y++)
-		{
-			//vec2 offset = vec2(
-			//	rotation.x * (poissonDisk[foo].x / divisor) - rotation.y * (poissonDisk[foo].y / divisor),
-			//	rotation.y * (poissonDisk[foo].x / divisor) + rotation.x * (poissonDisk[foo].y / divisor));
-		
-			vec2 offset = (vec2(poissonDisk[foo]) / 1.0f);
-		
-			float closestDepth = texture(u_ShadowMap[layer], vec3(projCoords.xyz + ((vec3(x, y, 1.0f) * vec3(offset.xy, 1.0f) * vec3(texelSize.xy, 1.0f))))).r;
-			//float closestDepth = texture(u_ShadowMap[layer], vec3(projCoords.xyz + vec3(x, y, 1.0f) * vec3(texelSize.xy, 1.0f))).r;
-		
-			//MAIN IMP
-			//float cosTheta = dot(v_Normal, vec3(fragPosLightSpace.xyz));
-			//float bias = 0.001f * tan(acos(cosTheta)); // cosTheta is dot( n,l ), clamped between 0 and 1
-			//bias = clamp(bias, 0.00009f, 0.001f);
-			//
-			//if(layer > 0)
-			//	bias = 0.001f;
-			//MAIN IMP
-			
+	ivec3 OffsetCoord;
+	vec2 f = mod(gl_FragCoord.xy, vec2(gShadowMapOffsetFilterSize));
+	OffsetCoord.yz = ivec2(f);
+	float Sum = 0.0;
+	int SamplesDiv2 = int(gShadowMapOffsetFilterSize * gShadowMapOffsetFilterSize / 2.0);
 
-			float cosTheta = dot(v_Normal, vec3(fragPosLightSpace.xyz));
-			float bias = 0.001f * tan(acos(cosTheta)); // cosTheta is dot( n,l ), clamped between 0 and 1
-			bias = clamp(bias, 0.00009f, 0.001f);
+	float TexelWidth = 1.0 / textureSize(u_ShadowMap[layer], 0).x;
+	float TexelHeight = 1.0 / textureSize(u_ShadowMap[layer], 0).x;
 
-			if (layer > 0)
-				bias = 0.001f;
+	vec2 TexelSize = vec2(TexelWidth, TexelHeight);
 
-			//Let's use it as zero at least while we don't get shadow acne.
-		//	bias = 0;
+	float DiffuseFactor = dot(Normal, -LightDirection);
+	float bias = mix(0.001, 0.0005f, DiffuseFactor);
+	float Depth = 0.0;
+	
 
-			shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
-			
+	for (int i = 0; i < 4; i++)
+	{
+			OffsetCoord.x = i;
+			vec4 Offsets = texelFetch(u_RandomAngles, OffsetCoord, 0) * gShadowMapRandomRadius;
+			sc.xy = ShadowCoords.xy + Offsets.rg * TexelSize;
+			Depth = texture(u_ShadowMap[layer], sc.xy).x;
+			if (Depth + bias < ShadowCoords.z) {
+				Sum += 0.0;
+			}
+			else {
+				Sum += 1.0;
+			}
+	
+			sc.xy = ShadowCoords.xy + Offsets.ba * TexelSize;
+			Depth = texture(u_ShadowMap[layer], sc.xy).x;
+			if (Depth + bias < ShadowCoords.z) {
+				Sum += 0.0;
+			}
+			else {
+				Sum += 1.0;
+			}
+	}
+
+	float Shadow = Sum / 8.0;
+
+	if (Shadow != 0.0 && Shadow != 1.0)
+	{
+		for (int i = 4; i < SamplesDiv2; i++) {
+			OffsetCoord.x = i;
+			vec4 Offsets = texelFetch(u_RandomAngles, OffsetCoord, 0) * gShadowMapRandomRadius;
+			sc.xy = ShadowCoords.xy + Offsets.rg * TexelSize;
+			Depth = texture(u_ShadowMap[layer], sc.xy).x;
+			if (Depth + bias < ShadowCoords.z) {
+				Sum += 0.0;
+			}
+			else {
+				Sum += 1.0;
+			}
+	
+			sc.xy = ShadowCoords.xy + Offsets.ba * TexelSize;
+			Depth = texture(u_ShadowMap[layer], sc.xy).x;
+			if (Depth + bias < ShadowCoords.z) {
+				Sum += 0.0;
+			}
+			else {
+				Sum += 1.0;
+			}
 		}
-			foo++;
-		}
-		
-		return shadow /= (xf + xf + 1) * (xf + xf + 1);
+	
+		Shadow = Sum / float(SamplesDiv2 * 2.0);
+	}
+
+return Shadow;
 }
+
+
 
 struct PackLight
 {
@@ -219,12 +213,14 @@ void main()
 		layer = 1;
 	}
 	
+	//float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
 	float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
 	//
 	//vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
 	
 
-	temporaryResult += vec3(dirLight.ambient + (1.0 - shadow) * (dirLight.diffuse + dirLight.specular));
+//	temporaryResult += vec3(dirLight.ambient + (1.0 - shadow) * (dirLight.diffuse + dirLight.specular));
+	temporaryResult += vec3(dirLight.ambient + (/*1.0 -*/ shadow) * (dirLight.diffuse + dirLight.specular));
 	outColor = vec4(temporaryResult.xyz, 1.0f);
 	
 	outColor.rgb = pow(outColor.rgb, vec3(1.0f / gamma));

@@ -20,6 +20,8 @@
 #include <time.h>
 #include <vector>
 
+#include <random>
+
 static std::vector<glm::vec4> frustumCorners;
 
 namespace Dindi
@@ -76,12 +78,56 @@ namespace Dindi
 			m_CSMTextures.push_back(shadowMap);
 		}
 
-	//	GenerateRandom3DTexture();
+		GenerateRandom3DTexture(16, 8);
+		
 	}
 
-	void CSMRenderPass::GenerateRandom3DTexture()
+	float jitter()
 	{
-		//NO-OP
+		static std::default_random_engine generator; 
+		static std::uniform_real_distribution<float> distrib(-0.5f, 0.5f);
+		return distrib(generator);
+
+	}
+
+	void CSMRenderPass::GenerateRandom3DTexture(int windowSize, int filterSize)
+	{
+		int bufferSize = windowSize * windowSize * filterSize * filterSize * 2;
+		std::vector<float> data;
+		data.resize(bufferSize);
+
+		int index = 0;
+
+		for (int TexY = 0; TexY < windowSize; TexY++)
+		{
+			for (int TexX = 0; TexX < windowSize; TexX++)
+			{
+				for (int v = filterSize - 1; v >= 0; v--)
+				{
+					for (int u = 0; u < filterSize; u++)
+					{
+						float x = ((float)u + 0.5f + jitter()) / (float)filterSize;
+						float y = ((float)v + 0.5f + jitter()) / (float)filterSize;
+
+						data[index] = sqrtf(y) * cosf(2 * glm::pi<float>() * x);
+						data[index + 1] = sqrtf(y) * sinf(2 * glm::pi<float>() * x);
+
+						index += 2;
+					}
+				}
+			}
+		}
+
+
+		int NumFilterSamples = filterSize * filterSize;
+
+		glGenTextures(1, &RandomAnglesTexture);
+		glBindTexture(GL_TEXTURE_3D, RandomAnglesTexture);
+		glTexStorage3D(GL_TEXTURE_3D, 1, GL_RGBA32F, NumFilterSamples / 2, windowSize, windowSize);
+		glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, NumFilterSamples / 2, windowSize, windowSize, GL_RGBA, GL_FLOAT, &data[0]);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glBindTexture(GL_TEXTURE_3D, 0);
 	}
 
 	CSMRenderPass::~CSMRenderPass()

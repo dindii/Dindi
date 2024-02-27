@@ -44,6 +44,7 @@ namespace Dindi
 		std::vector<Layer*> m_LayerStack;
 	private:
 		bool m_Running = true;
+		bool m_IsPaused = false;
 
 	private:
 		Scene* m_ActiveScene;

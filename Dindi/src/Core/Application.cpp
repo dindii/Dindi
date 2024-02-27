@@ -82,7 +82,13 @@ namespace Dindi
 			uint32_t newHeight = Event.GetHeight();
 			
 			if (newWidth <= 0 || newHeight <= 0)
+			{
+				m_IsPaused = true;
 				return false;
+			}
+			else if (m_IsPaused)
+				m_IsPaused = false;
+
 
 			Renderer::OnContextResize(0, 0, newWidth, newHeight);
 			m_ActiveScene->GetActiveCamera()->RemakeProjection((float)newWidth, (float)newHeight);
@@ -170,6 +176,7 @@ namespace Dindi
 				OnEvent(initEvent);
 			}
 			
+			
 			OnUpdate(m_DeltaTime);
 		}
 	}
@@ -179,6 +186,10 @@ namespace Dindi
 		m_DeltaTime.Tick();
 		
 		m_ApplicationWindow->OnUpdate();
+
+		if (m_IsPaused)
+			return;
+
 		Renderer::Clear();
 		Logger::Flush();
 

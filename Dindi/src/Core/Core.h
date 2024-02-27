@@ -27,7 +27,8 @@ enum ERenderingMapSlot
 	None = 0,
 	Diffuse,
 	Specular,
-	Normal, 
+	Normal,
+	RandomAngles,
 	Shadow,
 };
 

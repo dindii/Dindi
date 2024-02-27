@@ -17,6 +17,9 @@
 
 #include <Utils/DNDAssert.h>
 
+#include <time.h>
+#include <vector>
+
 static std::vector<glm::vec4> frustumCorners;
 
 namespace Dindi
@@ -50,7 +53,7 @@ namespace Dindi
 
 		m_CSMTextures.reserve(gd.NumberOfShadowCascades);
 
-		float sizes[3] = { 4096.0f, 1024.0f, 512.0F};
+		float sizes[3] = { 4096.0f, 1024.0f, 512.0f};
 
 		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
 		{
@@ -61,8 +64,10 @@ namespace Dindi
 			desc.width = (uint16_t)sizes[i];
 			desc.height = (uint16_t)sizes[i];
 			desc.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
-			desc.magFilter = RenderTargetMagMinFilter::NEAREST;
-			desc.minFilter = RenderTargetMagMinFilter::NEAREST;
+			//desc.magFilter = RenderTargetMagMinFilter::NEAREST;
+			//desc.minFilter = RenderTargetMagMinFilter::NEAREST;
+			desc.magFilter = RenderTargetMagMinFilter::LINEAR;
+			desc.minFilter = RenderTargetMagMinFilter::LINEAR;
 			desc.type = RenderTargetDataType::DND_UNSIGNED_BYTE;
 			desc.wrapU = RenderTargetWrapMode::CLAMP_BORDER;
 			desc.wrapV = RenderTargetWrapMode::CLAMP_BORDER;
@@ -70,8 +75,14 @@ namespace Dindi
 			Texture2D* shadowMap = new Texture2D(desc);
 			m_CSMTextures.push_back(shadowMap);
 		}
+
+	//	GenerateRandom3DTexture();
 	}
 
+	void CSMRenderPass::GenerateRandom3DTexture()
+	{
+		//NO-OP
+	}
 
 	CSMRenderPass::~CSMRenderPass()
 	{
@@ -90,9 +101,9 @@ namespace Dindi
 		UpdateFrustumCorners();
 		RecalculateProjectionMatrix();
 		
-		Renderer::SetCullingType(CullingFaceMode::FRONT);
+		//Renderer::SetCullingType(CullingFaceMode::FRONT);
 		TransformAndDraw(scene);
-		Renderer::SetCullingType(CullingFaceMode::BACK);
+		//Renderer::SetCullingType(CullingFaceMode::BACK);
 
 		m_CSMFramebuffer->UnBind();
 		

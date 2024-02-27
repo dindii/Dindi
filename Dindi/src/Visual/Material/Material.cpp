@@ -3,7 +3,7 @@
 #include "Material.h"
 
 #include <Rendering/Core/Renderer.h>
-
+#include <Rendering/RenderPasses/Shadow/CascadedShadowMapRenderPass.h>
 
 namespace Dindi
 {
@@ -54,6 +54,7 @@ namespace Dindi
 			m_Shader->UploadInt("u_Normal", ERenderingMapSlot::Normal);
 		}
 
+		
 
 		//Texture2D& shadowMap = Renderer::GetShadowMap();
 		//if (shadowMap.GetID())
@@ -75,6 +76,10 @@ namespace Dindi
 				m_Shader->UploadInt(shadowmapIndex, ERenderingMapSlot::Shadow + i);
 			}
 		}
+
+		uint32_t randomTextureHandle = CSMRenderPass::GetRandomAnglesTexture();
+		glBindTextureUnit(ERenderingMapSlot::RandomAngles, randomTextureHandle);
+		m_Shader->UploadInt("u_RandomAngles", ERenderingMapSlot::RandomAngles);
 
 
 		//#TODO: add more.

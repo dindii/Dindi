@@ -15,6 +15,9 @@ namespace Dindi
 		void GenerateOutput(Scene* scene);
 		std::vector<Texture2D*>& GetRenderTarget() { return m_CSMTextures; }
 		std::vector<glm::mat4>& GetTransforms() { return m_CSMLightOrthographicViewTransform; }
+	
+		static uint32_t GetRandomAnglesTexture() { return RandomAnglesTexture; }
+		void GenerateRandom3DTexture();
 	private:
 		void RecalculateProjectionMatrix();
 		void TransformAndDraw(Scene* scene);
@@ -26,6 +29,7 @@ namespace Dindi
 		Framebuffer* m_CSMFramebuffer = nullptr;
 		Ref<Shader> m_CSMShader;
 
+		static inline uint32_t RandomAnglesTexture = 0;
 
 		std::vector<Texture2D*> m_CSMTextures;
 	};

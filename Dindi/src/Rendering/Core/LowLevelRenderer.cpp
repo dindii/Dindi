@@ -44,6 +44,7 @@ namespace Dindi
 	{
 		Framebuffer* LowLevelRenderer::m_ScreenOutput = nullptr;
 		CSMRenderPass* LowLevelRenderer::m_CSMRenderPass = nullptr;
+		uint32_t LowLevelRenderer::m_DrawCallNumber = 0;
 
 		//We are going to use only one UBO, so this doesn't need to be dynamic.
 		//This is static because the user don't need to mess with UBOs, he will not need and doesn't care either. This is internal for us.
@@ -192,6 +193,8 @@ namespace Dindi
 
 		void LowLevelRenderer::OutputPass(Scene* scene)
 		{
+			m_DrawCallNumber = 0;
+
 			const GraphicsDefinitions& gd = m_GraphicsDefinitions;
 
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
@@ -201,6 +204,8 @@ namespace Dindi
 				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
 				{
 					Mesh* mesh = model->GetMeshes()[y];
+
+		
 
 					glBindVertexArray(mesh->GetVertexArrayObjectID());
 					glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferObjectID());
@@ -229,6 +234,7 @@ namespace Dindi
 
 					//#TODO: elements to draw.
 					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
+					m_DrawCallNumber++;
 				}
 			}
 		}

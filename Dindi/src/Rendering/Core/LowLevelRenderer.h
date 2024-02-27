@@ -79,11 +79,11 @@ namespace Dindi
 			static void DelMesh(unsigned int Mesh, unsigned int nMeshes = 1);		
 			static void RemakeFramebuffers(uint32_t width, uint32_t height);
 			static void SetCullingType(CullingFaceMode mode);
-
 			static inline uint32_t GetScreenOutputHandle() { return m_ScreenOutput->GetOutputColorImage(); }
 
 			static inline std::vector<Texture2D*>& GetShadowMap() { return m_CSMRenderPass->GetRenderTarget(); }
 		
+			static inline uint32_t GetDrawCallNumber() { return m_DrawCallNumber; }
 			static GraphicsDefinitions& GetGraphicsDefinitions() { return m_GraphicsDefinitions; }
 
 		private:
@@ -106,6 +106,8 @@ namespace Dindi
 			static inline GraphicsDefinitions m_GraphicsDefinitions;
 			static inline Texture2D m_ShadowMapTexture;
 			static CSMRenderPass* m_CSMRenderPass;
+			
+			static uint32_t m_DrawCallNumber;
 		};
 	}
 }

@@ -124,6 +124,8 @@ namespace Dindi
 
 		ImGui::Begin("Stats");
 		ImGui::Text("%.4f ms", dt.Milliseconds());
+		ImGui::NewLine();
+		ImGui::Text("%i DrawCalls", DND_INTERNAL::LowLevelRenderer::GetDrawCallNumber());
 		ImGui::End();
 	
 	}

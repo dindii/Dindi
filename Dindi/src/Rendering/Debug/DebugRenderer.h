@@ -87,6 +87,9 @@ namespace Dindi
 			static void DrawShape(const DebugShapeContext& debugShapeContext) {};
 			static void ImmediateDebugDrawShape(const DebugShapeContext& debugShapeContext) {};
 			static void ClearQueue() {};
+			static void AppendDebugModeFlag(EDebugVisualizationMode flag) { };
+			static void RemoveDebugModeFlag(EDebugVisualizationMode flag) { };
+			static bool CheckDebugModeFlag(EDebugVisualizationMode flag) { return 0; }
 #endif
 
 #ifdef DINDI_DEBUG

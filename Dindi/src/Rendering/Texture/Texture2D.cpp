@@ -84,10 +84,7 @@ namespace Dindi
 				
 			} break;
 		}
-		
-		glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-		glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-
+		 
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, &rtDescriptor.borderColor[0]);
 	}
 

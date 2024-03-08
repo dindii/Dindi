@@ -66,10 +66,8 @@ namespace Dindi
 			desc.width = (uint16_t)sizes[i];
 			desc.height = (uint16_t)sizes[i];
 			desc.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
-			//desc.magFilter = RenderTargetMagMinFilter::NEAREST;
-			//desc.minFilter = RenderTargetMagMinFilter::NEAREST;
-			desc.magFilter = RenderTargetMagMinFilter::LINEAR;
-			desc.minFilter = RenderTargetMagMinFilter::LINEAR;
+			desc.magFilter = RenderTargetMagMinFilter::NEAREST;
+			desc.minFilter = RenderTargetMagMinFilter::NEAREST;
 			desc.type = RenderTargetDataType::DND_UNSIGNED_BYTE;
 			desc.wrapU = RenderTargetWrapMode::CLAMP_BORDER;
 			desc.wrapV = RenderTargetWrapMode::CLAMP_BORDER;
@@ -147,9 +145,9 @@ namespace Dindi
 		UpdateFrustumCorners();
 		RecalculateProjectionMatrix();
 		
-		//Renderer::SetCullingType(CullingFaceMode::FRONT);
+	//	Renderer::SetCullingType(CullingFaceMode::FRONT);
 		TransformAndDraw(scene);
-		//Renderer::SetCullingType(CullingFaceMode::BACK);
+//		Renderer::SetCullingType(CullingFaceMode::BACK);
 
 		m_CSMFramebuffer->UnBind();
 		
@@ -179,22 +177,26 @@ namespace Dindi
 			//{
 			float multiplier = gd.CSMFarPlaneMultiplier[i];
 			float radius = (frustumCorners[0 + (i * 8)] - frustumCorners[6 + (i * 8)]).length() / 2.0f;
-			float texelsPerUnit = (radius * 2.0f) / m_CSMTextures[i]->GetWidth();
+			//float texelsPerUnit = (radius * 2.0f) / m_CSMTextures[2]->GetWidth();
+			float texelsPerUnit = (radius * 2.0f) / 128;
 			texelsPerUnit *= multiplier;
 			glm::mat4 correction = glm::lookAt(glm::vec3(0.0f), lightDir, { 0.0f, 1.0f, 0.0f }) * glm::scale(glm::mat4(1.0f), glm::vec3(texelsPerUnit));
 			glm::mat4 invCorrection = glm::inverse(correction);
 
+			frustumCenter = camera->GetCameraPos();
 			frustumCenter = correction * glm::vec4(frustumCenter, 1.0f);
 			frustumCenter.x = glm::floor(frustumCenter.x);
 			frustumCenter.y = glm::floor(frustumCenter.y);
 			frustumCenter = invCorrection * glm::vec4(frustumCenter, 1.0f);
 			//}
 
-			glm::vec3 eye = frustumCenter + (lightDir * radius * 2.0f);
-			glm::mat4 lightView = glm::lookAt(eye, frustumCenter, { 0.0f, 1.0f, 0.0f });
+		//	glm::vec3 eye = frustumCenter + (lightDir * radius * 2.0f);
+
+		//	glm::mat4 lightView = glm::lookAt(eye, frustumCenter, { 0.0f, 1.0f, 0.0f });
+			glm::mat4 lightView = glm::lookAt(frustumCenter + lightDir, frustumCenter, { 0.0f, 1.0f, 0.0f });
 
 
-			m_CSMLightOrthographicViewTransform[i] = glm::ortho(-radius * multiplier, radius * multiplier, -radius * multiplier, radius * multiplier, -radius * multiplier, radius * multiplier) * lightView;
+			m_CSMLightOrthographicViewTransform[i] = glm::ortho(-radius * multiplier, radius * multiplier, -radius * multiplier, radius * multiplier, -radius * multiplier * 5, radius * multiplier * 5) * lightView;
 		}
 	}
 
@@ -261,7 +263,8 @@ namespace Dindi
 								2.0f * z - 1.0f,
 								1.0f);
 
-						frustumCorners.emplace_back(worldCoords.x / worldCoords.w, worldCoords.y / worldCoords.w, worldCoords.z / worldCoords.w, 1.0f);
+					//	frustumCorners.emplace_back(worldCoords.x / worldCoords.w, worldCoords.y / worldCoords.w, worldCoords.z / worldCoords.w, 1.0f);
+						frustumCorners.emplace_back(worldCoords.x , worldCoords.y, worldCoords.z , 1.0f);
 					}
 				}
 			}

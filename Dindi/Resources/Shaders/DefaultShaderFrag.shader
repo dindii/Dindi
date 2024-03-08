@@ -42,7 +42,8 @@ layout(std140, binding = 1) uniform ConstantData
 
 
 float gamma = 2.2;
-float gShadowMapRandomRadius = 2.5f;
+//float gShadowMapRandomRadius = 2.5f;
+float gShadowMapRandomRadius = 2.2f;
 
 float gShadowMapOffsetTextureSize = 16;
 float gShadowMapOffsetFilterSize = 8;
@@ -54,7 +55,7 @@ float gShadowMapOffsetFilterSize = 8;
 
 /*******-------------------- PCSS functions --------------------******/
 
-float u_LightSize = 50.0f;
+float u_LightSize = 65.0f;
 
 
 float FilterSizeShadowCalculation(vec4 argfragPosLightSpace, int layer)
@@ -113,6 +114,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, int layer)
 	vec3 ShadowCoords = projCoords;
 
 	float radius = clamp(FilterSizeShadowCalculation(fragPosLightSpace, layer), 1.0f, 3.0f);
+	//float radius = 1.0f;
 
 	vec4 sc = vec4(ShadowCoords, 1.0f);
 
@@ -132,7 +134,8 @@ float ShadowCalculation(vec4 fragPosLightSpace, int layer)
 	vec2 TexelSize = vec2(TexelWidth, TexelHeight);
 
 	float DiffuseFactor = dot(Normal, -LightDirection);
-	float bias = mix(0.001, 0.0005f, DiffuseFactor);
+	//float bias = mix(0.001, 0.0005f, DiffuseFactor);
+	float bias = 0.0005;
 	float Depth = 0.0;
 
 
@@ -201,7 +204,12 @@ struct PackLight
 
 PackLight CalculateLight(vec3 argLightColor, vec3 argLightPos, bool isDirLighting)
 {
-	vec3 color = texture(u_Diffuse, v_TexCoord).rgb * argLightColor;
+	vec4 diffuseAll = texture(u_Diffuse, v_TexCoord);
+
+	if (diffuseAll.a < 1.0f)
+		discard;
+
+	vec3 color = diffuseAll.rgb * argLightColor;
 	vec3 specularColor = texture(u_Specular, v_TexCoord).rgb * argLightColor;
 
 	//ambient
@@ -257,7 +265,7 @@ void main()
 
 	int layer = 2;
 
-	float closer = u_CSMDistances[0];
+	float closer = u_CSMDistances[0];// -12.0f;
 	float mid = u_CSMDistances[1];
 
 
@@ -285,16 +293,15 @@ void main()
 
 	outColor.rgb = pow(outColor.rgb, vec3(1.0f / gamma));
 
-
 	//
 	if (abs(v_FragPosViewSpace.z) < closer)
 	{
-		//	outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
+	//		outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
 		layer = 0;
 	}
 	else if (abs(v_FragPosViewSpace.z) < mid)
 	{
-		//	outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
+	//		outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
 		layer = 1;
 	}
 }

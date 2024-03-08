@@ -45,7 +45,6 @@ namespace Dindi
 		glBindTexture(GL_TEXTURE_2D, m_RendererID);
 
 
-
 		glTexImage2D(GL_TEXTURE_2D, 0, rtDescriptor.internalFormat, rtDescriptor.width, rtDescriptor.height, 0, format, rtDescriptor.type, NULL);
 
 
@@ -161,6 +160,7 @@ namespace Dindi
 		if (data)
 		{
 			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+			glGenerateMipmap(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, 0);
 			return;
 		}

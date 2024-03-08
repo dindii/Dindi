@@ -26,7 +26,7 @@ namespace Dindi
 		CSMFarPlaneThresholds.push_back(80.0f);
 		CSMFarPlaneThresholds.push_back(120.0f);
 		
-		CSMCascadeDistance.push_back(16.0f);
+		CSMCascadeDistance.push_back(15.0f);
 		CSMCascadeDistance.push_back(45.0f);
 		CSMCascadeDistance.push_back(140.0f);
 

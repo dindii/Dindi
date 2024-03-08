@@ -239,6 +239,27 @@ PackLight CalculateLight(vec3 argLightColor, vec3 argLightPos, bool isDirLightin
 	return PackLight(ambient, diffuse, specular);
 }
 
+float GetDither2(ivec2 p)
+{
+	float d = 0.0;
+
+	if ((p.x & 1) != (p.y & 1))
+		d += 2.0;
+	if ((p.y & 1) == 1)
+		d += 1.0;
+
+	d *= 0.25;
+
+	return d;
+}
+
+float GetDither4(ivec2 p)
+{
+	float d = GetDither2(p);
+	d = d * 0.25 + GetDither2(p >> 1);
+	return d;
+}
+
 void main()
 {
 	vec3 temporaryResult = vec3(0.0f, 0.0f, 0.0f);
@@ -265,23 +286,38 @@ void main()
 
 	int layer = 2;
 
-	float closer = u_CSMDistances[0];// -12.0f;
+	float closer = u_CSMDistances[0];
 	float mid = u_CSMDistances[1];
 
 
 	//
-	if (abs(v_FragPosViewSpace.z) < closer)
+	float threshold = GetDither4(ivec2(gl_FragCoord.xy));
+
+	if (abs(v_FragPosViewSpace.z) < closer + threshold)
 	{
 		outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
 		layer = 0;
 	}
-	else if (abs(v_FragPosViewSpace.z) < mid)
+	else if (abs(v_FragPosViewSpace.z) < mid + threshold)
 	{
 		outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
 		layer = 1;
 	}
 
+
+	//if (closer <= threshold)
+	//{
+	//	outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
+	//	layer = 0;
+	//}
+	//else
+	//{
+	//	outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
+	//	layer = 1;
+	//}
+
 	//float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
+
 	float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
 	//
 	//vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;	

@@ -9,6 +9,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stbi/stb_image.h"
 
+#include <cmath>
+#include <algorithm>
+
 namespace Dindi
 {
 
@@ -130,7 +133,10 @@ namespace Dindi
 		m_InternalFormat = internalFormat;
 		m_DataFormat = dataFormat;
 
-		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
+		uint32_t numberOfMips = 1 + floor(log2(std::max(m_Width, m_Height)));
+
+		glTextureStorage2D(m_RendererID, numberOfMips, internalFormat, m_Width, m_Height);
+		
 
 		if (channels == 1)
 		{
@@ -159,7 +165,8 @@ namespace Dindi
 		//If stbi could not load the image, we will catch this error in the switch above since we won't have any channel set.
 		if (data)
 		{
-			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+			
+			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);	
 			glGenerateMipmap(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, 0);
 			return;

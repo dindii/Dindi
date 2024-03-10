@@ -52,3 +52,15 @@ Dindi/Resources/Models
 .vs/Dindi/v15
 bin-int
 Dindi/vendor/glm/doc
+*.ini
+*.sln
+*.ini
+*.sln
+*.vcxproj
+*.pdb
+*.ini
+*.sln
+*.vcxproj
+Dindi/vendor/glad/include/glad/glad.h
+*.pdb
+*.raddbg

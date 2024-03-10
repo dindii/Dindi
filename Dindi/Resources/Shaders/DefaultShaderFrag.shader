@@ -330,12 +330,12 @@ void main()
 	outColor.rgb = pow(outColor.rgb, vec3(1.0f / gamma));
 
 	//
-	if (abs(v_FragPosViewSpace.z) < closer)
+	if (abs(v_FragPosViewSpace.z) < closer + threshold)
 	{
 	//		outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
 		layer = 0;
 	}
-	else if (abs(v_FragPosViewSpace.z) < mid)
+	else if (abs(v_FragPosViewSpace.z) < mid + threshold)
 	{
 	//		outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
 		layer = 1;

@@ -248,7 +248,7 @@ float GetDither2(ivec2 p)
 	if ((p.y & 1) == 1)
 		d += 1.0;
 
-	d *= 0.25;
+	d *= 0.5f;
 
 	return d;
 }

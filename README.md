@@ -10,7 +10,7 @@ Done:
 ✅ Cascaded Shadow Mapping  
 ✅ Percentage Closer Soft Shadows (PCSS)  
 ✅ Random sampling (for Soft Shadows) [From this post of Nvidia GPU Gems](https://developer.nvidia.com/gpugems/gpugems2/part-ii-shading-lighting-and-shadows/chapter-17-efficient-soft-edged-shadows-using)  
-✅ Smooth transition between shadow map cascades (Dithering)  
+✅ Smooth transition between shadow map cascades (Bayer Dithering)  
 ✅ Gizmos  
 ✅ Mesh Picking (Ray casting + AABB)  
 ✅ Gamma Correction  

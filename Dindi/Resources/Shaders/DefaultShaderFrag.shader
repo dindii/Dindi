@@ -114,6 +114,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, int layer)
 	vec3 ShadowCoords = projCoords;
 
 	float radius = clamp(FilterSizeShadowCalculation(fragPosLightSpace, layer), 1.0f, 3.0f);
+	radius /= (layer + 1);
 	//float radius = 1.0f;
 
 	vec4 sc = vec4(ShadowCoords, 1.0f);
@@ -239,26 +240,12 @@ PackLight CalculateLight(vec3 argLightColor, vec3 argLightPos, bool isDirLightin
 	return PackLight(ambient, diffuse, specular);
 }
 
-float GetDither2(ivec2 p)
-{
-	float d = 0.0;
-
-	if ((p.x & 1) != (p.y & 1))
-		d += 2.0;
-	if ((p.y & 1) == 1)
-		d += 1.0;
-
-	d *= 0.5f;
-
-	return d;
-}
-
-float GetDither4(ivec2 p)
-{
-	float d = GetDither2(p);
-	d = d * 0.25 + GetDither2(p >> 1);
-	return d;
-}
+int Bayer4[4 * 4] = {
+	0, 8, 2, 10,
+	12, 4, 14, 6,
+	3, 11, 1, 9,
+	15, 7, 13, 5
+};
 
 void main()
 {
@@ -290,8 +277,15 @@ void main()
 	float mid = u_CSMDistances[1];
 
 
-	//
-	float threshold = GetDither4(ivec2(gl_FragCoord.xy));
+	int ModX = int(gl_FragCoord.x) % 4;
+	int ModY = int(gl_FragCoord.y) % 4;
+
+
+	float BayerCoords = float(Bayer4[ModX * 4 + ModY]);
+	BayerCoords *= (1.0f / (4.0f * 4.0f));
+	BayerCoords -= 0.5f;
+	float threshold = 3.0f * BayerCoords;
+	//}
 
 	if (abs(v_FragPosViewSpace.z) < closer + threshold)
 	{
@@ -304,26 +298,8 @@ void main()
 		layer = 1;
 	}
 
-
-	//if (closer <= threshold)
-	//{
-	//	outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
-	//	layer = 0;
-	//}
-	//else
-	//{
-	//	outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
-	//	layer = 1;
-	//}
-
-	//float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
-
 	float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
-	//
-	//vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;	
 
-
-//	temporaryResult += vec3(dirLight.ambient + (1.0 - shadow) * (dirLight.diffuse + dirLight.specular));
 	temporaryResult += vec3(dirLight.ambient + (/*1.0 -*/ shadow) * (dirLight.diffuse + dirLight.specular));
 	outColor = vec4(temporaryResult.xyz, 1.0f);
 

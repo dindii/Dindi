@@ -42,8 +42,9 @@ layout(std140, binding = 1) uniform ConstantData
 
 
 float gamma = 2.2;
+
 //float gShadowMapRandomRadius = 2.5f;
-float gShadowMapRandomRadius = 2.2f;
+float gShadowMapRandomRadius = 2.0f;
 
 float gShadowMapOffsetTextureSize = 16;
 float gShadowMapOffsetFilterSize = 8;
@@ -55,7 +56,7 @@ float gShadowMapOffsetFilterSize = 8;
 
 /*******-------------------- PCSS functions --------------------******/
 
-float u_LightSize = 65.0f;
+float u_LightSize = 80.0f;
 
 
 float FilterSizeShadowCalculation(vec4 argfragPosLightSpace, int layer)
@@ -113,9 +114,10 @@ float ShadowCalculation(vec4 fragPosLightSpace, int layer)
 	projCoords = projCoords * 0.5f + 0.5f;
 	vec3 ShadowCoords = projCoords;
 
-	float radius = clamp(FilterSizeShadowCalculation(fragPosLightSpace, layer), 1.0f, 3.0f);
+//	float radius = clamp(FilterSizeShadowCalculation(fragPosLightSpace, layer), 1.0f, 3.0f);
+	//float radius = clamp(FilterSizeShadowCalculation(fragPosLightSpace, layer), gShadowMapRandomRadius, gShadowMapRandomRadius * 4);
+	float radius = clamp(FilterSizeShadowCalculation(fragPosLightSpace, layer), gShadowMapRandomRadius, gShadowMapRandomRadius * 4);
 	radius /= (layer + 1);
-	//float radius = 1.0f;
 
 	vec4 sc = vec4(ShadowCoords, 1.0f);
 
@@ -143,7 +145,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, int layer)
 	for (int i = 0; i < 4; i++)
 	{
 		OffsetCoord.x = i;
-		vec4 Offsets = texelFetch(u_RandomAngles, OffsetCoord, 0) * gShadowMapRandomRadius * radius;
+		vec4 Offsets = texelFetch(u_RandomAngles, OffsetCoord, 0) * radius;
 		sc.xy = ShadowCoords.xy + Offsets.rg * TexelSize;
 		Depth = texture(u_ShadowMap[layer], sc.xy).x;
 		if (Depth + bias < ShadowCoords.z) {
@@ -169,7 +171,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, int layer)
 	{
 		for (int i = 4; i < SamplesDiv2; i++) {
 			OffsetCoord.x = i;
-			vec4 Offsets = texelFetch(u_RandomAngles, OffsetCoord, 0) * gShadowMapRandomRadius * radius;
+			vec4 Offsets = texelFetch(u_RandomAngles, OffsetCoord, 0) * radius;
 			sc.xy = ShadowCoords.xy + Offsets.rg * TexelSize;
 			Depth = texture(u_ShadowMap[layer], sc.xy).x;
 			if (Depth + bias < ShadowCoords.z) {
@@ -256,7 +258,6 @@ void main()
 	for (unsigned int x = 0; x < numLights; x++)
 	{
 		PackLight temp = CalculateLight(c_Lights[x].m_Color.rgb, c_Lights[x].m_Position.rgb, false);
-
 		float distance = length(c_Lights[x].m_Position.xyz - v_FragPos);
 		//float attenuation = 1.0f / (distance * distance);
 		float attenuation = 2.0f / (distance * (distance / 2));
@@ -269,7 +270,16 @@ void main()
 	}
 
 	//#TODO: colocar a cor do dir light no cbuffer
-	PackLight dirLight = CalculateLight(vec3(1.0f, 1.0f, 1.0f), c_DirLightPos.xyz, true);
+	//PackLight dirLight = CalculateLight(vec3(1.2f, 0.75f, 0.25f), c_DirLightPos.xyz, true);
+	
+	PackLight dirLight;
+
+	dirLight = CalculateLight(vec3(1.0f, 0.77f, 0.52f), c_DirLightPos.xyz, true);
+	//dirLight.diffuse *= 7.0f;
+
+	dirLight.ambient *= vec3(0.3f, 0.47f, 1.0f);
+	dirLight.ambient *= 15.0f;
+	
 
 	int layer = 2;
 

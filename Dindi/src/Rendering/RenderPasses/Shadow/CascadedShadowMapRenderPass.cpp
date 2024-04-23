@@ -65,7 +65,7 @@ namespace Dindi
 			//desc.height = (uint16_t)windowDims.y;
 			desc.width = (uint16_t)sizes[i];
 			desc.height = (uint16_t)sizes[i];
-			desc.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
+			desc.internalFormat = RenderTargetInternalFormat::DND_DETPH_32;
 			desc.magFilter = RenderTargetMagMinFilter::NEAREST;
 			desc.minFilter = RenderTargetMagMinFilter::NEAREST;
 			desc.type = RenderTargetDataType::DND_UNSIGNED_BYTE;

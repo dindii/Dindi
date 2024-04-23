@@ -13,6 +13,7 @@ namespace Dindi
 		DND_NONE = 0,
 		DND_DEPTH24_STENCIL8 = GL_DEPTH24_STENCIL8,
 		DND_DETPH_UNSIZED = GL_DEPTH_COMPONENT,
+		DND_DETPH_32 = GL_DEPTH_COMPONENT32,
 		DND_COLOR_SRGB8 = GL_SRGB8,
 		DND_COLOR_SRGBA8 = GL_SRGB8_ALPHA8,
 		DND_R8 = GL_R8,
@@ -44,7 +45,7 @@ namespace Dindi
 			return RenderTargetFormat::DND_DEPTH_STENCIL;
 			break;
 
-		case DND_DETPH_UNSIZED:
+		case DND_DETPH_UNSIZED: case DND_DETPH_32:
 			return RenderTargetFormat::DND_DEPTH;
 			break;
 

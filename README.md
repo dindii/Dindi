@@ -51,6 +51,7 @@ Percentage Closer Soft Shadows (PCSS):
 ---------------------------------------------------------------------------------------------------------------
 ![PCSS_Raw](https://github.com/dindii/Dindi/assets/19862090/5dbee663-0c9c-4c14-a2fa-60652e4375d8)
 ![PCSS_Raw2](https://github.com/dindii/Dindi/assets/19862090/0f546b76-8c80-42d3-b8c4-9b7aba60ca65)
+![sombra3](https://github.com/dindii/Dindi/assets/19862090/45e4bd91-c439-4eb8-aa07-a295e3cb4775)
 
 Smooth transition between Shadow Map Cascades (Dithering):
 ---------------------------------------------------------------------------------------------------------------

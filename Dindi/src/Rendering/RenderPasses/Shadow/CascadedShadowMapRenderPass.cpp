@@ -61,8 +61,6 @@ namespace Dindi
 		{
 			RenderTargetDescriptor desc;
 			desc.borderColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-			//desc.width = (uint16_t)windowDims.x;
-			//desc.height = (uint16_t)windowDims.y;
 			desc.width = (uint16_t)sizes[i];
 			desc.height = (uint16_t)sizes[i];
 			desc.internalFormat = RenderTargetInternalFormat::DND_DETPH_32;

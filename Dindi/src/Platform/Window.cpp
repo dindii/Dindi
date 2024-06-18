@@ -13,18 +13,18 @@ namespace Dindi
 		if (width < 0 || height < 0)
 			DND_LOG_FATAL("Could not create window: negative resolution.");
 
-		m_Width  = width;
-		m_Height = height;
-
 		if (!glfwInit())
 			DND_LOG_FATAL("Could not initialize window system!");
 
 		if (aspectRatio <= 0.0f)
 			DND_LOG_WARNING("Invalid aspect ratio input.");
-			
+		
 		m_AspectRatio = aspectRatio;
+		
+		m_Width = width;
+		m_Height = (float)height / aspectRatio;
 
-		m_Window = glfwCreateWindow((int)width, (int)(height / aspectRatio), m_Name, NULL, NULL);
+		m_Window = glfwCreateWindow((int)width, (int)(height), m_Name, NULL, NULL);
 
 
 		if(!m_Window)

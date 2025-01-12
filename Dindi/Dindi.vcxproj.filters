@@ -43,6 +43,12 @@
     <Filter Include="src\Rendering\Object">
       <UniqueIdentifier>{00A91E49-EC37-A812-9556-BC0D81C4B8B8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Rendering\RenderPasses">
+      <UniqueIdentifier>{18A69F18-04B6-4BE9-6D6F-B007599E3A82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Rendering\RenderPasses\Shadow">
+      <UniqueIdentifier>{0D0C1311-797A-6890-C263-23902E115E2C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Rendering\Scene">
       <UniqueIdentifier>{57A1AEBC-C302-8CCA-4C70-D27CB8D0C289}</UniqueIdentifier>
     </Filter>
@@ -141,9 +147,6 @@
     <ClInclude Include="src\Rendering\Camera\Camera.h">
       <Filter>src\Rendering\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering\Core\Common.h">
-      <Filter>src\Rendering\Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\Rendering\Core\Framebuffer.h">
       <Filter>src\Rendering\Core</Filter>
     </ClInclude>
@@ -158,6 +161,9 @@
     </ClInclude>
     <ClInclude Include="src\Rendering\Object\Renderable.h">
       <Filter>src\Rendering\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\RenderPasses\Shadow\CascadedShadowMapRenderPass.h">
+      <Filter>src\Rendering\RenderPasses\Shadow</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\Scene\Scene.h">
       <Filter>src\Rendering\Scene</Filter>
@@ -222,7 +228,9 @@
     <ClInclude Include="vendor\imguizmo\ImGuizmo.h">
       <Filter>vendor\imguizmo</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering\RenderPasses\Shadow\CascadedShadowMapRenderPass.h" />
+    <ClInclude Include="vendor\tinygltf\stb_image_write.h" />
+    <ClInclude Include="vendor\tinygltf\json.hpp" />
+    <ClInclude Include="vendor\tinygltf\tiny_gltf.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -266,6 +274,9 @@
     </ClCompile>
     <ClCompile Include="src\Rendering\Object\Renderable.cpp">
       <Filter>src\Rendering\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\RenderPasses\Shadow\CascadedShadowMapRenderPass.cpp">
+      <Filter>src\Rendering\RenderPasses\Shadow</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering\Scene\Scene.cpp">
       <Filter>src\Rendering\Scene</Filter>
@@ -324,6 +335,5 @@
     <ClCompile Include="vendor\imguizmo\ImGuizmo.cpp">
       <Filter>vendor\imguizmo</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\RenderPasses\Shadow\CascadedShadowMapRenderPass.cpp" />
   </ItemGroup>
 </Project>

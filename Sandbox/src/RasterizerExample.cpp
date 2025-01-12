@@ -34,11 +34,12 @@ void RasterizerExample::OnAttach()
 	//DEBUG
 	m_DefaultEditorCamera->SetCameraYaw(0.0f);
 	m_DefaultEditorCamera->SetCameraPitch(0.0f);
-	backpackModel = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\Backpack\\backpack.obj", glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
-	sponzaModel = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza.obj", glm::vec3(0.0f, 0.0f, 0.0f), 0.025f);
+//	backpackModel = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\Backpack\\backpack.obj", glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	backpackModel = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\normalChapter\\plane.obj", glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+    //sponzaModel = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza.obj", glm::vec3(0.0f, 0.0f, 0.0f), 0.025f);
 	SceneOne->GetLightManager()->AddPointLight(glm::vec3(0.0f), glm::vec3(1.0f));
 	
-	SceneOne->AddEntity(sponzaModel);
+	//SceneOne->AddEntity(sponzaModel);
 	SceneOne->AddEntity(backpackModel);
 
 	app.SetActiveScene(SceneOne);
@@ -57,6 +58,10 @@ void RasterizerExample::OnUpdate(const Dindi::DeltaTime& dt)
 {
 	LookAround();
 	MoveCamera(dt);
+
+	glm::vec3 rotation = backpackModel->GetRotation();
+	rotation.y += (1 % 90) / 2.0f * dt;
+	//backpackModel->SetRotation(rotation);
 }
 
 void RasterizerExample::OnEvent(Dindi::Event& event)

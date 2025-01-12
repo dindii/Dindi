@@ -29,7 +29,7 @@ namespace Dindi
 	
 	void Mesh::RegisterData()
 	{
-		RegisterMeshData(m_VertexPositions, m_Normal, m_TextureCoord);
+		RegisterMeshData(m_VertexPositions, m_Normal, m_TextureCoord, m_Tangent);
 	}
 
 	Dindi::AABB Mesh::GetOffsetAABB(const glm::vec3& offset, const glm::vec3& scale, const glm::vec3& rotation)

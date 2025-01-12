@@ -11,6 +11,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <Physics/Trace.h>
+#include <Input/Input.h>
+
 namespace Dindi
 {
 
@@ -37,7 +40,7 @@ namespace Dindi
 
 
 		// ----------------------------- Light
-		directionalLightDir = { 1.0f, 10.0f, 1.0f, 1.0f };
+		directionalLightDir = { 1.0f, 10.0f, 5.0f, 1.0f };
 		// ----------------------------- Light
 	}
 
@@ -160,7 +163,8 @@ namespace Dindi
 
 			PersistentData.data.c_View = camera->GetViewMatrix();
 			PersistentData.data.c_DirLightPos = gd.directionalLightDir;
-			
+
+
 			PersistentData.data.c_Time = app.GetTime();
 
 			PersistentData.data.c_CameraPos = glm::vec4(cameraPos.x, cameraPos.y, cameraPos.z, 0.0f);

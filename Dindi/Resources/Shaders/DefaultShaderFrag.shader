@@ -21,6 +21,11 @@ uniform sampler3D u_RandomAngles;
 
 uniform float u_CSMDistances[DND_CSM_LEVELS];
 
+in vec3 v_TangentLightDirPos;
+in vec3 v_TangentViewPos;
+in vec3 v_TangentFragPos;
+in mat3 v_TBN;
+
 struct PointLight
 {
 	vec4 m_Position;
@@ -208,6 +213,8 @@ struct PackLight
 PackLight CalculateLight(vec3 argLightColor, vec3 argLightPos, bool isDirLighting)
 {
 	vec4 diffuseAll = texture(u_Diffuse, v_TexCoord);
+	//vec2 flapTexCoord = vec2(v_TexCoord.x, 1.0f - v_TexCoord.y);
+	//vec4 diffuseAll = texture(u_Normal, flapTexCoord);
 
 	if (diffuseAll.a < 1.0f)
 		discard;
@@ -218,26 +225,47 @@ PackLight CalculateLight(vec3 argLightColor, vec3 argLightPos, bool isDirLightin
 	//ambient
 	vec3 ambient = 0.05f * color;
 
+	bool useNormalMapping = true;
 	//diffuse calc
 	vec3 lightPos = argLightPos;
+
 
 	vec3 lightDir = normalize(lightPos - v_FragPos) * float(!isDirLighting);
 	lightDir += normalize(lightPos) * float(isDirLighting);
 
+	if (isDirLighting && useNormalMapping)
+	{
+		lightDir = v_TBN * normalize(lightPos);
+	}
+
 	vec3 normal = normalize(v_Normal);
+	
+	if (isDirLighting && useNormalMapping)
+	{
+		vec2 flipTexCoord = vec2(v_TexCoord.x, 1.0f - v_TexCoord.y);
+		normal = texture(u_Normal, flipTexCoord).rgb;
+	//	normal = normalize(normal * 2.0f - 1.0f);
+	}
+	
 
 	float diffuseRate = max(dot(lightDir, normal), 0.0f);
-	vec3 diffuse = diffuseRate * color;
+	vec3 diffuse = diffuseRate * color * 10;
 
 	//specular calc
 	vec3 cameraPos = c_CameraPos.xyz;
 	vec3 viewDir = normalize(cameraPos - v_FragPos);
+
+	if (isDirLighting && useNormalMapping)
+	{
+		viewDir = v_TBN * viewDir;
+	}
+
 	vec3 halfwayDir = normalize(lightDir + viewDir);
 
 	float specularRate = 0.0f;
 	specularRate = pow(max(dot(normal, halfwayDir), 0.0f), 32.0f);
 
-	vec3 specular = vec3(0.3f) * specularRate;
+	vec3 specular = vec3(0.3f) * specularRate * specularColor;
 
 	return PackLight(ambient, diffuse, specular);
 }
@@ -255,19 +283,19 @@ void main()
 
 	//I will not waste too much time setting uniforms for those tweaks or even setting properties in the light class because we are not going to
 	//use blinn-phong for much time. So, that's why it is extremely hardcoded.
-	for (unsigned int x = 0; x < numLights; x++)
-	{
-		PackLight temp = CalculateLight(c_Lights[x].m_Color.rgb, c_Lights[x].m_Position.rgb, false);
-		float distance = length(c_Lights[x].m_Position.xyz - v_FragPos);
-		//float attenuation = 1.0f / (distance * distance);
-		float attenuation = 2.0f / (distance * (distance / 2));
-
-		vec3 ambientWithAttenuation = temp.ambient * attenuation;
-		vec3 diffuseWithAttenuation = temp.diffuse * attenuation;
-		vec3 specularWithAttenuation = temp.specular * attenuation;
-
-		temporaryResult += vec3(ambientWithAttenuation + diffuseWithAttenuation) + vec3(temp.specular * specularWithAttenuation);
-	}
+//	for (unsigned int x = 0; x < numLights; x++)
+//	{
+//		PackLight temp = CalculateLight(c_Lights[x].m_Color.rgb, c_Lights[x].m_Position.rgb, false);
+//		float distance = length(c_Lights[x].m_Position.xyz - v_FragPos);
+//		//float attenuation = 1.0f / (distance * distance);
+//		float attenuation = 2.0f / (distance * (distance / 2));
+//
+//		vec3 ambientWithAttenuation = temp.ambient * attenuation;
+//		vec3 diffuseWithAttenuation = temp.diffuse * attenuation;
+//		vec3 specularWithAttenuation = temp.specular * attenuation;
+//
+//		temporaryResult += vec3(ambientWithAttenuation + diffuseWithAttenuation) + vec3(temp.specular * specularWithAttenuation);
+//	}
 
 	//#TODO: colocar a cor do dir light no cbuffer
 	//PackLight dirLight = CalculateLight(vec3(1.2f, 0.75f, 0.25f), c_DirLightPos.xyz, true);
@@ -310,11 +338,12 @@ void main()
 
 	float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
 
-	temporaryResult += vec3(dirLight.ambient + (/*1.0 -*/ shadow) * (dirLight.diffuse + dirLight.specular));
+	//temporaryResult += vec3(dirLight.ambient + (/*1.0 -*/ shadow) * (dirLight.diffuse + dirLight.specular));
+	temporaryResult += vec3(dirLight.ambient + (/*1.0 -*/ shadow) * (dirLight.diffuse));
 	outColor = vec4(temporaryResult.xyz, 1.0f);
 
 	outColor.rgb = pow(outColor.rgb, vec3(1.0f / gamma));
-
+	
 	//
 	if (abs(v_FragPosViewSpace.z) < closer + threshold)
 	{

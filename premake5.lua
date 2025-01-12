@@ -129,7 +129,7 @@ project "Dindi"
 		"Dindi/vendor/glm"
 	}
 
-	links                      -- Linkamos a Engine no Sandbox também
+	links                      -- Linkamos a Engine no Sandbox tambï¿½m
       {
       	 "Dindi"
       }

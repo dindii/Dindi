@@ -36,7 +36,7 @@ namespace Dindi
 		inline void SetRenderFlag(const RenderFlags flag) { m_Flags = flag; }
 
 	protected:
-		void RegisterMeshData(std::vector<glm::vec3>& vertexPositions, std::vector<glm::vec3>& vertexNormals, std::vector<glm::vec2>& textCoords);
+		void RegisterMeshData(std::vector<glm::vec3>& vertexPositions, std::vector<glm::vec3>& vertexNormals, std::vector<glm::vec2>& textCoords, std::vector<glm::vec3>& tangents);
 	private:
 		//this will have a vbo abstraction
 		unsigned int m_VertexBufferObjectID, m_VertexArrayObjectID;

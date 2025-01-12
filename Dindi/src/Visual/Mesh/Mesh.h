@@ -25,6 +25,7 @@ namespace Dindi
 		void SetVertexPositionData(std::vector<glm::vec3>&& vertexPosData)    noexcept { m_VertexPositions = vertexPosData; BuildAABB(); }
 		void SetNormalData        (std::vector<glm::vec3>&& normalData)       noexcept { m_Normal = normalData; }
 		void SetTextureCoordData  (std::vector<glm::vec2>&& textureCoordData) noexcept { m_TextureCoord = textureCoordData; }
+		void SetTangentData       (std::vector<glm::vec3>&& tangentData)      noexcept { m_Tangent = tangentData; }
 
 		inline Material* GetMaterial() { return m_Material; }
 
@@ -74,6 +75,7 @@ namespace Dindi
 		std::vector<uint32_t> m_Indices;
 		std::vector<glm::vec3>     m_VertexPositions;
 		std::vector<glm::vec3>     m_Normal;
+		std::vector<glm::vec3>     m_Tangent;
 		std::vector<glm::vec2>     m_TextureCoord;
 		
 		AABB m_AABB;

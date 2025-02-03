@@ -82,7 +82,7 @@ namespace Dindi
 		void LowLevelRenderer::Init()
 		{
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
@@ -167,7 +167,7 @@ namespace Dindi
 
 			PersistentData.data.c_Time = app.GetTime();
 
-			PersistentData.data.c_CameraPos = glm::vec4(cameraPos.x, cameraPos.y, cameraPos.z, 0.0f);
+			PersistentData.data.c_CameraPos = glm::vec4(cameraPos.x, cameraPos.y, cameraPos.z, 1.0f);
 
 			LightManager* lightManager = scene->GetLightManager();
 			std::vector<GPUPointLightData>& lightsData = lightManager->GetLightsData();

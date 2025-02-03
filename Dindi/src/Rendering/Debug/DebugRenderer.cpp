@@ -95,7 +95,8 @@ namespace Dindi
 			m_DebugShapes[EDebugShape::LINE] = temporaryLineModel;
 			//LINES -------------------------------------------------------
 
-
+			//#TOREMOVE
+			AppendDebugModeFlag(LIGHT_BOX);
 
 		}
 

@@ -153,7 +153,6 @@ namespace Dindi
 					return true;
 				}   break;
 
-
 				default:
 					return false;
 			}

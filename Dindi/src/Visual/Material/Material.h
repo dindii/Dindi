@@ -31,5 +31,9 @@ namespace Dindi
 		Ref<Texture2D> m_roughnessMap;
 		Ref<Texture2D> m_specularMap;
 		Ref<Texture2D> m_ambientOcclusionMap;
+
+		static Texture2D* m_BlankDiffuseTexture;
+		static Texture2D* m_BlankSpecularTexture;
+		static Texture2D* m_BlankNormalTexture;
 	};
 }

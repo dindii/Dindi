@@ -148,6 +148,13 @@ namespace Dindi
 
 			for (uint32_t i = 0; i < temporaryVertexPositions.size(); i+=3)
 			{
+				if (temporaryTextureCoords.size() == 0)
+				{
+					DND_LOG_WARNING("Mesh", shapeIndex, " doesn't contain UVs! Model: ", filepath);
+					temporaryTangents.push_back(glm::vec3(0.0f));
+					continue;
+				}
+					
 				glm::vec3 p1 = temporaryVertexPositions[i];
 				glm::vec3 p2 = temporaryVertexPositions[i + 1];
 				glm::vec3 p3 = temporaryVertexPositions[i + 2];

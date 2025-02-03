@@ -7,11 +7,18 @@
 
 namespace Dindi
 {
-
+	Texture2D* Material::m_BlankDiffuseTexture = nullptr;
+	Texture2D* Material::m_BlankSpecularTexture = nullptr;
+	Texture2D* Material::m_BlankNormalTexture = nullptr;
 
 	Material::Material(const std::string& vertexpath, const std::string& fragpath)
 	{
 		m_Shader = Shader::Load(vertexpath, fragpath);
+
+		uint8_t singlePixel = 255;
+		m_BlankDiffuseTexture = new Texture2D(&singlePixel, 1, 1, 1);
+		m_BlankSpecularTexture = new Texture2D(&singlePixel, 1, 1, 1);
+		m_BlankNormalTexture = new Texture2D(&singlePixel, 1, 1, 1);
 	}
 
 	Material::~Material()
@@ -36,32 +43,14 @@ namespace Dindi
 	{
 		m_Shader->Bind();
 
-		if (m_diffuseMap)
-		{
-			m_diffuseMap->Bind(				 ERenderingMapSlot::Diffuse);
-			m_Shader->UploadInt("u_Diffuse", ERenderingMapSlot::Diffuse);
-		}
+		m_diffuseMap ? m_diffuseMap->Bind(ERenderingMapSlot::Diffuse) : m_BlankDiffuseTexture->Bind(ERenderingMapSlot::Diffuse);
+		m_Shader->UploadInt("u_Diffuse", ERenderingMapSlot::Diffuse);
 
-		if (m_specularMap)
-		{
-			m_specularMap->Bind(	          ERenderingMapSlot::Specular);
-			m_Shader->UploadInt("u_Specular", ERenderingMapSlot::Specular);
-		}
-
-		if (m_normalMap)
-		{
-			m_normalMap->Bind(				ERenderingMapSlot::Normal);
-			m_Shader->UploadInt("u_Normal", ERenderingMapSlot::Normal);
-		}
-
-		
-
-		//Texture2D& shadowMap = Renderer::GetShadowMap();
-		//if (shadowMap.GetID())
-		//{
-		//	shadowMap.Bind(                    ERenderingMapSlot::Shadow);
-		//	m_Shader->UploadInt("u_ShadowMap", ERenderingMapSlot::Shadow);
-		//}
+		m_specularMap ? m_specularMap->Bind(ERenderingMapSlot::Specular) : m_BlankSpecularTexture->Bind(ERenderingMapSlot::Specular);
+		m_Shader->UploadInt("u_Specular", ERenderingMapSlot::Specular);
+			
+		m_normalMap ? m_normalMap->Bind(ERenderingMapSlot::Normal) : m_BlankNormalTexture->Bind(ERenderingMapSlot::Normal);
+		m_Shader->UploadInt("u_Normal", ERenderingMapSlot::Normal);
 
 
 		std::vector<Texture2D*>& shadowMaps = Renderer::GetShadowMap();

@@ -31,9 +31,8 @@ namespace Dindi
 		Application& app = Application::GetInstance();
 		glm::vec2 windowDims = app.GetWindow()->GetDimensions();
 
-		m_CSMFramebuffer = new Framebuffer();
-
-		m_CSMShader = Shader::Load(RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowVert.shader", RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowFrag.shader");
+		m_Framebuffer = new Framebuffer();
+		m_Shader = Shader::Load(RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowVert.shader", RESOURCES_PATH "Resources/Shaders/Shadow/SimpleShadowFrag.shader");
 
 		Camera* camera = Application::GetInstance().GetActiveScene()->GetActiveCamera();
 
@@ -133,8 +132,8 @@ namespace Dindi
 
 	void CSMRenderPass::GenerateOutput(Scene* scene)
 	{
-		m_CSMFramebuffer->Bind();
-		m_CSMShader->Bind();
+		m_Framebuffer->Bind();
+		m_Shader->Bind();
 
 		//Set the viewport to whatever your current render target is
 		Application& app = Application::GetInstance();
@@ -147,7 +146,7 @@ namespace Dindi
 		TransformAndDraw(scene);
 //		Renderer::SetCullingType(CullingFaceMode::BACK);
 
-		m_CSMFramebuffer->UnBind();
+		m_Framebuffer->UnBind();
 		
 		 Renderer::SetViewport(0, 0, dims.x, dims.y);
 	}
@@ -204,7 +203,7 @@ namespace Dindi
 
 		for (uint32_t i = 0; i < gd.NumberOfShadowCascades; i++)
 		{
-			m_CSMFramebuffer->AttachRenderTarget(*m_CSMTextures[i], FramebufferRenderTargetSlot::DEPTH);
+			m_Framebuffer->AttachRenderTarget(*m_CSMTextures[i], FramebufferRenderTargetSlot::DEPTH);
 			Renderer::Clear(false, true);
 
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
@@ -220,9 +219,9 @@ namespace Dindi
 
 
 					glm::mat4 meshTransform = mesh->GetTransform();
-					m_CSMShader->UploadUniformMat4("u_Transform", meshTransform);
+					m_Shader->UploadUniformMat4("u_Transform", meshTransform);
 
-					m_CSMShader->UploadUniformMat4("u_CascadedVP", m_CSMLightOrthographicViewTransform[i]);
+					m_Shader->UploadUniformMat4("u_CascadedVP", m_CSMLightOrthographicViewTransform[i]);
 
 					//#TODO: elements to draw.
 					Renderer::SetViewport(0, 0, m_CSMTextures[i]->GetWidth(), m_CSMTextures[i]->GetHeight());

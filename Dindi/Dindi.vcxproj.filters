@@ -231,6 +231,9 @@
     <ClInclude Include="vendor\tinygltf\stb_image_write.h" />
     <ClInclude Include="vendor\tinygltf\json.hpp" />
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h" />
+    <ClInclude Include="src\Rendering\RenderPasses\RenderPass.h" />
+    <ClInclude Include="src\Rendering\RenderPasses\Raw\RawRenderPass.h" />
+    <ClInclude Include="src\Rendering\RenderPasses\PostProcessing\PostProcessingRenderPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -335,5 +338,11 @@
     <ClCompile Include="vendor\imguizmo\ImGuizmo.cpp">
       <Filter>vendor\imguizmo</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering\RenderPasses\Raw\RawRenderPass.cpp" />
+    <ClCompile Include="src\Rendering\RenderPasses\PostProcessing\PostProcessingRenderPass.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\PostProcessing\PostProcessingFrag.shader" />
+    <None Include="Resources\Shaders\PostProcessing\PostProcessingVertex.shader" />
   </ItemGroup>
 </Project>

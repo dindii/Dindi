@@ -310,7 +310,10 @@ namespace Dindi
 		glm::vec2 viewportDims(windowSize.x * m_ViewportPosX, windowSize.y);
 
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBringToFrontOnFocus);
-		ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), { windowSize.x * m_ViewportPosX, windowSize.y }, { 0,1 }, { 1,0 });
+		ImGui::Image((ImTextureID)DND_INTERNAL::LowLevelRenderer::GetPostProcessingHandle(), { windowSize.x * m_ViewportPosX, windowSize.y }, { 0,1 }, { 1,0 });
+		//ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), { windowSize.x * m_ViewportPosX, windowSize.y }, { 0,1 }, { 1,0 });
+	//	ImGui::Image((ImTextureID)Renderer::GetScreenOutputHandle(), { 300, 300 }, { 0,1 }, { 1,0 });
+//		ImGui::Image((ImTextureID)DND_INTERNAL::LowLevelRenderer::GetPostProcessingHandle(), { 300, 300 }, { 0,1 }, { 1,0 });
 		
 		//This must use the same ImGui window to draw the gizmo, so it is necessary to keep it in the same Begin-End call
 		ProcessTransformGizmo();
@@ -362,7 +365,7 @@ namespace Dindi
 
 		//#NOTE: I'm not sure if this should be here, but since we are already using the camera for another purposes (such as edit projection and view), I guess it will not be a problem to
 		//let this here. But we should keep in mind to change the architecture over this next time.
-		if(imageSize.x != m_ViewportSizeX || imageSize.y != m_ViewportSizeY)
+		if((uint32_t)imageSize.x != m_ViewportSizeX || (uint32_t)imageSize.y != m_ViewportSizeY)
 			m_Scene->GetActiveCamera()->RemakeProjection(imageSize.x, imageSize.y);
 		
 

@@ -55,7 +55,7 @@ namespace Dindi
 
 			RenderTargetFormat format = GetFormatFromInternalDataType(m_ColorDescriptor.internalFormat);
 
-			glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, m_ColorDescriptor.type, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, m_ColorDescriptor.internalFormat, m_Width, m_Height, 0, format, m_ColorDescriptor.type, NULL);
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

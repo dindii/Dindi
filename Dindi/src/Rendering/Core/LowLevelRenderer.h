@@ -4,6 +4,8 @@
 #include "Visual/Light/LightManager.h"
 #include <Rendering/Core/Framebuffer.h>
 #include <Rendering/RenderPasses/Shadow/CascadedShadowMapRenderPass.h>
+#include <Rendering/RenderPasses/Raw/RawRenderPass.h>
+#include <Rendering/RenderPasses/PostProcessing/PostProcessingRenderPass.h>
 
 class CSMRenderPass;
 
@@ -34,6 +36,10 @@ namespace Dindi
 		/// ----------------------------- Light
 		glm::vec4 directionalLightDir;
 		/// ----------------------------- Light
+
+		///----------------------------- Post Processing
+		float gamma = 2.2f;
+		float exposure = 1.0f;
 	};
 
 
@@ -79,7 +85,9 @@ namespace Dindi
 			static void DelMesh(unsigned int Mesh, unsigned int nMeshes = 1);		
 			static void RemakeFramebuffers(uint32_t width, uint32_t height);
 			static void SetCullingType(CullingFaceMode mode);
-			static inline uint32_t GetScreenOutputHandle() { return m_ScreenOutput->GetOutputColorImage(); }
+			//static inline uint32_t GetScreenOutputHandle() { return m_PostProcessingRenderPass->GetRenderTarget()->GetID(); }
+			static inline uint32_t GetScreenOutputHandle() { return m_RawRenderPass->GetRenderTarget()->GetID(); }
+			static inline uint32_t GetPostProcessingHandle() { return m_PostProcessingRenderPass->GetRenderTarget()->GetID(); }
 
 			static inline std::vector<Texture2D*>& GetShadowMap() { return m_CSMRenderPass->GetRenderTarget(); }
 		
@@ -94,18 +102,23 @@ namespace Dindi
 			//Render passes
 			static void OutputPass(Scene* scene);
 			static void ShadowPass(Scene* scene);
+			static void PostProcessingPass(Scene* scene);
 
 			static Framebuffer* m_ScreenOutput;
-			static inline Framebuffer* m_ShadowMap = nullptr;
+			static Framebuffer* m_PostProcessing;
+			
 
 			//@TODO: TO REFACTOR
 		private:
 			static inline glm::mat4 m_DirectionalLightView = glm::mat4(1.0f);
 			static inline glm::mat4 m_DirectionalLightProjection = glm::mat4(1.0f);
 			static inline Ref<Shader> m_ShadowShader = nullptr;
+			static inline Ref<Shader> m_PostProcessingShader = nullptr;
 			static inline GraphicsDefinitions m_GraphicsDefinitions;
 			static inline Texture2D m_ShadowMapTexture;
 			static CSMRenderPass* m_CSMRenderPass;
+			static RawRenderPass* m_RawRenderPass;
+			static PostProcessingRenderPass* m_PostProcessingRenderPass;
 			
 			static uint32_t m_DrawCallNumber;
 		};

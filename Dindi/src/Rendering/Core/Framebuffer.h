@@ -28,6 +28,7 @@ namespace Dindi
 		inline uint32_t GetOutputColorImage() const { return m_ColorAttachment; }
 		inline uint32_t GetOutputDepthImage() const { return m_DepthAttachment; }
 		
+		Ref<Texture2D> GetTexture() { return m_Texture; }
 
 	private:
 		uint32_t m_RendererID;
@@ -37,6 +38,8 @@ namespace Dindi
 
 		RenderTargetDescriptor m_ColorDescriptor;
 		RenderTargetDescriptor m_DepthDescriptor;
+
+		Ref<Texture2D> m_Texture;
 	};
 
 }

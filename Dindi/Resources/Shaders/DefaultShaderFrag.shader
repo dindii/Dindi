@@ -392,7 +392,7 @@ void main()
 	{
 		PackLight temp = CalculatePointLight(v_Lights[x].m_Color.rgb, v_Lights[x].m_Position.xyz, x);
 
-		
+
 		vec3 fragPos = textureSize(u_Normal, 0).x > 1 ? v_TangentFragPos : v_FragPos;
 		vec3 lightPos = textureSize(u_Normal, 0).x > 1 ? v_Lights[x].m_Position.xyz : c_Lights[x].m_Position.xyz;
 
@@ -410,7 +410,7 @@ void main()
 
 
 //	//#TODO: colocar a cor do dir light no cbuffer
-	PackLight dirLight = CalculateDirectionalLight(vec3(1.2f, 0.75f, 0.25f));
+	PackLight dirLight = CalculateDirectionalLight(vec3(1.2f, 0.75f, 0.25f) * 2);
 
 	dirLight.diffuse *= 1.0f;
 	dirLight.ambient *= vec3(0.3f, 0.47f, 1.0f);
@@ -449,12 +449,25 @@ void main()
 	//
 	float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
 
+	//get back
 	temporaryResult += vec3(dirLight.ambient + (/*1.0 -*/ shadow) * (dirLight.diffuse + dirLight.specular));
 	//temporaryResult += vec3(dirLight.ambient + (/*1.0 -*/ shadow) * (dirLight.diffuse));
 
 	outColor = vec4(temporaryResult.xyz, 1.0f);
 //
-	outColor.rgb = pow(outColor.rgb, vec3(1.0f / gamma));
+
+	//DEBUG TEST
+	//float exposure = 1.0f;
+	//outColor.rgb = vec3(1.0f) - exp(-outColor.rgb * exposure);
+	////vec3 result = hdrColor / (hdrColor + vec3(1.0f));
+	//
+	//
+	//outColor.rgb = pow(outColor.rgb, vec3(1.0f / gamma));
+
+	//DEBUG TEST
+
+
+	//outColor.rgb = pow(outColor.rgb, vec3(1.0f / gamma));
 //	
 //	//
 //	if (abs(v_FragPosViewSpace.z) < closer + threshold)

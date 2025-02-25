@@ -22,10 +22,10 @@ namespace Dindi
 
 		std::vector<glm::vec3>& GetVertexPositions() { return m_VertexPositions; }
 
-		void SetVertexPositionData(std::vector<glm::vec3>&& vertexPosData)    noexcept { m_VertexPositions = vertexPosData; BuildAABB(); }
-		void SetNormalData        (std::vector<glm::vec3>&& normalData)       noexcept { m_Normal = normalData; }
-		void SetTextureCoordData  (std::vector<glm::vec2>&& textureCoordData) noexcept { m_TextureCoord = textureCoordData; }
-		void SetTangentData       (std::vector<glm::vec3>&& tangentData)      noexcept { m_Tangent = tangentData; }
+		void SetVertexPositionData(std::vector<glm::vec3>&& vertexPosData)    noexcept { m_VertexPositions = vertexPosData; BuildAABB(); m_Dirty = true; }
+		void SetNormalData        (std::vector<glm::vec3>&& normalData)       noexcept { m_Normal = normalData; m_Dirty = true;}
+		void SetTextureCoordData  (std::vector<glm::vec2>&& textureCoordData) noexcept { m_TextureCoord = textureCoordData; m_Dirty = true;}
+		void SetTangentData(std::vector<glm::vec3>&& tangentData)             noexcept { m_Tangent = tangentData; m_Dirty = true;}
 
 		inline Material* GetMaterial() { return m_Material; }
 
@@ -33,6 +33,8 @@ namespace Dindi
 
 		void RegisterData();
 		
+		bool GetIsDirty() { return m_Dirty; }
+
 		void SetAABB(const AABB& aabb) { m_AABB = aabb; }
 		void SetWorldAABB(const AABB& aabb) { m_AABB.SetMin(aabb.GetMin()); m_AABB.SetMax(aabb.GetMax()); }
 		AABB GetAABB() const { return m_AABB; }
@@ -82,6 +84,7 @@ namespace Dindi
 		glm::vec3 m_Position = glm::vec3(0.0f), m_Rotation = glm::vec3(0.0f);
 		Material* m_Material;
 		float m_Scale = 1.0f; 
+		bool m_Dirty = false;
 
 	};
 }

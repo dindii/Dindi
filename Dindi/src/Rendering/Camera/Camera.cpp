@@ -120,7 +120,10 @@ namespace Dindi
 	void Camera::RemakeProjection(float newWidth, float newHeight)
 	{//#TODO: More params
 		if (newWidth <= 0 || newHeight <= 0)
+		{
+			__debugbreak();
 			return;
+		}
 
 		Application& app = Application::GetInstance();
 		float viewportAR = app.GetUILayer()->GetViewportAspectRatio();

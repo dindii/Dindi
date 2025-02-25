@@ -34,7 +34,7 @@ namespace Dindi
 		
 		void SortMeshesBasedOnAABBSize(bool greaterThan);
 
-		inline void AddMesh(Mesh* const newMesh) { m_Mesh.emplace_back(newMesh); };
+		void AddMesh(Mesh* const newMesh);
 		
 		void SetWorldAABB(const AABB& aabb) { m_AABB.SetMin(aabb.GetMin()); m_AABB.SetMax(aabb.GetMax()); }
 		void SetAABB(const AABB& aabb) { m_AABB = aabb; }

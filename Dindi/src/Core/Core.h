@@ -30,6 +30,8 @@ enum ERenderingMapSlot
 	Normal,
 	RandomAngles,
 	Shadow,
+	RawOutput,
+	PostprocessingOutput,
 };
 
 enum EApplicationState

@@ -53,6 +53,16 @@ namespace Dindi
 			std::sort(m_Mesh.begin(), m_Mesh.end(), [](Mesh* a, Mesh* b) { return a->GetAABB().GetAABBSize() < b->GetAABB().GetAABBSize(); });
 	}
 
+	void Model::AddMesh(Mesh* const newMesh)
+	{
+		if (newMesh->GetIsDirty())
+		{
+			newMesh->RegisterData();
+		}
+
+		m_Mesh.emplace_back(newMesh);
+	}
+
 	void Model::BuildAABB()
 	{
 		AABB meshAABB = m_Mesh[0]->GetAABB();

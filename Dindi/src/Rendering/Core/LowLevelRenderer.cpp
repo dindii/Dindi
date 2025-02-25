@@ -46,8 +46,12 @@ namespace Dindi
 
 	namespace DND_INTERNAL
 	{
+
 		Framebuffer* LowLevelRenderer::m_ScreenOutput = nullptr;
+		Framebuffer* LowLevelRenderer::m_PostProcessing = nullptr;
 		CSMRenderPass* LowLevelRenderer::m_CSMRenderPass = nullptr;
+		RawRenderPass* LowLevelRenderer::m_RawRenderPass = nullptr;
+		PostProcessingRenderPass* LowLevelRenderer::m_PostProcessingRenderPass = nullptr;
 		uint32_t LowLevelRenderer::m_DrawCallNumber = 0;
 
 		//We are going to use only one UBO, so this doesn't need to be dynamic.
@@ -123,28 +127,14 @@ namespace Dindi
 			Debug::DebugRenderer::Init();
 #endif
 
-			uint32_t nwidth = app.GetWindow()->GetWidth();
-			uint32_t nheight = app.GetWindow()->GetHeight();
-
-			//------ Default screen output
-			RenderTargetDescriptor colorDescriptor;
-			colorDescriptor.internalFormat = RenderTargetInternalFormat::DND_RGB8;
-			colorDescriptor.type = RenderTargetDataType::DND_UNSIGNED_BYTE;
-			
-			RenderTargetDescriptor depthDescriptor;
-			depthDescriptor.internalFormat = RenderTargetInternalFormat::DND_DETPH_UNSIZED;
-			depthDescriptor.type = DND_FLOAT;
-			
-
-			m_ScreenOutput = new Framebuffer(nwidth, nheight, colorDescriptor, depthDescriptor);
-			//------ Default screen output
-
 			glDebugMessageCallback(glerrorcallback, nullptr);
 		}
 
 		void LowLevelRenderer::OnAppInitialized()
 		{
 			m_CSMRenderPass = new CSMRenderPass();
+			m_RawRenderPass = new RawRenderPass();
+			m_PostProcessingRenderPass = new PostProcessingRenderPass();
 		}
 
 		void LowLevelRenderer::SetConstantData(Scene* scene)
@@ -189,62 +179,13 @@ namespace Dindi
 
 			m_CSMRenderPass->GenerateOutput(scene);
 
-			m_ScreenOutput->Bind();
-			Clear(true, true);
-			OutputPass(scene);
-			DebugDraw(scene);
-			m_ScreenOutput->UnBind();
+			m_RawRenderPass->FeedCSMData(m_CSMRenderPass->GetTransforms());
+			m_RawRenderPass->GenerateOutput(scene);
+			
+			m_PostProcessingRenderPass->FeedRawRenderData(m_RawRenderPass->GetRenderTarget());
+			m_PostProcessingRenderPass->GenerateOutput(scene);
 		}
-
-		void LowLevelRenderer::OutputPass(Scene* scene)
-		{
-			m_DrawCallNumber = 0;
-
-			const GraphicsDefinitions& gd = m_GraphicsDefinitions;
-
-			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
-			{
-				Model* model = scene->GetEntities()[x];
-
-				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
-				{
-					Mesh* mesh = model->GetMeshes()[y];
-
-		
-
-					glBindVertexArray(mesh->GetVertexArrayObjectID());
-					glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferObjectID());
-					
-					Material* material = mesh->GetMaterial();
-					material->Bind();
-
-					glm::mat4 meshTransform = mesh->GetTransform();
-
-					material->GetShader()->UploadUniformMat4("u_Transform", meshTransform);
-
-					
-					std::vector<glm::mat4>& transforms = m_CSMRenderPass->GetTransforms();
-					for (uint32_t i = 0; i < m_GraphicsDefinitions.NumberOfShadowCascades; i++)
-					{
-						char lightTransformIndex[128];
-
-						sprintf(lightTransformIndex, "u_SingleLightTransform[%i]", i);
-						material->GetShader()->UploadUniformMat4(lightTransformIndex, transforms[i]);
-						
-						memset(lightTransformIndex, 0, 128);
-						sprintf(lightTransformIndex, "u_CSMDistances[%i]", i);
-						material->GetShader()->UploadUniformFloat(lightTransformIndex, gd.CSMCascadeDistance[i]);
-					}
-				
-
-					//#TODO: elements to draw.
-					glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
-					m_DrawCallNumber++;
-				}
-			}
-		}
-
-		
+			
 		void LowLevelRenderer::ApplySceneTransformation(Scene* scene)
 		{
 			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
@@ -300,86 +241,6 @@ namespace Dindi
 				}
 			}
 			///////////////////////////////////////////// Transform and Draw
-		}
-
-		void LowLevelRenderer::DebugDraw(Scene* scene)
-		{
-			//Draw all debug shapes in the queue
-			Debug::DebugRenderer::SubmitDraw();
-
-			Application& app = Application::GetInstance();
-
-			//DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
-			//Draw cubes in light positions to debug.]
-			LightManager* lightManager = scene->GetLightManager();
-			std::vector<PointLight>& lights = lightManager->GetLights();
-
-			if (app.GetApplicationState() == EApplicationState::EDITOR && Debug::DebugRenderer::CheckDebugModeFlag(Debug::LIGHT_BOX))
-				for (uint32_t x = 0; x < lights.size(); x++)
-				{
-					Debug::DebugShapeContext shapeContext;
-
-					shapeContext.firstPosition = lights[x].GetPosition();
-					shapeContext.shapeColor = lights[x].GetColor();
-					shapeContext.shapeSize = 0.5f;
-					shapeContext.shapeRenderFlags = (Debug::EDebugRenderFlags::WIREFRAME) | (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-					shapeContext.shapeType = Debug::EDebugShape::CUBE;
-
-					Debug::DebugRenderer::DrawShape(shapeContext);
-				}
-
-
-
-			for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
-			{
-				Model* model = scene->GetEntities()[x];
-
-				for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
-				{
-					Mesh* mesh = scene->GetEntities()[x]->GetMeshes()[y];
-					
-
-
-					if (Debug::DebugRenderer::CheckDebugModeFlag(Debug::MESH_AABB))
-					{
-						Debug::DebugShapeContext shapeContext;
-						shapeContext.firstPosition = mesh[x].GetAABB().GetMin();
-						shapeContext.shapeColor = glm::vec3(0.0f, 0.0f, 1.0f);
-						shapeContext.shapeSize = 0.1f;
-						shapeContext.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-						shapeContext.shapeType = Debug::EDebugShape::CUBE;
-
-						Debug::DebugShapeContext shapeContext1;
-						shapeContext1.firstPosition = mesh[x].GetAABB().GetMax();
-						shapeContext1.shapeColor = glm::vec3(1.0f, 0.0f, 0.0f);
-						shapeContext1.shapeSize = 0.1f;
-						shapeContext1.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-						shapeContext1.shapeType = Debug::EDebugShape::CUBE;
-
-						Debug::DebugRenderer::DrawShape(shapeContext1);
-						Debug::DebugRenderer::DrawShape(shapeContext);
-					}
-
-
-					if (Debug::DebugRenderer::CheckDebugModeFlag(Debug::MODEL_AABB))
-					{
-						Debug::DebugShapeContext model1;
-						model1.firstPosition = model[x].GetAABB().GetMin();
-						model1.shapeColor = glm::vec3(0.0f, 1.0f, 0.0f);
-						model1.shapeSize = 0.1f;
-						model1.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-						model1.shapeType = Debug::EDebugShape::CUBE;
-						Debug::DebugShapeContext model2;
-						model2.firstPosition = model[x].GetAABB().GetMax();
-						model2.shapeColor = glm::vec3(0.0f, 1.0f, 1.0f);
-						model2.shapeSize = 0.1f;
-						model2.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-						model2.shapeType = Debug::EDebugShape::CUBE;
-						Debug::DebugRenderer::DrawShape(model1);
-						Debug::DebugRenderer::DrawShape(model2);
-					}
-				}
-			}
 		}
 
 		void LowLevelRenderer::Clear(const bool ColorBuffer /*= true*/, const bool DepthBuffer /*= true*/)

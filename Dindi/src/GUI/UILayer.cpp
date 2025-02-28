@@ -360,13 +360,15 @@ namespace Dindi
 		ImGuizmo::SetDrawlist();
 
 		ImVec2 imageSize = ImGui::GetItemRectSize();
-		
 		CacheViewportSize(imageSize.x, imageSize.y);
-
+		
 		//#NOTE: I'm not sure if this should be here, but since we are already using the camera for another purposes (such as edit projection and view), I guess it will not be a problem to
 		//let this here. But we should keep in mind to change the architecture over this next time.
-		if((uint32_t)imageSize.x != m_ViewportSizeX || (uint32_t)imageSize.y != m_ViewportSizeY)
+		if ((uint32_t)imageSize.x != m_ViewportSizeX || (uint32_t)imageSize.y != m_ViewportSizeY || !m_ViewportInitializedProperties)
+		{
 			m_Scene->GetActiveCamera()->RemakeProjection(imageSize.x, imageSize.y);
+			m_ViewportInitializedProperties = true;
+		}
 		
 
 		ImVec2 imagePos = ImGui::GetItemRectMin();

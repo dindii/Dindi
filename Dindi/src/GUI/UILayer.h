@@ -80,5 +80,7 @@ namespace Dindi
 
 		const float m_ViewportPosX = 0.702f;
 
+		bool m_ViewportInitializedProperties = false;
+
 	};
 }

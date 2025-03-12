@@ -6,6 +6,7 @@
 #include <Rendering/RenderPasses/Shadow/CascadedShadowMapRenderPass.h>
 #include <Rendering/RenderPasses/Raw/RawRenderPass.h>
 #include <Rendering/RenderPasses/PostProcessing/PostProcessingRenderPass.h>
+#include <Rendering/RenderPasses/PostProcessing/Bloom/BloomPostProcessingRenderPass.h>
 
 class CSMRenderPass;
 
@@ -119,6 +120,7 @@ namespace Dindi
 			static CSMRenderPass* m_CSMRenderPass;
 			static RawRenderPass* m_RawRenderPass;
 			static PostProcessingRenderPass* m_PostProcessingRenderPass;
+			static BloomPostProcessingRenderPass* m_BloomProcessingRenderPass;
 			
 			static uint32_t m_DrawCallNumber;
 		};

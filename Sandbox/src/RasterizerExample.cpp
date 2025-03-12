@@ -38,7 +38,7 @@ void RasterizerExample::OnAttach()
 	//backpackModel = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\normalChapter\\plane.obj", glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 	//backpackModel = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\Nanosuite\\nanosuit.obj", glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
     //sponzaModel = new Dindi::Model(RESOURCES_PATH "Resources\\Models\\sponza.obj", glm::vec3(0.0f, 0.0f, 0.0f), 0.025f);
-	SceneOne->GetLightManager()->AddPointLight(glm::vec3(0.0f), glm::vec3(1.0f));
+	SceneOne->GetLightManager()->AddPointLight(glm::vec3(0.0f), glm::vec3(2.0f));
 	
 	//SceneOne->AddEntity(sponzaModel);
 	//SceneOne->AddEntity(backpackModel);

@@ -120,7 +120,7 @@ namespace Dindi
 				shapeContext.firstPosition = lights[x].GetPosition();
 				shapeContext.shapeColor = lights[x].GetColor();
 				shapeContext.shapeSize = 0.5f;
-				shapeContext.shapeRenderFlags = (Debug::EDebugRenderFlags::WIREFRAME) | (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
+				shapeContext.shapeRenderFlags = 0;// (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
 				shapeContext.shapeType = Debug::EDebugShape::CUBE;
 
 				Debug::DebugRenderer::DrawShape(shapeContext);

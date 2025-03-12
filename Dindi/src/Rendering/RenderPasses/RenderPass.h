@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Rendering/Core/Framebuffer.h>
-#include <Core/Core.h>
 #include <glm/mat4x4.hpp>
 #include <Rendering/Scene/Scene.h>
 

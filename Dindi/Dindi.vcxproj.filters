@@ -46,6 +46,15 @@
     <Filter Include="src\Rendering\RenderPasses">
       <UniqueIdentifier>{18A69F18-04B6-4BE9-6D6F-B007599E3A82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Rendering\RenderPasses\PostProcessing">
+      <UniqueIdentifier>{0A2E07DA-7648-6A7B-BF6A-7A0F2BC49182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Rendering\RenderPasses\PostProcessing\Bloom">
+      <UniqueIdentifier>{32F4816E-9E2F-E231-A724-5FC113DF6662}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Rendering\RenderPasses\Raw">
+      <UniqueIdentifier>{B121D00D-9D47-9A74-868D-1F407252BF40}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Rendering\RenderPasses\Shadow">
       <UniqueIdentifier>{0D0C1311-797A-6890-C263-23902E115E2C}</UniqueIdentifier>
     </Filter>
@@ -162,6 +171,18 @@
     <ClInclude Include="src\Rendering\Object\Renderable.h">
       <Filter>src\Rendering\Object</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering\RenderPasses\PostProcessing\Bloom\BloomPostProcessingRenderPass.h">
+      <Filter>src\Rendering\RenderPasses\PostProcessing\Bloom</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\RenderPasses\PostProcessing\PostProcessingRenderPass.h">
+      <Filter>src\Rendering\RenderPasses\PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\RenderPasses\Raw\RawRenderPass.h">
+      <Filter>src\Rendering\RenderPasses\Raw</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\RenderPasses\RenderPass.h">
+      <Filter>src\Rendering\RenderPasses</Filter>
+    </ClInclude>
     <ClInclude Include="src\Rendering\RenderPasses\Shadow\CascadedShadowMapRenderPass.h">
       <Filter>src\Rendering\RenderPasses\Shadow</Filter>
     </ClInclude>
@@ -228,12 +249,6 @@
     <ClInclude Include="vendor\imguizmo\ImGuizmo.h">
       <Filter>vendor\imguizmo</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\tinygltf\stb_image_write.h" />
-    <ClInclude Include="vendor\tinygltf\json.hpp" />
-    <ClInclude Include="vendor\tinygltf\tiny_gltf.h" />
-    <ClInclude Include="src\Rendering\RenderPasses\RenderPass.h" />
-    <ClInclude Include="src\Rendering\RenderPasses\Raw\RawRenderPass.h" />
-    <ClInclude Include="src\Rendering\RenderPasses\PostProcessing\PostProcessingRenderPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -277,6 +292,15 @@
     </ClCompile>
     <ClCompile Include="src\Rendering\Object\Renderable.cpp">
       <Filter>src\Rendering\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\RenderPasses\PostProcessing\Bloom\BloomPostProcessingRenderPass.cpp">
+      <Filter>src\Rendering\RenderPasses\PostProcessing\Bloom</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\RenderPasses\PostProcessing\PostProcessingRenderPass.cpp">
+      <Filter>src\Rendering\RenderPasses\PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\RenderPasses\Raw\RawRenderPass.cpp">
+      <Filter>src\Rendering\RenderPasses\Raw</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering\RenderPasses\Shadow\CascadedShadowMapRenderPass.cpp">
       <Filter>src\Rendering\RenderPasses\Shadow</Filter>
@@ -338,11 +362,5 @@
     <ClCompile Include="vendor\imguizmo\ImGuizmo.cpp">
       <Filter>vendor\imguizmo</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\RenderPasses\Raw\RawRenderPass.cpp" />
-    <ClCompile Include="src\Rendering\RenderPasses\PostProcessing\PostProcessingRenderPass.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Shaders\PostProcessing\PostProcessingFrag.shader" />
-    <None Include="Resources\Shaders\PostProcessing\PostProcessingVertex.shader" />
   </ItemGroup>
 </Project>

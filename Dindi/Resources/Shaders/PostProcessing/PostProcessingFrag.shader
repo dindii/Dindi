@@ -2,6 +2,7 @@
 
 in vec2 v_TexCoord;
 uniform sampler2D u_HDRBuffer;
+uniform sampler2D u_BloomTexture;
 out vec4 FragColor;
 
 #define DND_MAX_LIGHTS 5
@@ -31,11 +32,14 @@ void main()
 	float gamma = 2.2;
 	float exposure = 1.0f;
 
-	vec3 hdrColor = texture(u_HDRBuffer, v_TexCoord).rgb;
+	vec4 hdrColor = texture(u_HDRBuffer, v_TexCoord);
+	vec4 bloomColor = texture(u_BloomTexture, v_TexCoord);
+
+	//with
+	vec4 intermediateResult = hdrColor + (bloomColor * 0.8f);
 	
 
-	vec3 result = vec3(1.0f) - exp(-hdrColor * exposure);
-
-	result = pow(result, vec3(1.0f / gamma));
-	FragColor = vec4(result, 1.0f);
+	vec4 result = vec4(1.0f) - exp(-intermediateResult * exposure);
+	result = pow(result, vec4(1.0f / gamma));
+	FragColor = vec4(result);
 }

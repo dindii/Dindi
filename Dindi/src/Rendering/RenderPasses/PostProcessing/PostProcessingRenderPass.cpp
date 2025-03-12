@@ -86,6 +86,9 @@ namespace Dindi
 		m_CachedRawRender->Bind(ERenderingMapSlot::RawOutput);
 		shader->UploadInt("u_HDRBuffer", ERenderingMapSlot::RawOutput);
 		
+		shader->UploadInt("u_BloomTexture", ERenderingMapSlot::BloomOutput);
+		//m_CachedRawRender->Bind(ERenderingMapSlot::BloomOutput);
+
 		
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, mesh->GetVertexCount());
 	}

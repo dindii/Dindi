@@ -392,7 +392,6 @@ void main()
 	{
 		PackLight temp = CalculatePointLight(v_Lights[x].m_Color.rgb, v_Lights[x].m_Position.xyz, x);
 
-
 		vec3 fragPos = textureSize(u_Normal, 0).x > 1 ? v_TangentFragPos : v_FragPos;
 		vec3 lightPos = textureSize(u_Normal, 0).x > 1 ? v_Lights[x].m_Position.xyz : c_Lights[x].m_Position.xyz;
 
@@ -449,12 +448,12 @@ void main()
 	//
 	float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
 
-	//get back
+	//get backas
 	temporaryResult += vec3(dirLight.ambient + (/*1.0 -*/ shadow) * (dirLight.diffuse + dirLight.specular));
-	//temporaryResult += vec3(dirLight.ambient + (/*1.0 -*/ shadow) * (dirLight.diffuse));
+	
 
 	outColor = vec4(temporaryResult.xyz, 1.0f);
-//
+//s
 
 	//DEBUG TEST
 	//float exposure = 1.0f;

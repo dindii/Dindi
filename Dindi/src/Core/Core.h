@@ -32,6 +32,8 @@ enum ERenderingMapSlot
 	Shadow,
 	RawOutput,
 	PostprocessingOutput,
+	BloomSource,
+	BloomOutput
 };
 
 enum EApplicationState

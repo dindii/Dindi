@@ -1,18 +1,12 @@
 #include "Dindipch.h"
-#include <Rendering/Core/Common.hpp>
 #include "LowLevelRenderer.h"
 #include <GLFW/glfw3.h>
-#include <Utils/Logger.h>
-#include <Core/Application.h>
 #include <Platform/Window.h>
 #include <Rendering/Debug/DebugRenderer.h>
 #include <Utils/AssetManager.h>
-#include <Rendering/Shader/Shader.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <Physics/Trace.h>
-#include <Input/Input.h>
 
 namespace Dindi
 {
@@ -51,6 +45,7 @@ namespace Dindi
 		Framebuffer* LowLevelRenderer::m_PostProcessing = nullptr;
 		CSMRenderPass* LowLevelRenderer::m_CSMRenderPass = nullptr;
 		RawRenderPass* LowLevelRenderer::m_RawRenderPass = nullptr;
+		BloomPostProcessingRenderPass* LowLevelRenderer::m_BloomProcessingRenderPass = nullptr;
 		PostProcessingRenderPass* LowLevelRenderer::m_PostProcessingRenderPass = nullptr;
 		uint32_t LowLevelRenderer::m_DrawCallNumber = 0;
 
@@ -100,7 +95,8 @@ namespace Dindi
 
 			SetViewport(0, 0, width, height);
 			
-			SetClearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+		//	SetClearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+			SetClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -135,6 +131,7 @@ namespace Dindi
 			m_CSMRenderPass = new CSMRenderPass();
 			m_RawRenderPass = new RawRenderPass();
 			m_PostProcessingRenderPass = new PostProcessingRenderPass();
+			m_BloomProcessingRenderPass = new BloomPostProcessingRenderPass(7);
 		}
 
 		void LowLevelRenderer::SetConstantData(Scene* scene)
@@ -181,7 +178,12 @@ namespace Dindi
 
 			m_RawRenderPass->FeedCSMData(m_CSMRenderPass->GetTransforms());
 			m_RawRenderPass->GenerateOutput(scene);
-			
+
+			m_BloomProcessingRenderPass->FeedSourceHDRBuffer(m_RawRenderPass->GetRenderTarget());
+			m_BloomProcessingRenderPass->GenerateOutput(scene);
+
+			//m_PostProcessingRenderPass->FeedBloomRenderData(m_BloomProcessingRenderPass->GetRenderTargetMips()[3]);
+
 			m_PostProcessingRenderPass->FeedRawRenderData(m_RawRenderPass->GetRenderTarget());
 			m_PostProcessingRenderPass->GenerateOutput(scene);
 		}

@@ -12,6 +12,7 @@ namespace Dindi
 
 		Texture2D* GetRenderTarget() { return m_RenderTarget; }
 		void FeedRawRenderData(Texture2D* rawRender) { m_CachedRawRender = rawRender; }
+		void FeedBloomRenderData(Texture2D* bloomRender) { m_BloomCachedRender = bloomRender; }
 		virtual void GenerateOutput(Scene* scene) override final;
 	protected:
 		virtual void TransformAndDraw(Scene* scene) override final;
@@ -19,6 +20,7 @@ namespace Dindi
 	private:
 		Model* m_ScreenQuadModel;
 		Texture2D* m_CachedRawRender;
+		Texture2D* m_BloomCachedRender;
 		Texture2D* m_RenderTarget;
 
 	};

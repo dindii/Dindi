@@ -183,6 +183,10 @@ namespace Dindi
 	void Shader::UploadUniformMat4(const std::string& name, const glm::mat4& mat)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
+
+		//if (location <= 0)
+		//	DND_LOG_WARNING("mat4 ", name, " uniform not found!");
+
 		glUniformMatrix4fv(location, 1, GL_FALSE, &mat[0][0]);
 		
 	}
@@ -190,30 +194,60 @@ namespace Dindi
 	void Shader::UploadUniformFloat(const std::string& name, const float value)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
+
+		//if (location <= 0)
+		//	DND_LOG_WARNING("float ", name, " uniform not found!");
+
 		glUniform1f(location, value);
+	}
+
+	void Shader::UploadUniformFloat2(const std::string& name, const glm::vec2& value)
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
+
+		//if (location <= 0)
+		//	DND_LOG_WARNING("vec2 ", name, " uniform not found!");
+
+		glUniform2f(location, value.x, value.y);
 	}
 
 	void Shader::UploadUniformFloat4(const std::string& name, const glm::vec4& mat)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
+
+		//if (location <= 0)
+		//	DND_LOG_WARNING("vec4 ", name, " uniform not found!");
+
 		glUniform4f(location, mat.x, mat.y, mat.z, mat.w);
 	}
 
 	void Shader::UploadUniformFloat3(const std::string& name, const glm::vec3& mat)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
+
+		//if (location <= 0)
+		//	DND_LOG_WARNING("vec3 ", name, " uniform not found!");
+
 		glUniform3f(location, mat.x, mat.y, mat.z);
 	}
 
 	void Shader::UploadIntArray(const std::string& name, int* data, uint32_t count)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
+
+		//if (location <= 0)
+		//	DND_LOG_WARNING("Int Array ", name, " uniform not found!");
+
 		glUniform1iv(location, count, data);
 	}
 
 	void Shader::UploadInt(const std::string& name, uint32_t data)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str()); //@TODO: Cache those locations
+
+		//if (location <= 0)
+		//	DND_LOG_WARNING("INT ", name, " uniform not found!");
+
 		glUniform1i(location, data);
 	}
 

@@ -38,7 +38,20 @@ namespace Dindi
 		glm::vec2 GetViewportMousePosition() const;
 		glm::vec2 GetViewportSize() const;
 		float GetViewportAspectRatio() const { return (float)m_ViewportSizeX / (float)m_ViewportSizeY; }
+
+#ifdef DINDI_DEBUG
+		void DebugImageUI(uint32_t imageHandles);
+#else
+		void DebugImageUI(uint32_t imageHandles) {};
+#endif
+
 	private:
+#ifdef DINDI_DEBUG
+		void DrawDebugImageUI();
+#else
+		void DrawDebugImageUI() {};
+#endif
+
 		void CacheViewportMinPos(uint32_t width, uint32_t height);
 		void CacheViewportSize(uint32_t width, uint32_t height);
 		void SetFrameDimensions(uint32_t width, uint32_t height) { m_FrameWidth = width; m_FrameHeight = height; };

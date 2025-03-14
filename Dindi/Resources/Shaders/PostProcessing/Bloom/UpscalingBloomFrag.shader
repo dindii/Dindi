@@ -7,11 +7,12 @@
 // Remember to use a floating-point texture format (for HDR)!
 // Remember to use edge clamping for this texture!
 uniform sampler2D u_SrcTexture;
+uniform sampler2D u_DownsampleSrcTexture;
 uniform float u_FilterRadius;
-
 in vec2 v_TexCoord;
-vec3 upsample;
+vec4 upsample;
 out vec4 outColor;
+
 
 void main()
 {
@@ -25,17 +26,17 @@ void main()
 	// d - e - f
 	// g - h - i
 	// === ('e' is the current texel) ===
-	vec3 a = texture(u_SrcTexture, vec2(v_TexCoord.x - x, v_TexCoord.y + y)).rgb;
-	vec3 b = texture(u_SrcTexture, vec2(v_TexCoord.x, v_TexCoord.y + y)).rgb;
-	vec3 c = texture(u_SrcTexture, vec2(v_TexCoord.x + x, v_TexCoord.y + y)).rgb;
+	vec4 a = texture(u_SrcTexture, vec2(v_TexCoord.x - x, v_TexCoord.y + y));
+	vec4 b = texture(u_SrcTexture, vec2(v_TexCoord.x, v_TexCoord.y + y));
+	vec4 c = texture(u_SrcTexture, vec2(v_TexCoord.x + x, v_TexCoord.y + y));
 
-	vec3 d = texture(u_SrcTexture, vec2(v_TexCoord.x - x, v_TexCoord.y)).rgb;
-	vec3 e = texture(u_SrcTexture, vec2(v_TexCoord.x, v_TexCoord.y)).rgb;
-	vec3 f = texture(u_SrcTexture, vec2(v_TexCoord.x + x, v_TexCoord.y)).rgb;
+	vec4 d = texture(u_SrcTexture, vec2(v_TexCoord.x - x, v_TexCoord.y));
+	vec4 e = texture(u_SrcTexture, vec2(v_TexCoord.x, v_TexCoord.y));
+	vec4 f = texture(u_SrcTexture, vec2(v_TexCoord.x + x, v_TexCoord.y));
 
-	vec3 g = texture(u_SrcTexture, vec2(v_TexCoord.x - x, v_TexCoord.y - y)).rgb;
-	vec3 h = texture(u_SrcTexture, vec2(v_TexCoord.x, v_TexCoord.y - y)).rgb;
-	vec3 i = texture(u_SrcTexture, vec2(v_TexCoord.x + x, v_TexCoord.y - y)).rgb;
+	vec4 g = texture(u_SrcTexture, vec2(v_TexCoord.x - x, v_TexCoord.y - y));
+	vec4 h = texture(u_SrcTexture, vec2(v_TexCoord.x, v_TexCoord.y - y));
+	vec4 i = texture(u_SrcTexture, vec2(v_TexCoord.x + x, v_TexCoord.y - y));
 
 	// Apply weighted distribution, by using a 3x3 tent filter:
 	//  1   | 1 2 1 |
@@ -46,5 +47,7 @@ void main()
 	upsample += (a + c + g + i);
 	upsample *= 1.0 / 16.0;
 
-	outColor = vec4(upsample, 1.0f);
+	upsample += texture(u_DownsampleSrcTexture, vec2(v_TexCoord.x, v_TexCoord.y));
+
+	outColor = vec4(upsample.xyz, 1.0f);
 }

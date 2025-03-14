@@ -38,7 +38,8 @@ void main()
 	//with
 	vec4 intermediateResult = hdrColor + (bloomColor * 0.8f);
 	
-
+	
+	
 	vec4 result = vec4(1.0f) - exp(-intermediateResult * exposure);
 	result = pow(result, vec4(1.0f / gamma));
 	FragColor = vec4(result);

@@ -33,6 +33,10 @@ enum ERenderingMapSlot
 	RawOutput,
 	PostprocessingOutput,
 	BloomSource,
+	BloomHotGlowSrc,
+	BloomHotGlowSrc2,
+	NextBloomMip,
+	PreviousBloomMip,
 	BloomOutput
 };
 

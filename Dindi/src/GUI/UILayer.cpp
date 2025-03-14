@@ -35,7 +35,28 @@ namespace Dindi
 		ProcessPerformanceStats(dt);
 		ProcessGraphicsDefinitions();
 
+#ifdef DINDI_DEBUG
+		DrawDebugImageUI();
+#endif
 		GUI::End();
+	}
+
+#ifdef DINDI_DEBUG
+	std::vector<uint32_t> DebugImageUIPool;
+#endif
+
+	void UILayer::DrawDebugImageUI()
+	{
+		ImGui::Begin("Custom Debug Image");
+
+		for (int i = 0; i < DebugImageUIPool.size(); i++)
+			ImGui::Image((ImTextureID)DebugImageUIPool[i], { 400, 400}, { 0,1 }, { 1,0 });
+
+		ImGui::End();
+	}
+	void UILayer::DebugImageUI(uint32_t imageHandle)
+	{
+		DebugImageUIPool.push_back(imageHandle);
 	}
 
 	void UILayer::OnEvent(Dindi::Event& event)

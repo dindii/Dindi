@@ -409,10 +409,10 @@ void main()
 
 
 //	//#TODO: colocar a cor do dir light no cbuffer
-	PackLight dirLight = CalculateDirectionalLight(vec3(1.2f, 0.75f, 0.25f) * 2);
+	PackLight dirLight = CalculateDirectionalLight(vec3(1.2f, 0.75f, 0.25f) * 2.4);
 
 	dirLight.diffuse *= 1.0f;
-	dirLight.ambient *= vec3(0.3f, 0.47f, 1.0f);
+	dirLight.ambient *= vec3(0.3f, 0.47f, 1.0f) * 0.2;
 
 //	temporaryResult += dirLight.ambient + dirLight.diffuse + dirLight.specular;
 //	

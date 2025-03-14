@@ -363,4 +363,8 @@
       <Filter>vendor\imguizmo</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\CopyFrag.shader" />
+    <None Include="Resources\Shaders\CopyVert.shader" />
+  </ItemGroup>
 </Project>

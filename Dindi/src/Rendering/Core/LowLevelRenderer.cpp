@@ -131,7 +131,7 @@ namespace Dindi
 			m_CSMRenderPass = new CSMRenderPass();
 			m_RawRenderPass = new RawRenderPass();
 			m_PostProcessingRenderPass = new PostProcessingRenderPass();
-			m_BloomProcessingRenderPass = new BloomPostProcessingRenderPass(7);
+			m_BloomProcessingRenderPass = new BloomPostProcessingRenderPass(8);
 		}
 
 		void LowLevelRenderer::SetConstantData(Scene* scene)

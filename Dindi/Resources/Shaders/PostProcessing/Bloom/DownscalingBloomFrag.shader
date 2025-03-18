@@ -23,7 +23,7 @@ uniform int u_PreFilter;
 vec3 PreFilter(vec3 color)
 {
 	float brightness = max(color.r, max(color.g, color.b));
-	float contribution = max(0, brightness - 1.5f);
+	float contribution = max(0, brightness - 2.5f);
 	contribution /= max(brightness, 0.00001f);
 	return color * contribution;
 }

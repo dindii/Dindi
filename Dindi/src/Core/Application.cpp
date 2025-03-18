@@ -56,7 +56,7 @@ namespace Dindi
 	{
 		for (Layer* layer : m_LayerStack)
 			layer->OnDetach();
-
+		
 		delete m_ApplicationWindow;
 	}
 

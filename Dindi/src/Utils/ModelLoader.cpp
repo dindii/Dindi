@@ -2,6 +2,7 @@
 #include "ModelLoader.h"
 #include <filesystem>
 #include "Utils/Logger.h"
+#include <Utils/Profiling/TimerProf.h>
 
 #define TINYOBJLOADER_IMPLEMENTATION 1
 #include "../vendor/tinyobjloader/tiny_obj_loader.h"
@@ -24,8 +25,7 @@ namespace Dindi
 
 	bool ModelLoader::LoadOBJ(std::string filepath, Model& modelToFill)
 	{
-		std::chrono::duration now = std::chrono::system_clock::now().time_since_epoch();
-		auto libTimeBefore = std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
+		SCOPED_PROFILE("LoadOBJ Total", true);
 
 		tinyobj::ObjReaderConfig readerConfig;
 
@@ -61,12 +61,15 @@ namespace Dindi
 
 		tinyobj::ObjReader loader;
 
-		if (!loader.ParseFromFile(filepath, readerConfig))
 		{
-			if (!loader.Error().empty())
-				DND_LOG_ERROR("Failed to load .OBJ file: ", loader.Error());
+			SCOPED_PROFILE("LoadOBJ Lib Parse Time", true);
+			if (!loader.ParseFromFile(filepath, readerConfig))
+			{
+				if (!loader.Error().empty())
+					DND_LOG_ERROR("Failed to load .OBJ file: ", loader.Error());
 
-			return false;
+				return false;
+			}
 		}
 
 		if (!loader.Warning().empty())
@@ -82,16 +85,12 @@ namespace Dindi
 		
 		std::vector<Mesh*>& meshToFill = modelToFill.GetMeshes();
 
-		std::chrono::duration anow = std::chrono::system_clock::now().time_since_epoch();
-		auto libTimeThen = std::chrono::duration_cast<std::chrono::milliseconds>(anow).count();
-
-		DND_LOG_TRACE("LibTime to Load Sponza: ", libTimeThen - libTimeBefore);
-
-		std::chrono::duration noww = std::chrono::system_clock::now().time_since_epoch();
-		auto sortTimeBefore = std::chrono::duration_cast<std::chrono::milliseconds>(noww).count();
-
 		meshToFill.reserve(shapes.size());
 
+
+
+		{
+		SCOPED_PROFILE("LoadOBJ Engine Parse Time", true);
 		for (size_t shapeIndex = 0; shapeIndex < shapes.size(); shapeIndex++)
 		{
 			meshToFill.emplace_back(new Mesh());
@@ -102,6 +101,8 @@ namespace Dindi
 			std::vector<glm::vec3> temporaryTangents;
 
 			size_t index_offset = 0;
+
+			//temporaryVertexPositions.resize(shapes[shapeIndex].mesh.num_face_vertices.size() * 3);
 
 			// Loop over faces(polygon)
 			for (size_t f = 0; f < shapes[shapeIndex].mesh.num_face_vertices.size(); f++)
@@ -213,11 +214,7 @@ namespace Dindi
 				}
 			}
 		}
-
-		std::chrono::duration nowaw = std::chrono::system_clock::now().time_since_epoch();
-		auto sortTimeThen = std::chrono::duration_cast<std::chrono::milliseconds>(nowaw).count();
-
-		DND_LOG_TRACE("Sort time to Load Sponza: ", sortTimeThen - sortTimeBefore);
+		}
 
 		return true;
 	}

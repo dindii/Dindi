@@ -39,7 +39,7 @@ void main()
 	vec4 i = texture(u_SrcTexture, vec2(v_TexCoord.x + x, v_TexCoord.y - y));
 
 	// Apply weighted distribution, by using a 3x3 tent filter:
-	//  1   | 1 2 1 |
+	//  1    | 1 2 1 |
 	// -- * | 2 4 2 |
 	// 16   | 1 2 1 |
 	upsample = e * 4.0;

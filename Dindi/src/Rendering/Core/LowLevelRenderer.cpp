@@ -47,6 +47,7 @@ namespace Dindi
 		RawRenderPass* LowLevelRenderer::m_RawRenderPass = nullptr;
 		BloomPostProcessingRenderPass* LowLevelRenderer::m_BloomProcessingRenderPass = nullptr;
 		PostProcessingRenderPass* LowLevelRenderer::m_PostProcessingRenderPass = nullptr;
+		GBufferRenderPass* LowLevelRenderer::m_GBufferRenderPass = nullptr;
 		uint32_t LowLevelRenderer::m_DrawCallNumber = 0;
 
 		//We are going to use only one UBO, so this doesn't need to be dynamic.
@@ -98,8 +99,9 @@ namespace Dindi
 		//	SetClearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
 			SetClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			//glEnable(GL_BLEND);
+			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_BLEND);
 
 			//Backface culling.
 			glEnable(GL_CULL_FACE);
@@ -132,6 +134,7 @@ namespace Dindi
 			m_RawRenderPass = new RawRenderPass();
 			m_PostProcessingRenderPass = new PostProcessingRenderPass();
 			m_BloomProcessingRenderPass = new BloomPostProcessingRenderPass(8);
+			m_GBufferRenderPass = new GBufferRenderPass();
 		}
 
 		void LowLevelRenderer::SetConstantData(Scene* scene)
@@ -175,8 +178,10 @@ namespace Dindi
 			ApplySceneTransformation(scene);
 
 			m_CSMRenderPass->GenerateOutput(scene);
+			m_GBufferRenderPass->GenerateOutput(scene);
 
 			m_RawRenderPass->FeedCSMData(m_CSMRenderPass->GetTransforms());
+			m_RawRenderPass->FeedGBufferData(m_GBufferRenderPass->GetGbufferResources());
 			m_RawRenderPass->GenerateOutput(scene);
 
 			m_BloomProcessingRenderPass->FeedSourceHDRBuffer(m_RawRenderPass->GetRenderTarget());
@@ -186,6 +191,7 @@ namespace Dindi
 
 			m_PostProcessingRenderPass->FeedRawRenderData(m_RawRenderPass->GetRenderTarget());
 			m_PostProcessingRenderPass->GenerateOutput(scene);
+
 		}
 			
 		void LowLevelRenderer::ApplySceneTransformation(Scene* scene)

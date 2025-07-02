@@ -37,7 +37,12 @@ enum ERenderingMapSlot
 	BloomHotGlowSrc2,
 	NextBloomMip,
 	PreviousBloomMip,
-	BloomOutput
+	BloomOutput,
+	GBuffer_Albedo,
+	GBuffer_Position,
+	Gbuffer_Normal,
+	GBuffer_Depth
+	
 };
 
 enum EApplicationState

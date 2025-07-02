@@ -21,12 +21,14 @@ in vec4 v_FragPosViewSpace;
 uniform sampler2D u_Diffuse;
 uniform sampler2D u_Specular;
 uniform sampler2D u_Normal; //#TODO: Expand to properly accept normal textures other than only attribute normals (usually we will only get those as textures).
+
 uniform sampler2D u_ShadowMap[DND_CSM_LEVELS];
-
 uniform sampler3D u_RandomAngles;
-
 uniform float u_CSMDistances[DND_CSM_LEVELS];
+
 in PointLight v_Lights[DND_MAX_LIGHTS];
+
+uniform int u_LightIndex;
 
 in vec3 v_TangentLightDirPos;
 in vec3 v_TangentViewPos;

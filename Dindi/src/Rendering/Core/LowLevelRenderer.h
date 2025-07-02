@@ -7,6 +7,7 @@
 #include <Rendering/RenderPasses/Raw/RawRenderPass.h>
 #include <Rendering/RenderPasses/PostProcessing/PostProcessingRenderPass.h>
 #include <Rendering/RenderPasses/PostProcessing/Bloom/BloomPostProcessingRenderPass.h>
+#include <Rendering/RenderPasses/Deferred/GBufferPass.h>
 
 class CSMRenderPass;
 
@@ -89,6 +90,7 @@ namespace Dindi
 			//static inline uint32_t GetScreenOutputHandle() { return m_PostProcessingRenderPass->GetRenderTarget()->GetID(); }
 			static inline uint32_t GetScreenOutputHandle() { return m_RawRenderPass->GetRenderTarget()->GetID(); }
 			static inline uint32_t GetPostProcessingHandle() { return m_PostProcessingRenderPass->GetRenderTarget()->GetID(); }
+			static inline std::vector<Texture2D*> GetGBuffer() { return m_GBufferRenderPass->GetGbufferResources(); }
 
 			static inline std::vector<Texture2D*>& GetShadowMap() { return m_CSMRenderPass->GetRenderTarget(); }
 		
@@ -121,6 +123,7 @@ namespace Dindi
 			static RawRenderPass* m_RawRenderPass;
 			static PostProcessingRenderPass* m_PostProcessingRenderPass;
 			static BloomPostProcessingRenderPass* m_BloomProcessingRenderPass;
+			static GBufferRenderPass* m_GBufferRenderPass;
 			
 			static uint32_t m_DrawCallNumber;
 		};

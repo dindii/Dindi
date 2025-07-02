@@ -15,6 +15,7 @@ namespace Dindi
 		Material(Shader* shader) : m_Shader(shader) {};
 		~Material();
 		void Bind() const;
+		void BindTextures(const Ref<Shader>& shader) const;
 		inline Ref<Shader>& GetShader()  { return m_Shader; }
 
 		void SetDiffuseMap         (Ref<Texture2D> DiffuseMap);
@@ -35,5 +36,7 @@ namespace Dindi
 		static Texture2D* m_BlankDiffuseTexture;
 		static Texture2D* m_BlankSpecularTexture;
 		static Texture2D* m_BlankNormalTexture;
+
+		glm::vec4 m_MissingTextureColor = { 1.0f, 0.0f, 1.0f, 1.0f };
 	};
 }

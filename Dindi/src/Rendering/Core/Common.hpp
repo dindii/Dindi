@@ -78,8 +78,11 @@ namespace Dindi
 
 	enum FramebufferRenderTargetSlot
 	{
+		POSITION,
+		NORMAL,
+		ALBEDO_SPECULAR,
 		DEPTH,
-		COLOR
+		FRAME_BUFFER_RENDER_TARGET_SLOT_LAST = DEPTH
 	};
 
 	enum RenderTargetMagMinFilter

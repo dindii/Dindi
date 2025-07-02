@@ -166,6 +166,13 @@ namespace Dindi
 
 		ImGui::SliderFloat4("Directional Light Position'", &gd.directionalLightDir.x, 0.0f, 5.0f);
 
+		for (int i = 0; i < 3; i++)
+		{
+			ImGui::Image((ImTextureID)DND_INTERNAL::LowLevelRenderer::GetGBuffer()[i]->GetID(), { 500, 500 }, { 0,1 }, { 1,0 });
+		}
+
+		ImGui::Image((ImTextureID)DND_INTERNAL::LowLevelRenderer::GetGBuffer()[FramebufferRenderTargetSlot::DEPTH]->GetID(), { 500, 500 }, { 0,1 }, { 1,0 });
+
 		ImGui::End();
 	}
 
@@ -248,7 +255,7 @@ namespace Dindi
 			if (ImGui::DragFloat3(lightLabel, pos, m_PositionSliderSpeed))
 				light.SetPosition({ pos[0], pos[1], pos[2] });
 
-			if (ImGui::ColorEdit3(lightColorLabel, color))
+			if (ImGui::ColorEdit3(lightColorLabel, color, ImGuiColorEditFlags_HDR))
 				light.SetColor({ color[0], color[1], color[2], 0.0f });
 
 			if (ImGui::Button(lightRemoveLabel))

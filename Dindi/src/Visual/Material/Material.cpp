@@ -39,18 +39,25 @@ namespace Dindi
 		//	delete m_ambientOcclusionMap;
 	}
 
-	void Material::Bind() const
+	void Material::BindTextures(const Ref<Shader>& shader) const
 	{
-		m_Shader->Bind();
+		shader->Bind();
 
 		m_diffuseMap ? m_diffuseMap->Bind(ERenderingMapSlot::Diffuse) : m_BlankDiffuseTexture->Bind(ERenderingMapSlot::Diffuse);
-		m_Shader->UploadInt("u_Diffuse", ERenderingMapSlot::Diffuse);
+		shader->UploadInt("u_Diffuse", ERenderingMapSlot::Diffuse);
 
 		m_specularMap ? m_specularMap->Bind(ERenderingMapSlot::Specular) : m_BlankSpecularTexture->Bind(ERenderingMapSlot::Specular);
-		m_Shader->UploadInt("u_Specular", ERenderingMapSlot::Specular);
-			
+		shader->UploadInt("u_Specular", ERenderingMapSlot::Specular);
+
 		m_normalMap ? m_normalMap->Bind(ERenderingMapSlot::Normal) : m_BlankNormalTexture->Bind(ERenderingMapSlot::Normal);
-		m_Shader->UploadInt("u_Normal", ERenderingMapSlot::Normal);
+		shader->UploadInt("u_Normal", ERenderingMapSlot::Normal);
+
+		shader->UploadUniformFloat4("u_Color", m_MissingTextureColor);
+	}
+
+	void Material::Bind() const
+	{
+		BindTextures(m_Shader);
 
 
 		std::vector<Texture2D*>& shadowMaps = Renderer::GetShadowMap();

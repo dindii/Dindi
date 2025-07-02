@@ -113,7 +113,36 @@ namespace Dindi
 
 	void Framebuffer::AttachRenderTarget(const Texture2D& rt, FramebufferRenderTargetSlot slot)
 	{
-		int32_t attachmentType = slot == FramebufferRenderTargetSlot::COLOR ? GL_COLOR_ATTACHMENT0 : GL_DEPTH_ATTACHMENT;
+		int32_t attachmentType;
+
+		switch (slot)
+		{
+			case FramebufferRenderTargetSlot::POSITION:
+			{
+				attachmentType = GL_COLOR_ATTACHMENT2;
+			} break;
+
+			case FramebufferRenderTargetSlot::NORMAL:
+			{
+				attachmentType = GL_COLOR_ATTACHMENT1;
+			} break;
+
+			case FramebufferRenderTargetSlot::ALBEDO_SPECULAR:
+			{
+				attachmentType = GL_COLOR_ATTACHMENT0;
+			} break;
+		
+			case FramebufferRenderTargetSlot::DEPTH	:
+			{
+				attachmentType = GL_DEPTH_ATTACHMENT;
+			} break;
+
+			default:
+			{
+				DND_LOG_ERROR("Trying to attach invalid slot on AttachRenderTarget(...)");
+				attachmentType = 0;
+			} break;
+		}
 		
 		glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, rt.GetID(), 0);
 	}

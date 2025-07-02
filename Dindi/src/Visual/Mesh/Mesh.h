@@ -13,8 +13,9 @@ namespace Dindi
 	class Mesh : public Renderable, public Pickable
 	{
 	public:
-		Mesh(std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER);
-		Mesh(std::vector<glm::vec3>&& vertices, std::string vertexPath = DEFAULT_VERTEX_SHADER, std::string fragmentPath = DEFAULT_FRAGMENT_SHADER) noexcept;
+		Mesh();
+		Mesh(std::string vertexPath, std::string fragmentPath);
+		Mesh(std::vector<glm::vec3>&& vertices, std::string vertexPath, std::string fragmentPath) noexcept;
 		
 		~Mesh();
 

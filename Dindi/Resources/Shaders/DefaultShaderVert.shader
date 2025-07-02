@@ -84,6 +84,7 @@ void main()
 	v_TangentViewPos = v_TBN * vec3(c_CameraPos.xyz);
 	v_TangentFragPos = v_TBN * v_FragPos;
 
+	//to enable back
 	
 	for (int i = 0; i < numLights; i++)
 	{

@@ -73,7 +73,7 @@ namespace Dindi
 
 	void PostProcessingRenderPass::TransformAndDraw(Scene* scene)
 	{
-		m_Framebuffer->AttachRenderTarget(*m_RenderTarget, FramebufferRenderTargetSlot::COLOR);
+		m_Framebuffer->AttachRenderTarget(*m_RenderTarget, FramebufferRenderTargetSlot::ALBEDO_SPECULAR);
 		DND_INTERNAL::LowLevelRenderer::Clear(true, true);
 
 		Mesh* mesh = m_ScreenQuadModel->GetMeshes()[0];

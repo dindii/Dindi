@@ -1,10 +1,7 @@
 #version 420 core
 
-layout(location = 0) in vec3 a_Coord;
-uniform mat4 u_Transform;
-
-//We will be not doing any lighting calculation but I will keep this here so we can use other useful constant buffer data.
 #define DND_MAX_LIGHTS 5
+#define DND_CSM_LEVELS 3
 
 struct PointLight
 {
@@ -25,7 +22,13 @@ layout(std140, binding = 1) uniform ConstantData
 	PointLight c_Lights[DND_MAX_LIGHTS];
 };
 
+layout(location = 0) in vec3 a_QuadCoord;
+layout(location = 2) in vec2 a_QuadTexCoord;
+
+out vec2 v_QuadTexCoord;
+
 void main()
-{                                
-	gl_Position = c_ViewProjection * (u_Transform * vec4(a_Coord.x, a_Coord.y, a_Coord.z, 1.0f));
+{
+	v_QuadTexCoord = a_QuadTexCoord;
+	gl_Position = vec4(a_QuadCoord, 1.0);
 }

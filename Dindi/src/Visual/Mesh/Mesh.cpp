@@ -21,6 +21,11 @@ namespace Dindi
 		BuildAABB();
 	}
 	
+	Mesh::Mesh()
+	{
+		m_Material = new Material(DEFAULT_VERTEX_SHADER, DEFAULT_FRAGMENT_SHADER);
+	}
+
 	Mesh::~Mesh()
 	{
 		if (m_Material)

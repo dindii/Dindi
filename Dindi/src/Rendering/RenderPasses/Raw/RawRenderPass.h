@@ -11,6 +11,7 @@ namespace Dindi
 		~RawRenderPass();
 
 		inline void FeedCSMData(std::vector<glm::mat4>& shadowTransforms) { m_CachedShadowTransforms = shadowTransforms; }
+		inline void FeedGBufferData(std::vector<Texture2D*>& gbufferContent) { m_CachedGBuffer = gbufferContent; }
 		Texture2D* GetRenderTarget() { return m_RenderTarget; }
 		virtual void GenerateOutput(Scene* scene) override final;
 	protected:
@@ -20,5 +21,8 @@ namespace Dindi
 		void TransformAndDrawDebugShapes(Scene* scene);
 		std::vector<glm::mat4> m_CachedShadowTransforms;
 		Texture2D* m_RenderTarget;
+		Model* m_GBufferQuadModel;
+
+		std::vector<Texture2D*> m_CachedGBuffer;
 	};
 }

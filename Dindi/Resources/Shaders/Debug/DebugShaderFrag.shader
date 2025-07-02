@@ -4,7 +4,7 @@ uniform vec3 u_Color;
 
 out vec4 finalColor;
 
-#define DND_MAX_LIGHTS 1000
+#define DND_MAX_LIGHTS 5
 
 struct PointLight
 {
@@ -24,8 +24,6 @@ layout(std140, binding = 1) uniform ConstantData
 	vec4 c_DirLightPos;
 	PointLight c_Lights[DND_MAX_LIGHTS];
 };
-
-
 
 void main()
 {

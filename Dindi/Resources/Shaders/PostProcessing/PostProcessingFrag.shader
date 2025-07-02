@@ -54,6 +54,7 @@ void main()
 	vec4 bloomColor = texture(u_BloomTexture, v_TexCoord);
 
 	//with
+	//vec4 intermediateResult = hdrColor + (bloomColor * 0.0f);
 	vec4 intermediateResult = hdrColor + (bloomColor * 1.0f);
 	
 	vec4 result = vec4(aces_tonemap(intermediateResult.xyz * exposure), 1.0f);

@@ -7,6 +7,8 @@
 #include <Rendering/Core/Renderer.h>
 #include <Rendering/Debug/DebugRenderer.h>
 
+#include <Utils/MeshUtils.h>
+
 namespace Dindi
 {
 	RawRenderPass::RawRenderPass()
@@ -36,6 +38,8 @@ namespace Dindi
 
 		m_RenderTarget = new Texture2D(rawPassColorDescriptor);
 		//------ Default screen output
+
+		m_GBufferQuadModel = MeshUtil::GenerateQuad(RESOURCES_PATH "Resources/Shaders/Deferred/DeferredFinalPass.vert", RESOURCES_PATH "Resources/Shaders/Deferred/DeferredFinalPass.frag");
 	}
 	
 	RawRenderPass::~RawRenderPass()
@@ -49,17 +53,16 @@ namespace Dindi
 		DND_INTERNAL::LowLevelRenderer::Clear(true, true);
 
 		TransformAndDraw(scene);
-#ifdef DINDI_DEBUG
-		TransformAndDrawDebugShapes(scene);
-#endif
+
 		m_Framebuffer->UnBind();
 	}
 	
 	void RawRenderPass::TransformAndDraw(Scene* scene)
 	{
+#if 0
 		const GraphicsDefinitions& gd = DND_INTERNAL::LowLevelRenderer::GetGraphicsDefinitions();
 		
-		m_Framebuffer->AttachRenderTarget(*m_RenderTarget, FramebufferRenderTargetSlot::COLOR);
+		m_Framebuffer->AttachRenderTarget(*m_RenderTarget, FramebufferRenderTargetSlot::ALBEDO_SPECULAR);
 		
 		for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
 		{
@@ -98,86 +101,49 @@ namespace Dindi
 				glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
 			}
 		}
-	}
+#endif
 
-	void RawRenderPass::TransformAndDrawDebugShapes(Scene* scene)
-	{
-		//Draw all debug shapes in the queue
-		Debug::DebugRenderer::SubmitDraw();
+		//The image rendered using the G-Buffer will be stored here
+		m_Framebuffer->AttachRenderTarget(*m_RenderTarget, FramebufferRenderTargetSlot::ALBEDO_SPECULAR);
 
-		Application& app = Application::GetInstance();
+		const GraphicsDefinitions& gd = DND_INTERNAL::LowLevelRenderer::GetGraphicsDefinitions();
 
-		//DEBUG RENDERER CALLS ---------------------------------------------------------------------------------------------------------------------------
-		//Draw cubes in light positions to debug.]
-		LightManager* lightManager = scene->GetLightManager();
-		std::vector<PointLight>& lights = lightManager->GetLights();
+		Mesh* fullscreenQuadMesh = m_GBufferQuadModel->GetMeshes()[0];
 
-		if (app.GetApplicationState() == EApplicationState::EDITOR && Debug::DebugRenderer::CheckDebugModeFlag(Debug::LIGHT_BOX))
-			for (uint32_t x = 0; x < lights.size(); x++)
-			{
-				Debug::DebugShapeContext shapeContext;
-
-				shapeContext.firstPosition = lights[x].GetPosition();
-				shapeContext.shapeColor = lights[x].GetColor();
-				shapeContext.shapeSize = 0.5f;
-				shapeContext.shapeRenderFlags = 0;// (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-				shapeContext.shapeType = Debug::EDebugShape::CUBE;
-
-				Debug::DebugRenderer::DrawShape(shapeContext);
-			}
+		glBindVertexArray(fullscreenQuadMesh->GetVertexArrayObjectID());
+		glBindBuffer(GL_ARRAY_BUFFER, fullscreenQuadMesh->GetVertexBufferObjectID());
 
 
+		Material* deferredPassMainMaterial = fullscreenQuadMesh->GetMaterial();
+		deferredPassMainMaterial->Bind();
+		
+		Ref<Shader> deferredPassMainShader = deferredPassMainMaterial->GetShader();
+		deferredPassMainShader->Bind();
 
-		for (uint32_t x = 0; x < scene->GetEntities().size(); x++)
+		deferredPassMainShader->UploadInt("u_GBuffer_Position", ERenderingMapSlot::GBuffer_Position);
+		m_CachedGBuffer[FramebufferRenderTargetSlot::POSITION]->Bind(ERenderingMapSlot::GBuffer_Position);
+
+		deferredPassMainShader->UploadInt("u_GBuffer_Normal", ERenderingMapSlot::Gbuffer_Normal);
+		m_CachedGBuffer[FramebufferRenderTargetSlot::NORMAL]->Bind(ERenderingMapSlot::Gbuffer_Normal);
+
+		deferredPassMainShader->UploadInt("u_GBuffer_Albedo", ERenderingMapSlot::GBuffer_Albedo);
+		m_CachedGBuffer[FramebufferRenderTargetSlot::ALBEDO_SPECULAR]->Bind(ERenderingMapSlot::GBuffer_Albedo);
+
+		deferredPassMainShader->UploadInt("u_GBuffer_Depth", ERenderingMapSlot::GBuffer_Depth);
+		m_CachedGBuffer[FramebufferRenderTargetSlot::DEPTH]->Bind(ERenderingMapSlot::GBuffer_Depth);
+
+		for (uint32_t i = 0; i < m_CachedShadowTransforms.size(); i++)
 		{
-			Model* model = scene->GetEntities()[x];
+			char lightTransformIndex[128];
 
-			for (uint32_t y = 0; y < scene->GetEntities()[x]->GetMeshes().size(); y++)
-			{
-				Mesh* mesh = scene->GetEntities()[x]->GetMeshes()[y];
+			sprintf(lightTransformIndex, "u_SingleLightTransform[%i]", i);
+			deferredPassMainShader->UploadUniformMat4(lightTransformIndex, m_CachedShadowTransforms[i]);
 
-
-
-				if (Debug::DebugRenderer::CheckDebugModeFlag(Debug::MESH_AABB))
-				{
-					Debug::DebugShapeContext shapeContext;
-					shapeContext.firstPosition = mesh[x].GetAABB().GetMin();
-					shapeContext.shapeColor = glm::vec3(0.0f, 0.0f, 1.0f);
-					shapeContext.shapeSize = 0.1f;
-					shapeContext.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-					shapeContext.shapeType = Debug::EDebugShape::CUBE;
-
-					Debug::DebugShapeContext shapeContext1;
-					shapeContext1.firstPosition = mesh[x].GetAABB().GetMax();
-					shapeContext1.shapeColor = glm::vec3(1.0f, 0.0f, 0.0f);
-					shapeContext1.shapeSize = 0.1f;
-					shapeContext1.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-					shapeContext1.shapeType = Debug::EDebugShape::CUBE;
-
-					Debug::DebugRenderer::DrawShape(shapeContext1);
-					Debug::DebugRenderer::DrawShape(shapeContext);
-				}
-
-
-				if (Debug::DebugRenderer::CheckDebugModeFlag(Debug::MODEL_AABB))
-				{
-					Debug::DebugShapeContext model1;
-					model1.firstPosition = model[x].GetAABB().GetMin();
-					model1.shapeColor = glm::vec3(0.0f, 1.0f, 0.0f);
-					model1.shapeSize = 0.1f;
-					model1.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-					model1.shapeType = Debug::EDebugShape::CUBE;
-					Debug::DebugShapeContext model2;
-					model2.firstPosition = model[x].GetAABB().GetMax();
-					model2.shapeColor = glm::vec3(0.0f, 1.0f, 1.0f);
-					model2.shapeSize = 0.1f;
-					model2.shapeRenderFlags = (Debug::EDebugRenderFlags::NO_DEPTH_TESTING);
-					model2.shapeType = Debug::EDebugShape::CUBE;
-					Debug::DebugRenderer::DrawShape(model1);
-					Debug::DebugRenderer::DrawShape(model2);
-				}
-			}
+			memset(lightTransformIndex, 0, 128);
+			sprintf(lightTransformIndex, "u_CSMDistances[%i]", i);
+			deferredPassMainShader->UploadUniformFloat(lightTransformIndex, gd.CSMCascadeDistance[i]);
 		}
-	}
 
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, fullscreenQuadMesh->GetVertexCount());
+	}
 }

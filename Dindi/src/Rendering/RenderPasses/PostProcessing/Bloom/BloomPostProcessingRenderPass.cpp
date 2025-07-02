@@ -82,7 +82,7 @@ namespace Dindi
 			m_DownscaleTargetMips.push_back(tempDown);
 		}
 
-		m_Framebuffer->AttachRenderTarget(*m_UpscaleTargetMips[0], FramebufferRenderTargetSlot::COLOR);
+		m_Framebuffer->AttachRenderTarget(*m_UpscaleTargetMips[0], FramebufferRenderTargetSlot::ALBEDO_SPECULAR);
 	
 		m_DownsampleShader = Shader::Load(RESOURCES_PATH "Resources/Shaders/PostProcessing/Bloom/DownscalingBloomVert.shader", RESOURCES_PATH "Resources/Shaders/PostProcessing/Bloom/DownscalingBloomFrag.shader");
 		m_UpsampleShader = Shader::Load(RESOURCES_PATH "Resources/Shaders/PostProcessing/Bloom/UpscalingBloomVert.shader", RESOURCES_PATH "Resources/Shaders/PostProcessing/Bloom/UpscalingBloomFrag.shader");
@@ -137,7 +137,7 @@ namespace Dindi
 			const Texture2D* mip = m_UpscaleTargetMips[i];
 
 			glViewport(0, 0, mip->GetWidth(), mip->GetHeight());
-			m_Framebuffer->AttachRenderTarget(*mip, FramebufferRenderTargetSlot::COLOR);
+			m_Framebuffer->AttachRenderTarget(*mip, FramebufferRenderTargetSlot::ALBEDO_SPECULAR);
 
 			i == 0 ? m_DownsampleShader->UploadInt("u_PreFilter", 1) : m_DownsampleShader->UploadInt("u_PreFilter", 0);
 			m_DownsampleShader->UploadUniformFloat("u_Threshold", 1.0f);
@@ -151,7 +151,7 @@ namespace Dindi
 
 			/*test*/
 			copyShader->Bind();
-			m_Framebuffer->AttachRenderTarget(*m_DownscaleTargetMips[i], FramebufferRenderTargetSlot::COLOR);
+			m_Framebuffer->AttachRenderTarget(*m_DownscaleTargetMips[i], FramebufferRenderTargetSlot::ALBEDO_SPECULAR);
 			copyShader->UploadInt("u_SrcCopy", ERenderingMapSlot::BloomSource);
 			mip->Bind(ERenderingMapSlot::BloomSource);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, mesh->GetVertexCount());
@@ -210,7 +210,7 @@ namespace Dindi
 			m_DownscaleTargetMips[i]->Bind(ERenderingMapSlot::BloomHotGlowSrc);
 
 			glViewport(0, 0, nextMip->GetWidth(), nextMip->GetHeight());
-			m_Framebuffer->AttachRenderTarget(*nextMip, FramebufferRenderTargetSlot::COLOR);
+			m_Framebuffer->AttachRenderTarget(*nextMip, FramebufferRenderTargetSlot::ALBEDO_SPECULAR);
 
 			DND_INTERNAL::LowLevelRenderer::Clear(true, true);
 
@@ -222,7 +222,8 @@ namespace Dindi
 		}
 		m_UpscaleTargetMips[0]->Bind(ERenderingMapSlot::BloomOutput);
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_BLEND);
 	}
 	 
 }

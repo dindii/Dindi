@@ -65,7 +65,8 @@ namespace Dindi
 			memcpy(&cubeVertices[0], cubeVerticesArray, cubeNumVertices * sizeof(glm::vec3));
 
 			Model* temporaryCubeModel = new Model();
-			Mesh*  cubeDebugMesh = new Mesh(std::move(cubeVertices), RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderVert.shader", RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderFrag.shader");
+			//#TODO: Actually we need a deferred debug pass... where we take the depth info stored and render our debug geometry using that depth information but with a raw color debug output pass
+			Mesh*  cubeDebugMesh = new Mesh(std::move(cubeVertices), RESOURCES_PATH "Resources/Shaders/Deferred/GBuffer.vert", RESOURCES_PATH "Resources/Shaders/Deferred/GBuffer.frag");
 			
 			temporaryCubeModel->AddMesh(cubeDebugMesh);
 
@@ -87,7 +88,7 @@ namespace Dindi
 			memcpy(&lineVertices[0], lineVerticesArray, lineNumVertices * sizeof(glm::vec3));
 
 			Model* temporaryLineModel = new Model();
-			Mesh*  lineDebugMesh = new Mesh(std::move(lineVertices), RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderVert.shader", RESOURCES_PATH "Resources/Shaders/Debug/DebugShaderFrag.shader");
+			Mesh*  lineDebugMesh = new Mesh(std::move(lineVertices), RESOURCES_PATH "Resources/Shaders/Deferred/GBuffer.vert", RESOURCES_PATH "Resources/Shaders/Deferred/GBuffer.frag");
 
 			lineDebugMesh->SetRenderFlag(RenderFlags::Stream);
 			temporaryLineModel->AddMesh(lineDebugMesh);
@@ -151,7 +152,8 @@ namespace Dindi
 			Mesh* mesh = m_DebugShapes[debugShapeContext.shapeType]->GetMeshes()[0];
 
 			mesh->GetMaterial()->Bind();
-			mesh->GetMaterial()->GetShader()->UploadUniformFloat3("u_Color", debugShapeContext.shapeColor);
+			//#TODO Regulate cube debug color + light debug strength here.
+			mesh->GetMaterial()->GetShader()->UploadUniformFloat4("u_Color", glm::vec4(debugShapeContext.shapeColor.x, debugShapeContext.shapeColor.y, debugShapeContext.shapeColor.z, 1.0f));
 
 			glm::mat4 transform(1.0f);
 			transform = glm::translate(transform, debugShapeContext.firstPosition);

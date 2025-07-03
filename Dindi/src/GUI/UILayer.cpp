@@ -45,6 +45,7 @@ namespace Dindi
 	std::vector<uint32_t> DebugImageUIPool;
 #endif
 
+#ifdef DINDI_DEBUG
 	void UILayer::DrawDebugImageUI()
 	{
 		ImGui::Begin("Custom Debug Image");
@@ -58,6 +59,7 @@ namespace Dindi
 	{
 		DebugImageUIPool.push_back(imageHandle);
 	}
+#endif
 
 	void UILayer::OnEvent(Dindi::Event& event)
 	{

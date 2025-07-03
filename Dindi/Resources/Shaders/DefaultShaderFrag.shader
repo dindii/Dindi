@@ -451,7 +451,7 @@ void main()
 	float shadow = ShadowCalculation(v_FragPosLightSpace[layer], layer);
 
 	//get backas
-	temporaryResult += vec3(dirLight.ambient + (/*1.0 -*/ shadow) * (dirLight.diffuse + dirLight.specular));
+	temporaryResult += vec3(dirLight.ambient + shadow * (dirLight.diffuse + dirLight.specular));
 	
 
 	outColor = vec4(temporaryResult.xyz, 1.0f);

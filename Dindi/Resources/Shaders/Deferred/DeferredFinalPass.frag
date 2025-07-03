@@ -43,7 +43,7 @@ vec3 ResolvePointLights(vec3 fragNormal, vec3 fragmentPos, vec3 fragmentAmbient,
 
 		for(int i = 0; i < numLights; i++)
 		{
-			vec3 lightPosition = c_Lights[i].m_Position.xyz;
+			vec3 lightPosition = c_Lights[i].m_Position.xyz + 0.0001f;
 			vec3 lightColor = c_Lights[i].m_Color.rgb;
 
 			vec3 lightDir = normalize(lightPosition -  fragmentPos);
@@ -65,8 +65,8 @@ vec3 ResolvePointLights(vec3 fragNormal, vec3 fragmentPos, vec3 fragmentAmbient,
 			float distance = length(lightPosition - fragmentPos);
 			float attenuation = 2.0f / (distance * (distance / 2));
 			
-			diffuse *= attenuation * 0.05f;
-			fragmentAmbient *= attenuation;
+			fragmentAmbient *= attenuation *  0.05f;
+			diffuse *= attenuation;
 			specular *= attenuation * 0.5f;
 
 			lightContribution += (diffuse + fragmentAmbient + specular);
@@ -75,7 +75,7 @@ vec3 ResolvePointLights(vec3 fragNormal, vec3 fragmentPos, vec3 fragmentAmbient,
 		return lightContribution;
 }
 
-vec3 ResolveDirectionalLight(vec3 fragNormal, vec3 fragmentPos, vec3 fragColor, float specularMultiplier)
+vec3 ResolveDirectionalLight(vec3 fragNormal, vec3 fragmentPos, vec3 fragColor, float specularMultiplier, float shadowValue)
 {
 		vec3 lightContribution = vec3(0.0f, 0.0f, 0.0f);
 
@@ -84,7 +84,7 @@ vec3 ResolveDirectionalLight(vec3 fragNormal, vec3 fragmentPos, vec3 fragColor, 
 
 		//#TODO - Create a Uniform for directional light color.
 		vec3 dirLightColor = vec3(1.2f, 0.75f, 0.25f) * 2.4;
-		vec3 dirLightAmbientColor = dirLightColor *  vec3(0.3f, 0.47f, 1.0f) * 0.2;
+		vec3 dirLightAmbientColor = fragColor * dirLightColor *  vec3(0.3f, 0.47f, 1.0f) *0.2;
 
 		//Tweak light strength per light for bloom 
 		vec3 diffuse = diff * fragColor * dirLightColor;
@@ -98,7 +98,7 @@ vec3 ResolveDirectionalLight(vec3 fragNormal, vec3 fragmentPos, vec3 fragColor, 
 		//Tweak specular for bloom
 		vec3 specular = dirLightColor * spec * specularMultiplier * 1.0f;
 
-		lightContribution += (diffuse + dirLightAmbientColor + specular);
+		lightContribution += dirLightAmbientColor  + shadowValue * (diffuse + specular);
 		
 		return lightContribution;
 }
@@ -172,7 +172,6 @@ float CalculateDirectionalShadow(vec4 fragPosLightSpace, int layer, float shadow
 
 
 	float TexelWidth = 1.0 / textureSize(u_ShadowMap[layer], 0).x;
-	//#BUG? SHOULD IT BE .X?
 	float TexelHeight = 1.0 / textureSize(u_ShadowMap[layer], 0).x;
 
 	vec2 TexelSize = vec2(TexelWidth, TexelHeight);
@@ -274,7 +273,6 @@ int ResolveShadowCascadeLayer(float thresholdMultiplier, float fragmentDistance)
 	return finalLayer;
 }
 
-
 void main()
 {
 		//fetch gbuffer
@@ -306,6 +304,7 @@ void main()
 		int shadowCascadeLayer = ResolveShadowCascadeLayer(3.0f, viewSpaceFragmentDistance);
 		shadowCascadeLayer = shadowCascadeLayer;
 		float filterSize = CalculateShadowFilterSize(FragPosLightSpace[shadowCascadeLayer], c_DirLightPos.xyz, lightSize, blockerSearchSamples, shadowMapOffsetTextureSize, shadowMapOffsetFilterSize);
+		filterSize = pow(filterSize, 4);
 		float shadowValue = CalculateDirectionalShadow(FragPosLightSpace[shadowCascadeLayer], shadowCascadeLayer, filterSize,  shadowMapRandomRadius, shadowMapOffsetFilterSize, normal);
 		//----------------------------------------------------------------------------------    Shadow calc
 
@@ -313,7 +312,7 @@ void main()
 		vec3 totalLightContribution = vec3(0.0f, 0.0f, 0.0f);
 		
 		totalLightContribution += ResolvePointLights(normal, fragPos, ambient, color, specularTexVal);
-		totalLightContribution += ResolveDirectionalLight(normal, fragPos, color, specularTexVal) * shadowValue;
+		totalLightContribution += ResolveDirectionalLight(normal, fragPos, color, specularTexVal, shadowValue);
 		//----------------------------------------------------------------------------------    Light calc 
 
 		OutputColor = vec4(totalLightContribution.rgb, 1.0f);

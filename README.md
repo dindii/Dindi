@@ -15,16 +15,18 @@ Done:
 ✅ Mesh Picking (Ray casting + AABB)  
 ✅ Gamma Correction  
 ✅ Model Loading  
+✅ Normal Mapping  
+✅ HDR  
+✅ Tonemapping (ACES)  
+✅ Bloom  
+✅ Deferred Shading  
+✅ Screen Space Ambient Occlusion  
 
 TODO:  
-❌ Normal Mapping  
-❌ HDR  
-❌ Bloom  
-❌ Deferred Shading  
-❌ Screen Space Ambient Occlusion  
+❌ Clustered rendering (deferred with clusters)
 ❌ Depth of Field  
 ❌ Screen Space Reflections  
-❌ Temporal Anti Aliasing  
+❌ Eye Adaptation
 ❌ Screen Space Shadows  
 ❌ Point Light Shadows  
 ❌ PBR  
@@ -53,9 +55,34 @@ Percentage Closer Soft Shadows (PCSS):
 ![PCSS_Raw2](https://github.com/dindii/Dindi/assets/19862090/0f546b76-8c80-42d3-b8c4-9b7aba60ca65)
 ![sombra3](https://github.com/dindii/Dindi/assets/19862090/45e4bd91-c439-4eb8-aa07-a295e3cb4775)
 
+
 Smooth transition between Shadow Map Cascades (Dithering):
 ---------------------------------------------------------------------------------------------------------------
 [SmoothCSMTransition.webm](https://github.com/dindii/Dindi/assets/19862090/699bbf4f-2dcb-41ec-8a9e-9e341227ff1c)
+
+ 
+Normal Mapping:
+---------------------------------------------------------------------------------------------------------------
+![NormalMapping1](https://github.com/user-attachments/assets/c8b6333f-bc3d-4ad9-b03e-152b271fce04)
+![NormalMapping2](https://github.com/user-attachments/assets/7dfa01b8-c669-4f10-9721-5920f705947a)
+
+Bloom:
+---------------------------------------------------------------------------------------------------------------
+![Bloom1](https://github.com/user-attachments/assets/42be01bf-3082-4d83-870a-c8931c80a5a9)
+![Bloom2](https://github.com/user-attachments/assets/0a82a5d3-eda8-4925-b25d-56a6a54e8b32)
+
+Deferred rendering:
+---------------------------------------------------------------------------------------------------------------
+![Deferred1](https://github.com/user-attachments/assets/47de6454-6260-48b6-9d4b-17ccaa9ba7af)
+
+SSAO:
+---------------------------------------------------------------------------------------------------------------
+![SSAO1](https://github.com/user-attachments/assets/5ce04741-bfef-4bee-ba1a-0622a2fade24)
+![SSAO2](https://github.com/user-attachments/assets/34905d4c-9b85-4681-80ee-5603daf16bec)
+![SSAO3](https://github.com/user-attachments/assets/6ed26242-7dd7-46ea-ab10-0f7e27ef45d4)
+
+
+
 
 
 

@@ -144,6 +144,9 @@ namespace Dindi
 			deferredPassMainShader->UploadUniformFloat(lightTransformIndex, gd.CSMCascadeDistance[i]);
 		}
 
+		deferredPassMainShader->UploadInt("u_SSAOTexture", ERenderingMapSlot::SSAOTexture);
+		m_CachedSSAOTexture->Bind(ERenderingMapSlot::SSAOTexture);
+
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, fullscreenQuadMesh->GetVertexCount());
 	}
 }

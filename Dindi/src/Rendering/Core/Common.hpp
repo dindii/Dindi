@@ -21,6 +21,8 @@ namespace Dindi
 		DND_R8 = GL_R8,
 		DND_COLOR_RGBA32F = GL_RGBA32F,
 		DND_COLOR_RGBA16F = GL_RGBA16F,
+		DND_COLOR_RGB16F = GL_RGB16F,
+		
 	};
 
 	enum RenderTargetFormat
@@ -52,7 +54,7 @@ namespace Dindi
 			return RenderTargetFormat::DND_DEPTH;
 			break;
 
-		case DND_COLOR_SRGB8: case DND_COLOR_RGB8:
+		case DND_COLOR_SRGB8: case DND_COLOR_RGB8: case DND_COLOR_RGB16F:
 			return RenderTargetFormat::DND_RGB;
 			break;
 

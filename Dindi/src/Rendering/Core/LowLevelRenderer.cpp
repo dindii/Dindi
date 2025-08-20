@@ -48,6 +48,8 @@ namespace Dindi
 		BloomPostProcessingRenderPass* LowLevelRenderer::m_BloomProcessingRenderPass = nullptr;
 		PostProcessingRenderPass* LowLevelRenderer::m_PostProcessingRenderPass = nullptr;
 		GBufferRenderPass* LowLevelRenderer::m_GBufferRenderPass = nullptr;
+		SSAORenderPass* LowLevelRenderer::m_SSAORenderPass = nullptr;
+		SimpleGaussianBlurRenderPass* LowLevelRenderer::m_GaussianBlurRenderPass = nullptr;
 		uint32_t LowLevelRenderer::m_DrawCallNumber = 0;
 
 		//We are going to use only one UBO, so this doesn't need to be dynamic.
@@ -135,6 +137,8 @@ namespace Dindi
 			m_PostProcessingRenderPass = new PostProcessingRenderPass();
 			m_BloomProcessingRenderPass = new BloomPostProcessingRenderPass(8);
 			m_GBufferRenderPass = new GBufferRenderPass();
+			m_SSAORenderPass = new SSAORenderPass();
+			m_GaussianBlurRenderPass = new SimpleGaussianBlurRenderPass();
 		}
 
 		void LowLevelRenderer::SetConstantData(Scene* scene)
@@ -179,9 +183,16 @@ namespace Dindi
 
 			m_CSMRenderPass->GenerateOutput(scene);
 			m_GBufferRenderPass->GenerateOutput(scene);
+			glFlush();
+			m_SSAORenderPass->FeedGBufferData(m_GBufferRenderPass->GetGbufferResources());
+			m_SSAORenderPass->GenerateOutput(scene);
+
+			m_GaussianBlurRenderPass->FeedTextureToBlur(m_SSAORenderPass->GetSSAOTexture());
+			m_GaussianBlurRenderPass->GenerateOutput(scene);
 
 			m_RawRenderPass->FeedCSMData(m_CSMRenderPass->GetTransforms());
 			m_RawRenderPass->FeedGBufferData(m_GBufferRenderPass->GetGbufferResources());
+			m_RawRenderPass->FeedSSAOData(m_GaussianBlurRenderPass->GetBlurTexture());
 			m_RawRenderPass->GenerateOutput(scene);
 
 			m_BloomProcessingRenderPass->FeedSourceHDRBuffer(m_RawRenderPass->GetRenderTarget());
@@ -297,7 +308,8 @@ namespace Dindi
 
 		void LowLevelRenderer::RemakeFramebuffers(uint32_t width, uint32_t height)
 		{
-			m_ScreenOutput->Remake();
+			if(m_ScreenOutput)
+				m_ScreenOutput->Remake();
 		}
 
 		void LowLevelRenderer::SetCullingType(CullingFaceMode mode)

@@ -147,6 +147,12 @@ namespace Dindi
 				index_offset += fv;
 			}
 
+			if (!temporaryVertexPositions.size())
+			{
+				DND_LOG_WARNING("Mesh", shapeIndex, " doesn't contain Vertices! Model: ", filepath);
+				continue;
+			}
+
 			for (uint32_t i = 0; i < temporaryVertexPositions.size(); i+=3)
 			{
 				if (temporaryTextureCoords.size() == 0)

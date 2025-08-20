@@ -41,8 +41,12 @@ enum ERenderingMapSlot
 	GBuffer_Albedo,
 	GBuffer_Position,
 	Gbuffer_Normal,
-	GBuffer_Depth
-	
+	GBuffer_Depth,
+	SSAONoise,
+	SSAOTexture,
+	Util1,
+	Util2,
+	Util3
 };
 
 enum EApplicationState

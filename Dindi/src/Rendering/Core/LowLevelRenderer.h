@@ -8,6 +8,8 @@
 #include <Rendering/RenderPasses/PostProcessing/PostProcessingRenderPass.h>
 #include <Rendering/RenderPasses/PostProcessing/Bloom/BloomPostProcessingRenderPass.h>
 #include <Rendering/RenderPasses/Deferred/GBufferPass.h>
+#include <Rendering/RenderPasses/SSAO/SSAORenderPass.h>
+#include <Rendering/RenderPasses/PostProcessing/Blur/SimpleGaussianBlur.h>
 
 class CSMRenderPass;
 
@@ -123,7 +125,9 @@ namespace Dindi
 			static RawRenderPass* m_RawRenderPass;
 			static PostProcessingRenderPass* m_PostProcessingRenderPass;
 			static BloomPostProcessingRenderPass* m_BloomProcessingRenderPass;
+			static SSAORenderPass* m_SSAORenderPass;
 			static GBufferRenderPass* m_GBufferRenderPass;
+			static SimpleGaussianBlurRenderPass* m_GaussianBlurRenderPass;
 			
 			static uint32_t m_DrawCallNumber;
 		};

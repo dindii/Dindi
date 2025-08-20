@@ -35,9 +35,11 @@ uniform sampler3D u_RandomAngles;
 uniform mat4 u_SingleLightTransform[DND_CSM_LEVELS];
 uniform float u_CSMDistances[DND_CSM_LEVELS];
 
+uniform sampler2D u_SSAOTexture;
+
 out vec4 OutputColor;
 
-vec3 ResolvePointLights(vec3 fragNormal, vec3 fragmentPos, vec3 fragmentAmbient, vec3 fragColor, float specularMultiplier)
+vec3 ResolvePointLights(vec3 fragNormal, vec3 fragmentPos, vec3 fragmentAmbient, vec3 fragColor, float specularMultiplier, float ao)
 {
 		vec3 lightContribution = vec3(0.0f, 0.0f, 0.0f);
 
@@ -65,7 +67,7 @@ vec3 ResolvePointLights(vec3 fragNormal, vec3 fragmentPos, vec3 fragmentAmbient,
 			float distance = length(lightPosition - fragmentPos);
 			float attenuation = 2.0f / (distance * (distance / 2));
 			
-			fragmentAmbient *= attenuation *  0.05f;
+			fragmentAmbient *= attenuation *  0.05f * ao;
 			diffuse *= attenuation;
 			specular *= attenuation * 0.5f;
 
@@ -75,7 +77,7 @@ vec3 ResolvePointLights(vec3 fragNormal, vec3 fragmentPos, vec3 fragmentAmbient,
 		return lightContribution;
 }
 
-vec3 ResolveDirectionalLight(vec3 fragNormal, vec3 fragmentPos, vec3 fragColor, float specularMultiplier, float shadowValue)
+vec3 ResolveDirectionalLight(vec3 fragNormal, vec3 fragmentPos, vec3 fragColor, float specularMultiplier, float shadowValue, float ao)
 {
 		vec3 lightContribution = vec3(0.0f, 0.0f, 0.0f);
 
@@ -84,7 +86,7 @@ vec3 ResolveDirectionalLight(vec3 fragNormal, vec3 fragmentPos, vec3 fragColor, 
 
 		//#TODO - Create a Uniform for directional light color.
 		vec3 dirLightColor = vec3(1.2f, 0.75f, 0.25f) * 2.4;
-		vec3 dirLightAmbientColor = fragColor * dirLightColor *  vec3(0.3f, 0.47f, 1.0f) *0.2;
+		vec3 dirLightAmbientColor = fragColor * dirLightColor *  vec3(0.3f, 0.47f, 1.0f) * 0.2 * ao;
 
 		//Tweak light strength per light for bloom 
 		vec3 diffuse = diff * fragColor * dirLightColor;
@@ -261,12 +263,12 @@ int ResolveShadowCascadeLayer(float thresholdMultiplier, float fragmentDistance)
 
 	if (abs(fragmentDistance) < close + threshold)
 	{
-		//outColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
+//		OutputColor.rgb *= vec3(1.0f, 0.1f, 0.1f);
 		finalLayer = 0;
 	}
 	else if (abs(fragmentDistance) < mid + threshold)
 	{
-		//outColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
+//		OutputColor.rgb *= vec3(0.1f, 1.1f, 0.1f);
 		finalLayer = 1;
 	}
 
@@ -281,7 +283,7 @@ void main()
 		vec4 colorSpecular= texture(u_GBuffer_Albedo, v_QuadTexCoord);
 
 		vec3 fragPos = position.rgb;
-		float viewSpaceFragmentDistance = position.a;
+		float viewSpaceFragmentDistance = position.w;
 
 		vec3 color = colorSpecular.rgb;
 		float specularTexVal = colorSpecular.a;
@@ -304,16 +306,35 @@ void main()
 		int shadowCascadeLayer = ResolveShadowCascadeLayer(3.0f, viewSpaceFragmentDistance);
 		shadowCascadeLayer = shadowCascadeLayer;
 		float filterSize = CalculateShadowFilterSize(FragPosLightSpace[shadowCascadeLayer], c_DirLightPos.xyz, lightSize, blockerSearchSamples, shadowMapOffsetTextureSize, shadowMapOffsetFilterSize);
-		filterSize = pow(filterSize, 4);
+		//filterSize = pow(filterSize, 4);
 		float shadowValue = CalculateDirectionalShadow(FragPosLightSpace[shadowCascadeLayer], shadowCascadeLayer, filterSize,  shadowMapRandomRadius, shadowMapOffsetFilterSize, normal);
 		//----------------------------------------------------------------------------------    Shadow calc
 
 		//----------------------------------------------------------------------------------    Light calc 
 		vec3 totalLightContribution = vec3(0.0f, 0.0f, 0.0f);
+		float ao = 1.0f - texture(u_SSAOTexture, v_QuadTexCoord).r;
+		ao *= ao * ao;
 		
-		totalLightContribution += ResolvePointLights(normal, fragPos, ambient, color, specularTexVal);
-		totalLightContribution += ResolveDirectionalLight(normal, fragPos, color, specularTexVal, shadowValue);
+		//OutputColor = vec4(0.95f * ao, 0.95f * ao, 0.95f * ao, 1.0f);
+		//return;
+
+		totalLightContribution += ResolvePointLights(normal, fragPos, ambient, color, specularTexVal, ao);
+		totalLightContribution += ResolveDirectionalLight(normal, fragPos, color, specularTexVal, shadowValue, ao);
 		//----------------------------------------------------------------------------------    Light calc 
 
-		OutputColor = vec4(totalLightContribution.rgb, 1.0f);
+		OutputColor = vec4(totalLightContribution.rgb, 1.0f);// * texture(u_SSAOTexture, v_QuadTexCoord).r;
+
+		//if(shadowCascadeLayer == 0)
+		//{
+		//OutputColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		//}
+		//else 	if(shadowCascadeLayer == 1)
+		//{
+		//OutputColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		//}
+		//else 		if(shadowCascadeLayer == 2)
+		//{
+		//	OutputColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);
+		//}
+		
 }

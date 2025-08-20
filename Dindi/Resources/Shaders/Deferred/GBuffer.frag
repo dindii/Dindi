@@ -43,6 +43,8 @@ layout(std140, binding = 1) uniform ConstantData
 void main()
 {
 
+//#bring  bag distance from camera
+	//gPosition = vec4(v_FragPos.xyz, 1.0f);
 	gPosition = vec4(v_FragPos.xyz, v_ViewSpaceFragmentDistance);
 
 	//Use default magenta texture in case we don't have a diffuse texture for it. Debug cube meshes for lights also uses this to set the color of the cube with the color of the light (debugging purposes)

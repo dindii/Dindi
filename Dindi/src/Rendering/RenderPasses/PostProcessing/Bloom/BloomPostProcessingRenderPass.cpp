@@ -91,7 +91,6 @@ namespace Dindi
 
 	void BloomPostProcessingRenderPass::GenerateOutput(Scene* scene)
 	{
-		
 		m_Framebuffer->Bind();
 	
 		DownsampleMips();

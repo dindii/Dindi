@@ -23,10 +23,10 @@ Done:
 ✅ Screen Space Ambient Occlusion  
 
 TODO:  
-❌ Clustered rendering (deferred with clusters)
+❌ Clustered rendering (deferred with clusters)  
 ❌ Depth of Field  
 ❌ Screen Space Reflections  
-❌ Eye Adaptation
+❌ Eye Adaptation  
 ❌ Screen Space Shadows  
 ❌ Point Light Shadows  
 ❌ PBR  

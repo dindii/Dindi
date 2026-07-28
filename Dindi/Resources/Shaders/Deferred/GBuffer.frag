@@ -42,7 +42,6 @@ layout(std140, binding = 1) uniform ConstantData
 
 void main()
 {
-
 //#bring  bag distance from camera
 	//gPosition = vec4(v_FragPos.xyz, 1.0f);
 	gPosition = vec4(v_FragPos.xyz, v_ViewSpaceFragmentDistance);
@@ -66,7 +65,8 @@ void main()
 	if (textureSize(u_Normal, 0).x > 1)
 	{
 		vec3 tempNormal = texture(u_Normal, v_TexCoord).rgb;
-		tempNormal = tempNormal * 2.0 - 1.0;
+		tempNormal = normalize(tempNormal * 2.0f - 1.0f);//
+		gNormal = vec4(tempNormal.xyz, 1.0f);
 		gNormal = vec4(normalize(v_TBN * tempNormal).xyz, 1.0f);
 	}
 	else

@@ -15,13 +15,13 @@
 namespace Dindi
 {
 
-	Ref<Texture2D> Texture2D::Load(const std::string& path)
+	Ref<Texture2D> Texture2D::Load(const std::string& path, ETextureLoadFlag flags)
 	{
 		Ref<Texture2D> texture = AssetManager::Get<Texture2D>(path);
 
 		if (!texture)
 		{
-			Texture2D* newTex = new Texture2D(path);
+			Texture2D* newTex = new Texture2D(path, flags);
 			texture.reset(newTex);
 			AssetManager::Add<Texture2D>(path, texture);
 		}
@@ -34,7 +34,7 @@ namespace Dindi
 
 	}
 
-	Texture2D::Texture2D(const RenderTargetDescriptor& rtDescriptor)
+	Texture2D::Texture2D(const RenderTargetDescriptor& rtDescriptor, ETextureLoadFlag flags)
 	{
 		m_Width = rtDescriptor.width;
 		m_Height = rtDescriptor.height;
@@ -91,7 +91,7 @@ namespace Dindi
 	}
 
 	//#TODO: We have to split this function. We may want to upload data to the GPU later and not necessarily when it is created.
-	void Texture2D::LoadTextureFromData(const uint8_t* data, const uint32_t width, const uint32_t height, const uint32_t channels)
+	void Texture2D::LoadTextureFromData(const uint8_t* data, const uint32_t width, const uint32_t height, const uint32_t channels, ETextureLoadFlag flags)
 	{
 		m_Width = width;
 		m_Height = height;
@@ -110,13 +110,13 @@ namespace Dindi
 		}
 		case 3:
 		{
-			internalFormat = GL_SRGB8;
+			flags & ETextureLoadFlag::LOAD_AS_RGB ? internalFormat = GL_RGB8 : internalFormat = GL_SRGB8;
 			dataFormat = GL_RGB;
 			break;
 		}
 		case 4:
 		{
-			internalFormat = GL_SRGB8_ALPHA8;
+			flags & ETextureLoadFlag::LOAD_AS_RGB ? internalFormat = GL_RGBA8 : internalFormat = GL_SRGB8_ALPHA8;
 			dataFormat = GL_RGBA;
 			break;
 		}
@@ -175,12 +175,12 @@ namespace Dindi
 		DND_LOG_WARNING("Texture's data is not set!");
 	}
 
-	Texture2D::Texture2D(const uint8_t* data, const uint32_t width, const uint32_t height, const uint32_t channels /*= 4*/)
+	Texture2D::Texture2D(const uint8_t* data, const uint32_t width, const uint32_t height, const uint32_t channels /*= 4*/, ETextureLoadFlag flags)
 	{
-		LoadTextureFromData(data, width, height, channels);
+		LoadTextureFromData(data, width, height, channels, flags);
 	}
 
-	Texture2D::Texture2D(const std::string& path) : m_Path(path)
+	Texture2D::Texture2D(const std::string& path, ETextureLoadFlag flags) : m_Path(path)
 	{
 		int width = 0, height = 0, channels = 0;
 
@@ -192,7 +192,7 @@ namespace Dindi
 			return;
 		}
 
-		LoadTextureFromData(data, width, height, channels);
+		LoadTextureFromData(data, width, height, channels, flags);
 		stbi_image_free(data);
 	}
 

@@ -250,6 +250,10 @@
       <Filter>vendor\imguizmo</Filter>
     </ClInclude>
     <ClInclude Include="src\Utils\Profiling\TimerProf.h" />
+    <ClInclude Include="src\Rendering\RenderPasses\Deferred\GBufferPass.h" />
+    <ClInclude Include="src\Utils\MeshUtils.h" />
+    <ClInclude Include="src\Rendering\RenderPasses\SSAO\SSAORenderPass.h" />
+    <ClInclude Include="src\Rendering\RenderPasses\PostProcessing\Blur\SimpleGaussianBlur.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -364,5 +368,19 @@
       <Filter>vendor\imguizmo</Filter>
     </ClCompile>
     <ClCompile Include="src\Utils\Profiling\TimerProf.cpp" />
+    <ClCompile Include="src\Rendering\RenderPasses\Deferred\GBufferPass.cpp" />
+    <ClCompile Include="src\Utils\MeshUtils.cpp" />
+    <ClCompile Include="src\Rendering\RenderPasses\SSAO\SSAORenderPass.cpp" />
+    <ClCompile Include="src\Rendering\RenderPasses\PostProcessing\Blur\SimpleGaussianBlur.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\Deferred\GBuffer.vert" />
+    <None Include="Resources\Shaders\Deferred\GBuffer.frag" />
+    <None Include="Resources\Shaders\Deferred\DeferredFinalPassVert.shader" />
+    <None Include="Resources\Shaders\Deferred\DeferredFinalPassFrag.shader" />
+    <None Include="Resources\Shaders\PostProcessing\SSAO\SSAO.frag" />
+    <None Include="Resources\Shaders\PostProcessing\SSAO\SSAO.vert" />
+    <None Include="Resources\Shaders\PostProcessing\Blur\SimpleGaussianBlur.vert" />
+    <None Include="Resources\Shaders\PostProcessing\Blur\SimpleGaussianBlur.frag" />
   </ItemGroup>
 </Project>

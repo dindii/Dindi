@@ -313,10 +313,11 @@ void main()
 		//----------------------------------------------------------------------------------    Light calc 
 		vec3 totalLightContribution = vec3(0.0f, 0.0f, 0.0f);
 		float ao = 1.0f - texture(u_SSAOTexture, v_QuadTexCoord).r;
-		ao *= ao * ao;
+		ao *= (ao * ao);
+		//ao = 1.0f;
 		
-		//OutputColor = vec4(0.95f * ao, 0.95f * ao, 0.95f * ao, 1.0f);
-		//return;
+		//totalLightContribution += ResolvePointLights(normal, fragPos, ambient, color, specularTexVal, 1);
+		//totalLightContribution += ResolveDirectionalLight(normal, fragPos, color, specularTexVal, shadowValue, 1);
 
 		totalLightContribution += ResolvePointLights(normal, fragPos, ambient, color, specularTexVal, ao);
 		totalLightContribution += ResolveDirectionalLight(normal, fragPos, color, specularTexVal, shadowValue, ao);

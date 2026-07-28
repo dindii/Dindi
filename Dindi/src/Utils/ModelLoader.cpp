@@ -215,7 +215,7 @@ namespace Dindi
 
 				if (!meshMaterial.bump_texname.empty())
 				{
-					temporaryNormal = Texture2D::Load(dirPrefix + meshMaterial.bump_texname);
+					temporaryNormal = Texture2D::Load(dirPrefix + meshMaterial.bump_texname, ETextureLoadFlag::LOAD_AS_RGB);
 					meshToFill[shapeIndex]->GetMaterial()->SetNormalMap(temporaryNormal);
 				}
 			}
